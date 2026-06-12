@@ -36,6 +36,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const spaceRef = useRef(false)
   const pendingRelate = useRef<{ fromId: string; fromField: string; from: Pt; sx: number; sy: number } | null>(null)
   const renameRef = useRef<string | null>(null)
+  // Entity that should focus its field input once its name is committed (relate-create flow).
+  const pendingFieldsRef = useRef<string | null>(null)
   const [, forceUi] = useReducer((n: number) => n + 1, 0)
   const dupRef = useRef<string | null>(null)
 
@@ -124,7 +126,10 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
         } else {
           const id = addEntity(doc, p.x - 91, p.y - 18, 'new_table')
           addRelationship(doc, tl.fromId, id, { fromField: tl.fromField, role })
-          dispatch({ t: 'setNewId', id })
+          // Match the click-create flow: focus the name first, then jump to fields on commit.
+          renameRef.current = id
+          pendingFieldsRef.current = id
+          forceUi()
         }
       } else if (tl.k === 'endpointDown') {
         // click (no drag) → toggle that end's cardinality
@@ -238,6 +243,9 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     const p = screenToWorld(ev.clientX, ev.clientY)
     if (spaceRef.current || ev.button === 1) { ev.preventDefault(); dispatch({ t: 'startPan', sx: p.sx, sy: p.sy }); return }
     if (ev.button !== 0) return
+    // Keep the browser from moving focus to <body> on mouseup, so the name input's
+    // focus (set on mount) sticks instead of being yanked away.
+    ev.preventDefault()
     dispatch({ t: 'openName', at: { x: p.x, y: p.y } })
     dupRef.current = null
   }
@@ -335,8 +343,12 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
               setEntityColor(doc, e.id, next)
             }}
             onRenameStart={() => { renameRef.current = e.id; forceUi() }}
-            onRenameCommit={(name) => { renameEntity(doc, e.id, name); renameRef.current = null; forceUi() }}
-            onRenameCancel={() => { renameRef.current = null; forceUi() }}
+            onRenameCommit={(name) => {
+              renameEntity(doc, e.id, name); renameRef.current = null
+              if (pendingFieldsRef.current === e.id) { pendingFieldsRef.current = null; dispatch({ t: 'setNewId', id: e.id }) }
+              forceUi()
+            }}
+            onRenameCancel={() => { renameRef.current = null; pendingFieldsRef.current = null; forceUi() }}
             onDelete={() => { deleteEntity(doc, e.id); dispatch({ t: 'clearSel' }) }}
             onAddFields={(csv) => addFields(doc, e.id, csv)}
             onRenameField={(fid, name) => renameField(doc, e.id, fid, name)}
