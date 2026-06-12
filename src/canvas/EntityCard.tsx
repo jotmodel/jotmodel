@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Entity } from '../model/board'
 
+// Header height fallback before .ent-h is measured (matches the design system / geom HEADER_H).
+const HEADER_FALLBACK = 38
+// The relate dot only appears within this many px of a relate-edge (keeps it clear of row controls).
+const EDGE_GATE = 24
+
 export interface EntityCardProps {
   entity: Entity
   selected: boolean
@@ -30,6 +35,43 @@ export function EntityCard(props: EntityCardProps) {
   const [editing, setEditing] = useState<string | null>(null) // field id being renamed
   const fieldRef = useRef<HTMLInputElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const handleRef = useRef<HTMLDivElement>(null)
+
+  // The relate dot tracks the pointer: it snaps to the nearest relate-edge (left/right/bottom) at
+  // the cursor's position so the connector is always under the mouse, and hides over the header
+  // (move zone). Driven by direct DOM writes — no re-render per mouse-move.
+  function onCardMouseMove(e: React.MouseEvent) {
+    const root = rootRef.current, dot = handleRef.current
+    if (!root || !dot) return
+    const rect = root.getBoundingClientRect()
+    const scale = rect.width / root.offsetWidth || 1
+    const W = root.offsetWidth, H = root.offsetHeight
+    const lx = (e.clientX - rect.left) / scale
+    const ly = (e.clientY - rect.top) / scale
+    const headerH = headerRef.current?.offsetHeight ?? HEADER_FALLBACK
+    if (ly < headerH) { dot.style.opacity = '0'; return }
+    const sy = Math.max(headerH, Math.min(H, ly))
+    const cands = [
+      { x: 0, y: sy, d: lx },                                  // left edge
+      { x: W, y: sy, d: W - lx },                              // right edge
+      { x: Math.max(0, Math.min(W, lx)), y: H, d: H - ly },    // bottom edge
+    ]
+    const best = cands.reduce((a, b) => (b.d < a.d ? b : a))
+    // Only show near an edge — keep the dot out of the way while reaching for in-row controls.
+    if (best.d > EDGE_GATE) { dot.style.opacity = '0'; return }
+    dot.style.left = `${best.x}px`
+    dot.style.top = `${best.y}px`
+    dot.style.right = 'auto'
+    dot.style.transform = 'translate(-50%, -50%)'
+    dot.style.opacity = '1'
+  }
+  function onCardMouseLeave() {
+    const dot = handleRef.current
+    if (!dot) return
+    // Reset every inline prop so the dot returns to its CSS default (right-center, hover-gated).
+    dot.style.left = dot.style.top = dot.style.right = dot.style.transform = dot.style.opacity = ''
+  }
 
   useLayoutEffect(() => {
     props.onMeasure(entity.id, rootRef.current)
@@ -55,8 +97,11 @@ export function EntityCard(props: EntityCardProps) {
         transform: props.offset ? `translate(${props.offset.dx}px, ${props.offset.dy}px)` : undefined,
       }}
       onMouseDown={(e) => { e.stopPropagation(); props.onSelect(e) }}
+      onMouseMove={onCardMouseMove}
+      onMouseLeave={onCardMouseLeave}
     >
       <div
+        ref={headerRef}
         className="ent-h"
         onMouseDown={(e) => {
           const t = e.target as HTMLElement
@@ -142,6 +187,13 @@ export function EntityCard(props: EntityCardProps) {
           </div>
         ))}
 
+        {/* Relate-from-edge: pressing any of these border strips (or the hover dot) arms a relate
+            drag — the whole table edge is the connector. Siblings of the rows (not inside them), so
+            they bubble to the card root for selection but don't trigger a field's `as <field>`. */}
+        <div className="redge r-l" title="drag to relate" onMouseDown={(e) => props.onStartRelate(e)} />
+        <div className="redge r-r" title="drag to relate" onMouseDown={(e) => props.onStartRelate(e)} />
+        <div className="redge r-b" title="drag to relate" onMouseDown={(e) => props.onStartRelate(e)} />
+
         {showField ? (
           <div className="fieldinput">
             <input
@@ -163,8 +215,8 @@ export function EntityCard(props: EntityCardProps) {
         )}
       </div>
 
-      <div className="handle" title="drag to relate"
-        onMouseDown={(e) => { e.stopPropagation(); props.onStartRelate(e) }} />
+      <div ref={handleRef} className="handle" title="drag to relate"
+        onMouseDown={(e) => props.onStartRelate(e)} />
     </div>
   )
 }

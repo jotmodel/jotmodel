@@ -60,7 +60,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
 
   // Transient UI not worth putting in the reducer.
   const spaceRef = useRef(false)
-  const pendingRelate = useRef<{ fromId: string; fromField: string; from: Pt; sx: number; sy: number } | null>(null)
+  const pendingRelate = useRef<{ fromId: string; fromField: string | null; from: Pt; sx: number; sy: number } | null>(null)
   const renameRef = useRef<string | null>(null)
   // Press on a member of a multi-selection: keep the group (so a drag moves it all), but if the
   // pointer is released without dragging, collapse the selection to just that card on mouseup.
@@ -408,8 +408,11 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       dispatch({ t: 'startMove', id: e.id, dx: p.x - e.x, dy: p.y - e.y })
     }
   }
-  function onCardRelateHandle(e: Entity) {
-    dispatch({ t: 'startRelate', fromId: e.id, fromField: null, from: edgeAnchorWorld(e) })
+  // Relate from a table's edge (the whole border, or the hover dot). Arm a pending drag from the
+  // grab point — a press that doesn't move just selects; passing the threshold draws the line.
+  function armRelate(e: Entity, ev: React.MouseEvent) {
+    const p = screenToWorld(ev.clientX, ev.clientY)
+    pendingRelate.current = { fromId: e.id, fromField: null, from: { x: p.x, y: p.y }, sx: p.sx, sy: p.sy }
   }
   function onFieldPointerDown(e: Entity, fieldId: string, ev: React.MouseEvent) {
     const p = screenToWorld(ev.clientX, ev.clientY)
@@ -463,7 +466,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
         <div className="hint">
           <b>Click anywhere</b> to add a table<br />
           fields are comma-separated · types infer<br />
-          drag the edge dot (or a field) to relate · click the header dot to color-code<br />
+          drag a table's edge (or a field) to relate · click the header dot to color-code<br />
           <span className="hint-kbd">space-drag to pan · ⌘-scroll to zoom · ⌫ deletes · ⌘Z undoes</span>
         </div>
       )}
@@ -502,7 +505,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
             onMeasure={measure}
             onSelect={(ev) => onCardSelect(e.id, ev)}
             onStartMove={(ev) => onCardMove(e, ev)}
-            onStartRelate={() => onCardRelateHandle(e)}
+            onStartRelate={(ev) => armRelate(e, ev)}
             onFieldPointerDown={(fieldId, ev) => onFieldPointerDown(e, fieldId, ev)}
             onCycleColor={() => {
               const i = e.color ? SEM.indexOf(e.color as any) : -1

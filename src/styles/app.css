@@ -114,7 +114,7 @@ body{
 }
 .ent:hover .ent-x{opacity:1}
 .ent-x:hover{background:var(--jm-surface-2);color:var(--jm-text)}
-.ent-b{padding:3px 0}
+.ent-b{padding:3px 0;position:relative}
 .row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px;font-family:var(--jm-mono);font-size:12px;position:relative;cursor:default}
 .row .fn{color:var(--jm-text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .fn.pk{font-weight:600}
@@ -145,6 +145,12 @@ body{
 }
 .ent:hover .handle{opacity:1}
 .handle:hover{border-color:var(--jm-signal);box-shadow:var(--jm-ring)}
+/* Relate-from-edge grab strips: a ~11px band straddling the card border (mostly outside, ~2px in
+   — clear of row controls). Cover the body's L/R edges (below the move header) and the bottom. */
+.redge{position:absolute;z-index:1;cursor:crosshair}
+.redge.r-l{left:-9px;width:11px;top:0;bottom:0}
+.redge.r-r{right:-9px;width:11px;top:0;bottom:0}
+.redge.r-b{left:0;right:0;bottom:-9px;height:11px}
 
 /* user color-coding (the only color on the canvas) */
 .ent.c-slate{border-left:3px solid var(--sem-slate)} .ent.c-slate .ent-h{background:color-mix(in srgb,var(--sem-slate) 8%,transparent)} .ent.c-slate .cdot{background:var(--sem-slate);border-color:var(--sem-slate)}

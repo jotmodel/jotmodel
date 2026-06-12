@@ -28,7 +28,9 @@ the code is the source of truth and you don't need it again. The always-on rules
   number of"→number, "paid?/active/done/yes-no"→boolean, a word matching another table→a
   relationship. Otherwise **leave it a plain field** — never force a guess, demand a convention,
   or make anyone rename to be understood. Always overridable; the model works fully untyped.
-- **Relate:** drag an entity's edge handle → dashed line follows the cursor → drop on empty canvas
+- **Relate:** drag from an entity's edge — the **whole card border is the relate handle** (a dot
+  tracks your pointer along the border to mark where the line will spring from) → dashed line follows
+  the cursor → drop on empty canvas
   = new related table; drop on an existing table = connect. A table made by dropping on empty canvas
   opens with its **name focused** (type to replace `new_table`); committing the name jumps to its
   field input — the same name→fields flow as click-create. (Click-create's name box focuses on open
@@ -72,6 +74,13 @@ on the thing it changes** — no menus, no drawers.
   line → `1`/`N` sets the focused end, `Space` toggles. *(History: the endpoints once toggled each
   end, but that fought the role field and overlapped the delete — cardinality is the label only,
   endpoints are reroute-only. Don't move cardinality back onto the endpoints.)*
+- **Relate from the table edge.** The relate-drag starts from **anywhere on the card's border**, not
+  just a dot — left/right/bottom edge strips all arm the same drag, and **the relate dot follows the
+  pointer**, snapping to the nearest of those edges so the connector is always under the mouse (it
+  hides over the header). The strips sit *below* the header (header stays drag-to-move) and field rows keep their
+  `as <field>` relate. Like a field-drag, it's a **pending** drag: a press that doesn't pass the
+  ~5px threshold just selects the table; passing it draws the dashed line. *(Chosen over the single
+  13px hover dot, which forced you to hunt for the connector.)*
 - **Multiple relationships / roles ("as").** **Drag from the field row** → the link takes that
   field's word (`as sender`); a second from `recipient` draws a parallel offset line `as
   recipient`. From the table edge instead → a small pre-filled, editable midpoint label. *Keyboard:*
