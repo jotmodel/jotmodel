@@ -21,6 +21,10 @@ interface Props {
   onEndpointDown: (relId: string, end: 'from' | 'to', e: React.MouseEvent) => void
   onCycleCardinality: (r: Relationship) => void
   onEditRole: (id: string, role: string) => void
+  /** View-only: hide the inline controls + endpoints (selection/inspect still works). */
+  readOnly?: boolean
+  /** relId → a peer's selection halo colour (presence palette). */
+  peerSel?: Map<string, string>
 }
 
 // Glyphs are drawn relative to the edge's outward normal (nx,ny) so they orient correctly
@@ -75,6 +79,7 @@ export function Relationships(props: Props) {
         if (!ra || !rb || !ea || !eb) return null
         const isSel = selected?.id === r.id
         const settling = plug?.relId === r.id
+        const peerColor = props.peerSel?.get(r.id)
         const cls = 'rg' + (isSel || groupSelected.includes(r.id) ? ' sel' : '') + (settling ? ' settling' : '')
 
         // ---- self-loop ----
@@ -84,10 +89,11 @@ export function Relationships(props: Props) {
             <g key={r.id} className={cls}>
               <path className="hit" d={loop.d} fill="none" strokeWidth={12} stroke="transparent"
                 onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }} />
+              {peerColor && <path d={loop.d} fill="none" strokeWidth={6} strokeLinecap="round" style={{ stroke: peerColor, opacity: 0.4 }} />}
               <path className="rline" d={loop.d} fill="none" strokeWidth={2} strokeLinecap="round" />
               {glyph(r.toCard, loop.tip.x, loop.tip.y, loop.tip.nx, loop.tip.ny)}
-              {!isSel && label(r, loop.lx, loop.ly, props)}
-              {isSel && controls(r, loop.lx, loop.ly, props)}
+              {(!isSel || props.readOnly) && label(r, loop.lx, loop.ly, props)}
+              {isSel && !props.readOnly && controls(r, loop.lx, loop.ly, props)}
             </g>
           )
         }
@@ -119,11 +125,12 @@ export function Relationships(props: Props) {
           <g key={r.id} className={cls}>
             <path className="hit" d={d} fill="none" strokeWidth={12} stroke="transparent"
               onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }} />
+            {peerColor && <path d={d} fill="none" strokeWidth={6} strokeLinecap="round" style={{ stroke: peerColor, opacity: 0.4 }} />}
             <path className="rline" d={d} fill="none" strokeWidth={2} strokeLinecap="round" />
             {glyph(r.fromCard, ax, ay, a.nx, a.ny)}
             {glyph(r.toCard, bx, by, b.nx, b.ny)}
-            {!isSel && label(r, lx, ly, props)}
-            {isSel && (
+            {(!isSel || props.readOnly) && label(r, lx, ly, props)}
+            {isSel && !props.readOnly && (
               <>
                 {controls(r, lx, ly, props)}
                 {endpoint(ax, ay, () => {}, (e) => props.onEndpointDown(r.id, 'from', e))}

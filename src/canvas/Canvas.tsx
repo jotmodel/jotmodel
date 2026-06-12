@@ -11,6 +11,9 @@ import {
 import { reducer, initialState, type Pt } from './reducer'
 import { EntityCard } from './EntityCard'
 import { Relationships } from './Relationships'
+import { Presence } from './Presence'
+import { usePresence } from './usePresence'
+import type { Awareness } from 'y-protocols/awareness'
 
 interface Hit { entityId: string; fieldId: string | null }
 
@@ -42,10 +45,29 @@ function segHitsBox(ax: number, ay: number, bx: number, by: number, b: Box) {
     segCross(ax, ay, bx, by, b.x, bot, b.x, b.y)
 }
 
-export function Canvas({ board, entities, rels }: { board: Board; entities: Entity[]; rels: Relationship[] }) {
+export function Canvas({ board, entities, rels, awareness = null, presenceName = 'Guest', readOnly = false }: {
+  board: Board; entities: Entity[]; rels: Relationship[]
+  awareness?: Awareness | null; presenceName?: string; readOnly?: boolean
+}) {
   const doc = board.doc
   const stageRef = useRef<HTMLDivElement>(null)
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  // ---- presence (multiplayer) ----
+  const { peers, setCursor, setSelection } = usePresence(awareness, presenceName)
+  const setCursorRef = useRef(setCursor); setCursorRef.current = setCursor
+  const lastCursorPub = useRef(0)
+  // Latest read-only flag for the once-attached global listeners (mirrors the entitiesRef pattern).
+  const readOnlyRef = useRef(readOnly); readOnlyRef.current = readOnly
+  // Broadcast our selection to peers whenever it changes (ephemeral — never in the Y.Doc).
+  useEffect(() => { setSelection(state.selected) }, [state.selected, setSelection])
+  // Peer selections → halo colour per id (first peer to claim an id wins).
+  const peerEntityColor = new Map<string, string>()
+  const peerRelColor = new Map<string, string>()
+  for (const p of peers) {
+    for (const id of p.selection.entities) if (!peerEntityColor.has(id)) peerEntityColor.set(id, p.color)
+    for (const id of p.selection.rels) if (!peerRelColor.has(id)) peerRelColor.set(id, p.color)
+  }
 
   // Latest values for the once-attached global listeners.
   const stateRef = useRef(state); stateRef.current = state
@@ -204,6 +226,9 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   useEffect(() => {
     function onMove(ev: MouseEvent) {
       const p = screenToWorld(ev.clientX, ev.clientY)
+      // Broadcast our cursor to peers (throttled). No-op when there's no relay (awareness null).
+      const now = Date.now()
+      if (now - lastCursorPub.current > 40) { lastCursorPub.current = now; setCursorRef.current({ x: p.x, y: p.y }) }
       const tl = stateRef.current.tool
       // Any real drag cancels the pending click-collapse — the press was a move, not a click.
       const cc = collapseRef.current
@@ -231,6 +256,10 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
         collapseRef.current = null
         dispatch({ t: 'endTool' })
         return
+      }
+      // View-only: no create / relate / reroute (marquee-select + pan still work for inspection).
+      if (readOnlyRef.current && (tl.k === 'relating' || tl.k === 'rerouting' || tl.k === 'pressing')) {
+        dispatch({ t: 'endTool' }); return
       }
       if (tl.k === 'relating') {
         const hit = hitTest(ev.clientX, ev.clientY)
@@ -278,12 +307,12 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       const typing = tag === 'INPUT' || tag === 'TEXTAREA'
       const meta = ev.metaKey || ev.ctrlKey
       if (meta && (ev.key === 'z' || ev.key === 'Z')) {
-        if (typing) return
+        if (typing || readOnlyRef.current) return
         ev.preventDefault()
         if (ev.shiftKey) board.undo.redo(); else board.undo.undo()
         return
       }
-      if (meta && (ev.key === 'y' || ev.key === 'Y')) { if (!typing) { ev.preventDefault(); board.undo.redo() } return }
+      if (meta && (ev.key === 'y' || ev.key === 'Y')) { if (!typing && !readOnlyRef.current) { ev.preventDefault(); board.undo.redo() } return }
       if (meta && (ev.key === 'a' || ev.key === 'A')) {
         if (typing) return
         ev.preventDefault()
@@ -295,17 +324,17 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       const seld = stateRef.current.selected
       if (ev.key === 'Escape') { dispatch({ t: 'escape' }); renameRef.current = null; dupRef.current = null; forceUi(); return }
       if (ev.key === ' ') { spaceRef.current = true; if (stageRef.current) stageRef.current.style.cursor = 'grab' }
-      if ((ev.key === 'Delete' || ev.key === 'Backspace') && (seld.entities.length || seld.rels.length)) {
+      if ((ev.key === 'Delete' || ev.key === 'Backspace') && !readOnlyRef.current && (seld.entities.length || seld.rels.length)) {
         // Delete the whole selected group. Rels first, then entities (deleting an entity also
         // sweeps its own rels). Within the 350ms capture window this is one undo step.
         for (const id of seld.rels) deleteRelationship(doc, id)
         for (const id of seld.entities) deleteEntity(doc, id)
         dispatch({ t: 'clearSel' }); return
       }
-      if (sel?.type === 'entity' && (ev.key === 'Enter' || ev.key === 'F2')) {
+      if (sel?.type === 'entity' && !readOnlyRef.current && (ev.key === 'Enter' || ev.key === 'F2')) {
         renameRef.current = sel.id; forceUi(); return
       }
-      if (sel?.type === 'rel') {
+      if (sel?.type === 'rel' && !readOnlyRef.current) {
         const r = relsRef.current.find(x => x.id === sel.id); if (!r) return
         const end = sel.end ?? 'to'
         if (ev.key === '1') { setRelationshipCard(doc, r.id, end, 'one') }
@@ -456,6 +485,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     }
   }
   function onCardMove(e: Entity, ev: React.MouseEvent) {
+    if (readOnlyRef.current) { dispatch({ t: 'selectEntity', id: e.id }); return }
     const p = screenToWorld(ev.clientX, ev.clientY)
     if (inGroup(e.id)) {
       const items = stateRef.current.selected.entities.map(id => {
@@ -471,16 +501,19 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   // Relate from a table's edge (the whole border, or the hover dot). Arm a pending drag from the
   // grab point — a press that doesn't move just selects; passing the threshold draws the line.
   function armRelate(e: Entity, ev: React.MouseEvent) {
+    if (readOnlyRef.current) return
     const p = screenToWorld(ev.clientX, ev.clientY)
     pendingRelate.current = { fromId: e.id, fromField: null, from: { x: p.x, y: p.y }, sx: p.sx, sy: p.sy }
   }
   function onFieldPointerDown(e: Entity, fieldId: string, ev: React.MouseEvent) {
+    if (readOnlyRef.current) return
     const p = screenToWorld(ev.clientX, ev.clientY)
     pendingRelate.current = { fromId: e.id, fromField: fieldId, from: fieldStartWorld(e, fieldId), sx: p.sx, sy: p.sy }
   }
 
   // ---- rel callbacks ----
   function onEndpointDown(relId: string, end: 'from' | 'to', ev: React.MouseEvent) {
+    if (readOnlyRef.current) return
     const p = screenToWorld(ev.clientX, ev.clientY)
     dispatch({ t: 'startEndpoint', relId, end, sx: p.sx, sy: p.sy, cur: { x: p.x, y: p.y } })
   }
@@ -530,7 +563,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
 
   return (
     <div
-      className="stage"
+      className={'stage' + (readOnly ? ' readonly' : '')}
       ref={stageRef}
       onMouseDown={onStageMouseDown}
       style={{ backgroundPosition: `${tx}px ${ty}px`, backgroundSize: `${24 * scale}px ${24 * scale}px` }}
@@ -559,6 +592,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           onEndpointDown={onEndpointDown}
           onCycleCardinality={cycleCardinality}
           onEditRole={(id, role) => setRelationshipRole(doc, id, role)}
+          readOnly={readOnly}
+          peerSel={peerRelColor}
         />
 
         {state.tool.k === 'marquee' && (() => {
@@ -577,6 +612,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
             renaming={renameRef.current === e.id}
             autoFocusFields={e.id === state.newId}
             offset={pushed.get(e.id) ?? null}
+            readOnly={readOnly}
+            peerColor={peerEntityColor.get(e.id) ?? null}
             onMeasure={measure}
             onSelect={(ev) => onCardSelect(e.id, ev)}
             onStartMove={(ev) => onCardMove(e, ev)}
@@ -618,6 +655,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           />
         )}
       </div>
+
+      <Presence peers={peers} view={state.view} />
 
       <div className="zoomctl">
         <button title="Zoom out (-)" onClick={() => zoomCenter(1 / 1.2)}>–</button>

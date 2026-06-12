@@ -15,8 +15,9 @@ export interface RelayOptions {
    * `_reconnectWS`, so the socket reconnects with a fresh token.
    */
   getToken?: () => Promise<string | null>
-  /** Receives the live provider once attached (for awareness/presence + connection status). */
-  onProvider?: (provider: YProvider) => void
+  /** Receives the live provider once attached (for awareness/presence + connection status),
+   *  and null on detach. */
+  onProvider?: (provider: YProvider | null) => void
 }
 
 /**
@@ -44,6 +45,6 @@ export function makeRelayProvider(opts: RelayOptions) {
     // party "jot-board" = kebab-case of the `JotBoard` Durable Object binding.
     const provider = new YProvider(opts.host, opts.boardId, board.doc, { party: 'jot-board', params })
     opts.onProvider?.(provider)
-    return () => provider.destroy()
+    return () => { opts.onProvider?.(null); provider.destroy() }
   }
 }

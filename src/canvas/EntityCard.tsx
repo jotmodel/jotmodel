@@ -31,6 +31,10 @@ export interface EntityCardProps {
   onRenameField: (fieldId: string, name: string) => void
   onDeleteField: (fieldId: string) => void
   onCycleFieldType: (fieldId: string, dir: 1 | -1) => void
+  /** View-only (share viewer): hide every editing affordance, keep inspect. */
+  readOnly?: boolean
+  /** A peer's selection halo colour for this card (presence palette), or null. */
+  peerColor?: string | null
 }
 
 export function EntityCard(props: EntityCardProps) {
@@ -94,6 +98,7 @@ export function EntityCard(props: EntityCardProps) {
   useEffect(() => { if (autoFocusFields) setShowField(true) }, [autoFocusFields])
 
   const cls = ['ent', 'pop', selected ? 'selected' : '', armed ? 'armed' : '', dragging ? 'dragging' : '',
+    props.readOnly ? 'readonly' : '', props.peerColor ? 'peer-haloed' : '',
     entity.color ? `c-${entity.color}` : ''].filter(Boolean).join(' ')
 
   return (
@@ -107,6 +112,9 @@ export function EntityCard(props: EntityCardProps) {
         // Transient "make room" shift while a touching relationship is selected; only set when
         // non-zero so it never clobbers the .pop entrance animation's transform.
         transform: props.offset ? `translate(${props.offset.dx}px, ${props.offset.dy}px)` : undefined,
+        // A peer's selection halo (presence palette) — outline doesn't disturb layout or shadows.
+        outline: props.peerColor ? `2px solid ${props.peerColor}` : undefined,
+        outlineOffset: props.peerColor ? '2px' : undefined,
       }}
       onMouseDown={(e) => { e.stopPropagation(); props.onSelect(e) }}
       onMouseMove={onCardMouseMove}
@@ -120,10 +128,10 @@ export function EntityCard(props: EntityCardProps) {
           if (t.classList.contains('cdot') || t.classList.contains('ent-x') || t.tagName === 'INPUT') return
           props.onStartMove(e)
         }}
-        onDoubleClick={() => props.onRenameStart()}
+        onDoubleClick={() => { if (!props.readOnly) props.onRenameStart() }}
       >
         <span className="cdot" title="color-code" onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => { e.stopPropagation(); props.onCycleColor() }} />
+          onClick={(e) => { e.stopPropagation(); if (!props.readOnly) props.onCycleColor() }} />
         {renaming ? (
           <input
             autoFocus
@@ -153,7 +161,7 @@ export function EntityCard(props: EntityCardProps) {
               if (editing) return
               props.onFieldPointerDown(f.id, e)
             }}
-            onDoubleClick={(e) => { e.stopPropagation(); setEditing(f.id) }}
+            onDoubleClick={(e) => { e.stopPropagation(); if (!props.readOnly) setEditing(f.id) }}
           >
             {editing === f.id ? (
               <input
@@ -186,10 +194,10 @@ export function EntityCard(props: EntityCardProps) {
                   tabIndex={0}
                   title="Change type (click; ⇧-click to reverse)"
                   onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(e) => { e.stopPropagation(); props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }}
+                  onClick={(e) => { e.stopPropagation(); if (!props.readOnly) props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }}
                   onDoubleClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }
+                    if ((e.key === 'Enter' || e.key === ' ') && !props.readOnly) { e.preventDefault(); props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }
                   }}
                 >{f.type}</span>
                 <button className="row-x" title="delete field" onMouseDown={(e) => e.stopPropagation()}

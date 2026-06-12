@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   toDBML, toDbt, toSQL, exportJotmodel, parseJotmodel, download, type Dialect,
 } from '../model/export'
@@ -6,6 +6,8 @@ import { importUpdate } from '../model/board'
 import type { Board, Entity, Relationship } from '../model/board'
 import { ShareDialog } from '../screens/ShareDialog'
 import { Mark, Wordmark } from './Brand'
+import type { ConnStatus } from '../canvas/usePresence'
+import type { GetToken, Role } from '../lib/api'
 
 export interface TopBarProps {
   board: Board
@@ -15,9 +17,22 @@ export interface TopBarProps {
   canRedo: boolean
   onUndo: () => void
   onRedo: () => void
+  // Cloud / multiplayer — all optional; the local-only path passes none.
+  status?: ConnStatus | null
+  readOnly?: boolean
+  title?: string
+  boardId?: string
+  getToken?: GetToken
+  role?: Role
+  userSlot?: ReactNode
 }
 
-export function TopBar({ board, entities, rels, canUndo, canRedo, onUndo, onRedo }: TopBarProps) {
+const STATUS_LABEL: Record<ConnStatus, string> = {
+  online: 'Live', syncing: 'Syncing…', connecting: 'Connecting…', offline: 'Offline',
+}
+
+export function TopBar(props: TopBarProps) {
+  const { board, entities, rels, canUndo, canRedo, onUndo, onRedo, status, readOnly, title } = props
   const [theme, setTheme] = useState<'light' | 'dark'>(
     () => (document.documentElement.dataset.theme as 'light' | 'dark') || 'light',
   )
@@ -54,12 +69,24 @@ export function TopBar({ board, entities, rels, canUndo, canRedo, onUndo, onRedo
     <div className="topbar">
       <Mark />
       <Wordmark />
+      {title && <><span className="sep" /><span className="board-title" title={title}>{title}</span></>}
+      {readOnly && <span className="viewonly-tag" title="You have view-only access to this board">View only</span>}
 
-      <span className="sep" />
-      <button className="btn icon" title="Undo (⌘Z)" disabled={!canUndo} onClick={onUndo}>↶</button>
-      <button className="btn icon" title="Redo (⇧⌘Z)" disabled={!canRedo} onClick={onRedo}>↷</button>
+      {!readOnly && (
+        <>
+          <span className="sep" />
+          <button className="btn icon" title="Undo (⌘Z)" disabled={!canUndo} onClick={onUndo}>↶</button>
+          <button className="btn icon" title="Redo (⇧⌘Z)" disabled={!canRedo} onClick={onRedo}>↷</button>
+        </>
+      )}
 
       <span className="sp" />
+
+      {status && (
+        <span className="conn" title={`Multiplayer: ${STATUS_LABEL[status]}`}>
+          <span className={`conn-dot ${status}`} />{STATUS_LABEL[status]}
+        </span>
+      )}
 
       <div className="menu" ref={menuRef}>
         <button className="btn" onClick={() => setMenu(m => !m)}>Export ▾</button>
@@ -73,19 +100,31 @@ export function TopBar({ board, entities, rels, canUndo, canRedo, onUndo, onRedo
             <button onClick={() => sql('sqlserver')}>SQL — SQL Server <span className="k">.sql</span></button>
             <div className="hr" />
             <button onClick={() => { download('board.jotmodel', exportJotmodel(board.doc)); setMenu(false) }}>JotModel file <span className="k">.jotmodel</span></button>
-            <button onClick={() => { fileRef.current?.click(); setMenu(false) }}>Import… <span className="k">.jotmodel</span></button>
+            {!readOnly && (
+              <button onClick={() => { fileRef.current?.click(); setMenu(false) }}>Import… <span className="k">.jotmodel</span></button>
+            )}
           </div>
         )}
       </div>
       <input ref={fileRef} type="file" accept=".jotmodel,application/json" hidden onChange={onPickFile} />
 
       <button className="btn" onClick={() => setShare(true)}>Share</button>
-      {share && <ShareDialog board={board} onClose={() => setShare(false)} />}
+      {share && (
+        <ShareDialog
+          board={board}
+          boardId={props.boardId}
+          getToken={props.getToken}
+          role={props.role}
+          onClose={() => setShare(false)}
+        />
+      )}
 
       <span className="toggle">
         <button className={theme === 'light' ? 'on' : ''} onClick={() => setT('light')}>Light</button>
         <button className={theme === 'dark' ? 'on' : ''} onClick={() => setT('dark')}>Dark</button>
       </span>
+
+      {props.userSlot}
     </div>
   )
 }

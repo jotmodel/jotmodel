@@ -17,6 +17,9 @@ body{
 .topbar .wm b{font-weight:700}.topbar .wm span{color:var(--jm-text-mid);font-weight:500}
 .topbar .sp{flex:1}
 .topbar .sep{width:1px;height:22px;background:var(--jm-line);margin:0 2px}
+.topbar .board-title{font-family:var(--jm-ui);font-weight:500;font-size:13px;color:var(--jm-text-mid);max-width:30ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.share-link{display:flex;gap:6px}
+.share-link input{flex:1;font-family:var(--jm-mono);font-size:11px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:7px 9px;outline:0}
 
 /* buttons — aligns with the design system: .btn + .btn.primary / .btn.ghost */
 .btn{
@@ -265,6 +268,34 @@ body{
 .board-rename{flex:1;font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;margin:12px 14px;caret-color:var(--jm-signal)}
 .board-actions{display:flex;align-items:center;gap:4px;padding-right:10px;opacity:0;transition:opacity var(--jm-dur-fast)}
 .board-row:hover .board-actions,.board-row:focus-within .board-actions{opacity:1}
+
+/* ---- presence (multiplayer) — cursors + pills use ONLY the presence palette ---- */
+.presence-layer{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.peer-cursor{position:absolute;transform:translate(-2px,-2px);display:flex;align-items:flex-start;gap:0;will-change:left,top}
+.peer-cursor svg{display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.peer-pill{margin:-1px 0 0 -2px;font-family:var(--jm-ui);font-weight:600;font-size:10.5px;line-height:1;
+  color:var(--jm-on-signal);padding:3px 7px;border-radius:var(--jm-r-pill);white-space:nowrap;
+  box-shadow:var(--jm-shadow-card)}
+
+/* connection status dot — chrome, so neutral/signal only (never semantic colours) */
+.conn{display:inline-flex;align-items:center;gap:6px;font-family:var(--jm-mono);font-size:10px;color:var(--jm-text-dim)}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:var(--jm-text-dim);flex:none}
+.conn-dot.online{background:var(--jm-signal)}
+.conn-dot.syncing,.conn-dot.connecting{background:var(--jm-signal);animation:conn-pulse 1.2s var(--jm-ease) infinite}
+.conn-dot.offline{background:var(--jm-text-dim)}
+@keyframes conn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* peer selection halo on an entity card (the colour comes from the peer, via inline style) */
+.ent.peer-haloed{transition:outline-color var(--jm-dur)}
+
+/* view-only board (a share viewer): hide every editing affordance, keep inspect/pan/select */
+.stage.readonly{cursor:default}
+.ent.readonly .ent-x,.ent.readonly .handle,.ent.readonly .redge,
+.ent.readonly .addfield,.ent.readonly .fieldinput,.ent.readonly .row-x{display:none}
+.ent.readonly .ent-h{cursor:default}
+.ent.readonly .cdot,.ent.readonly .ty{cursor:default;pointer-events:none}
+.viewonly-tag{font-family:var(--jm-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--jm-text-dim);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);padding:3px 9px}
 
 /* ---- routed status screens (404 / 403) — scaffold, pending design review ---- */
 .status-screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
