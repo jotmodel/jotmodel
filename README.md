@@ -13,11 +13,16 @@ palette in `src/styles/tokens.css`.
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev        # http://localhost:5173  (local-only board; no account, no backend)
 npm run build      # type-check + production build → dist/
 npm run preview    # serve the build
 npm run typecheck  # client + worker type-check
+npm test           # vitest — export, inference, worker ACL
 ```
+
+Copy `.env.example` → `.env.local` and set `VITE_CLERK_PUBLISHABLE_KEY` (+ run the worker, below)
+to switch on the full account-aware app: accounts, cloud boards, share links, and live
+multiplayer with presence. The marketing site is a standalone static site in `site/`.
 
 ## What's implemented
 
@@ -54,20 +59,49 @@ The share-token WebSocket path is testable without Clerk; the REST + Clerk path 
 **development** instance. Activate the client cloud path by setting `VITE_CLERK_PUBLISHABLE_KEY` and
 `VITE_WORKER_HOST` (`.env.local`).
 
-## Deploy (staged — needs your Cloudflare account; ~$5/mo Workers Paid for DO/D1/R2)
+## Go-live (jotmodel.com + app.jotmodel.com)
+
+Three Cloudflare targets, one repo:
+
+```
+jotmodel.com      → Pages "jotmodel-site"  (marketing, site/)
+app.jotmodel.com  → Pages "jotmodel-app"   (the SPA, dist/, SPA fallback)
+api.jotmodel.com  → Worker                 (REST /api/* + WebSocket relay → JotBoard DO)
+                     └ D1 (jotmodel) · R2 (jotmodel-snapshots) · Clerk (prod)
+```
+
+CI (`.github/workflows/ci.yml`) runs typecheck + tests + build on every push/PR and deploys all
+three on push to `main`. Run the one-time provisioning below first (needs your credentials).
 
 ```bash
-# Pages (Phase 1 static app, free):
-npm run deploy:pages
-
-# Worker + data (Phase 2–3):
-wrangler d1 create jotmodel          # put the printed id in wrangler.toml
-npm run db:remote                    # apply schema
+# 1. Data
+wrangler d1 create jotmodel              # paste database_id into wrangler.toml
+npm run db:remote                        # apply worker/db/schema.sql
 wrangler r2 bucket create jotmodel-snapshots
-wrangler secret put CLERK_SECRET_KEY
-wrangler secret put CLERK_JWT_KEY
+
+# 2. Clerk (production instance): set allowed origin https://app.jotmodel.com; copy the keys.
+wrangler secret put CLERK_SECRET_KEY     # sk_live_...
+wrangler secret put CLERK_JWT_KEY        # PEM public key
+
+# 3. Worker (provisions the api.jotmodel.com custom domain declared in wrangler.toml)
 npm run deploy:worker
+
+# 4. Pages projects + custom domains
+wrangler pages project create jotmodel-app
+wrangler pages project create jotmodel-site
+#   add custom domains app.jotmodel.com / jotmodel.com in the dashboard,
+#   and set the app's build env: VITE_CLERK_PUBLISHABLE_KEY (pk_live_...).
+npm run deploy:app
+npm run deploy:site
+
+# 5. CI secrets (GitHub → repo → Settings → Secrets):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, VITE_CLERK_PUBLISHABLE_KEY
 ```
+
+`APP_ORIGIN` in `wrangler.toml` must EXACTLY equal `https://app.jotmodel.com` and Clerk's `azp`
+(no trailing slash) or every authenticated call silently 401s. The app loads the routed,
+account-aware build only when `VITE_CLERK_PUBLISHABLE_KEY` is set at build time; without it the
+local-only Phase-1 board is served (the `npm run dev` default).
 
 ## Project layout
 
