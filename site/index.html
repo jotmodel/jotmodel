@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+
+  <title>JotModel — Type it. Drag it. It's a model.</title>
+  <meta name="description" content="JotModel is a fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+
+  <link rel="canonical" href="https://jotmodel.com/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- theme-color mirrors --jm-bg (light/dark); manifest can't read CSS vars -->
+  <meta name="theme-color" content="#FCFCFD" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0F1216" media="(prefers-color-scheme: dark)" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jotmodel.com/" />
+  <meta property="og:title" content="JotModel — Type it. Drag it. It's a model." />
+  <meta property="og:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+  <meta property="og:image" content="https://jotmodel.com/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="JotModel" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JotModel — Type it. Drag it. It's a model." />
+  <meta name="twitter:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship — the model just appears. Exports clean DBML, dbt, and SQL." />
+  <meta name="twitter:image" content="https://jotmodel.com/og-image.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/tokens.css" />
+  <link rel="stylesheet" href="/site.css" />
+
+  <script>
+    // Set the theme before first paint to avoid a flash. Stored choice wins;
+    // otherwise follow the OS. (Mirrors the app's pre-paint script.)
+    (function () {
+      try {
+        var saved = localStorage.getItem('jm-theme');
+        var t = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = t;
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    })();
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "JotModel",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "url": "https://jotmodel.com/",
+    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- ============================ HEADER ============================ -->
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="/" aria-label="JotModel home">
+      <svg class="mark" width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+        <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
+        <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+      </svg>
+      <span class="wm"><b>jot</b><span>model</span></span>
+    </a>
+
+    <span class="head-sp"></span>
+
+    <span class="toggle" role="group" aria-label="Color theme">
+      <button type="button" id="t-light" data-theme-set="light">Light</button>
+      <button type="button" id="t-dark" data-theme-set="dark">Dark</button>
+    </span>
+
+    <a class="btn btn-primary" href="https://app.jotmodel.com">Open the app</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">A whiteboard for data-modeling conversations</p>
+        <h1 class="hero-title">Type it. <span class="nowrap">Drag it.</span><br>It&rsquo;s a model.</h1>
+        <p class="lede">
+          Model at the speed of conversation. Type an entity, drag a relationship, and the
+          diagram just appears &mdash; in plain language, not <code>snake_case</code>. The tool
+          gets out of the room&rsquo;s way so the people in it can think.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
+          <a class="btn btn-ghost btn-lg" href="#input-model">See how it works</a>
+        </div>
+        <p class="cta-note">Free to try &middot; works offline &middot; no account needed to start.</p>
+      </div>
+
+      <div class="hero-demo">
+        <figure class="demo" aria-label="A live mini-canvas: two entity cards connected by a relationship.">
+          <div class="demo-bar">
+            <span class="demo-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="demo-title">untitled board</span>
+            <span class="demo-sp"></span>
+            <span class="demo-presence" aria-hidden="true">
+              <span class="pcur p1"></span><span class="pcur p2"></span>
+            </span>
+            <button type="button" id="demo-replay" class="demo-replay" title="Replay">Replay</button>
+          </div>
+          <div id="stage" class="demo-stage">
+            <svg id="rels" class="demo-rels" aria-hidden="true"></svg>
+          </div>
+          <figcaption class="visually-hidden">
+            Animated demonstration of building a data model: a "users" table and an "orders"
+            table type themselves in, then a relationship line draws between them.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== THE INPUT MODEL ====================== -->
+  <section id="input-model" class="band">
+    <div class="wrap">
+      <p class="eyebrow">The input model</p>
+      <h2>Type an entity. Drag to relate. <span class="muted">Done.</span></h2>
+      <p class="section-lede">
+        The whole tool is built around one motion. You write the way you talk &mdash;
+        &ldquo;order date&rdquo;, &ldquo;active?&rdquo;, &ldquo;amount&rdquo; &mdash; and JotModel reads the
+        natural language, infers a sensible type, and keeps the diagram tidy. No syntax,
+        no conventions, no code required.
+      </p>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-n" aria-hidden="true">1</span>
+          <div>
+            <h3>Type an entity</h3>
+            <p>Click anywhere, name the table, and start listing fields &mdash; comma-separated, plain English.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-n" aria-hidden="true">2</span>
+          <div>
+            <h3>Types infer themselves</h3>
+            <p>JotModel reads each field name and assigns a sensible type. Wrong guess? Override it inline.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-n" aria-hidden="true">3</span>
+          <div>
+            <h3>Drag to relate</h3>
+            <p>Pull from a table&rsquo;s edge to another table. The relationship draws itself, with cardinality.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="infer-card">
+        <div class="infer-head">
+          <span class="infer-label">You type</span>
+          <span class="infer-label">JotModel reads</span>
+        </div>
+        <ul class="infer-list">
+          <li><code class="fn">order date</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">date</span></li>
+          <li><code class="fn">active?</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">boolean</span></li>
+          <li><code class="fn">amount</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">number</span></li>
+          <li><code class="fn">email</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">email</span></li>
+          <li><code class="fn">id</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">pk</span></li>
+          <li><code class="fn">created at</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">timestamp</span></li>
+        </ul>
+        <p class="infer-foot">
+          You never write <code>order_date</code> or <code>is_active</code> unless you want to.
+          Snake_case is supported &mdash; never assumed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================ STRICT UNDERNEATH / EXPORT ================ -->
+  <section class="band band-alt">
+    <div class="wrap export-grid">
+      <div class="export-copy">
+        <p class="eyebrow">Loose in the room, strict underneath</p>
+        <h2>A whiteboard up top. <span class="muted">Clean output below.</span></h2>
+        <p class="section-lede">
+          Fields can stay loose while the conversation is live. The moment you need real
+          artifacts, the model exports clean &mdash; no cleanup pass required.
+        </p>
+        <ul class="export-targets">
+          <li>
+            <span class="tgt-name">DBML</span>
+            <span class="tgt-desc">Portable schema, ready for dbdiagram and friends.</span>
+          </li>
+          <li>
+            <span class="tgt-name">dbt</span>
+            <span class="tgt-desc">A <code>schema.yml</code> plus model stubs to drop in.</span>
+          </li>
+          <li>
+            <span class="tgt-name">SQL DDL</span>
+            <span class="tgt-desc">Postgres, MySQL, or SQL Server &mdash; pick your dialect.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="export-code">
+        <div class="code-card" aria-label="Example DBML export">
+          <div class="code-bar">
+            <span class="code-dot" aria-hidden="true"></span>
+            <span class="code-name">model.dbml</span>
+          </div>
+<pre class="code"><code><span class="c-kw">Table</span> <span class="c-id">users</span> {
+  id          <span class="c-ty">integer</span>   [pk]
+  email       <span class="c-ty">varchar</span>
+  created_at  <span class="c-ty">timestamp</span>
+}
+
+<span class="c-kw">Table</span> <span class="c-id">orders</span> {
+  id          <span class="c-ty">integer</span>   [pk]
+  user_id     <span class="c-ty">integer</span>   [ref: &gt; users.id]
+  amount      <span class="c-ty">decimal</span>
+  order_date  <span class="c-ty">date</span>
+}
+
+<span class="c-cm">// one user, many orders</span>
+<span class="c-kw">Ref</span>: orders.user_id &gt; users.id</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== LOCAL-FIRST + REALTIME =================== -->
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Local-first, now multiplayer</p>
+      <h2>Your boards live with you. <span class="muted">And travel when you need them to.</span></h2>
+      <p class="section-lede">
+        JotModel loads instantly and works offline &mdash; your work is yours, on your machine, first.
+        When you&rsquo;re ready to bring others in, save to the cloud, share by link, and model together
+        live.
+      </p>
+
+      <div class="feature-grid">
+        <article class="feature">
+          <h3>Instant &amp; offline</h3>
+          <p>No spinner, no sign-in wall. Open a board and start typing &mdash; even on a plane.</p>
+        </article>
+        <article class="feature">
+          <h3>Cloud save &amp; share links</h3>
+          <p>Sync when you want it. Send a link and the room is looking at the same model.</p>
+        </article>
+        <article class="feature feature-wide">
+          <h3>Live multiplayer with presence</h3>
+          <p>See who&rsquo;s in the room and where they&rsquo;re pointing. Edits land in real time.</p>
+          <div class="presence-demo" aria-hidden="true">
+            <span class="ghost-cur g1"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Priya</em></span>
+            <span class="ghost-cur g2"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Marco</em></span>
+            <span class="ghost-cur g3"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Dana</em></span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIGHT AND DARK ARE EQUALS ================= -->
+  <section class="band band-alt">
+    <div class="wrap equals-grid">
+      <div>
+        <p class="eyebrow">Light and dark are equals</p>
+        <h2>Designed twice. <span class="muted">Patched never.</span></h2>
+        <p class="section-lede">
+          Every color in JotModel ships in both themes from the start &mdash; nothing is built for one
+          and bolted onto the other. Flip it and see: the whole page moves as one.
+        </p>
+        <span class="toggle toggle-inline" role="group" aria-label="Color theme">
+          <button type="button" data-theme-set="light">Light</button>
+          <button type="button" data-theme-set="dark">Dark</button>
+        </span>
+      </div>
+      <div class="equals-tiles" aria-hidden="true">
+        <div class="eq-tile eq-light" data-theme="light">
+          <span class="eq-lk">
+            <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+            <span class="wm"><b>jot</b><span>model</span></span>
+          </span>
+          <span class="eq-cap">Light</span>
+        </div>
+        <div class="eq-tile eq-dark" data-theme="dark">
+          <span class="eq-lk">
+            <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+            <span class="wm"><b>jot</b><span>model</span></span>
+          </span>
+          <span class="eq-cap">Dark</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= FINAL CTA ========================= -->
+  <section class="final-cta">
+    <div class="wrap final-inner">
+      <h2 class="final-title">Type it. Drag it. It&rsquo;s a model.</h2>
+      <p class="final-lede">Jot the model. Have the conversation. The tool stays out of the way.</p>
+      <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <a class="brand brand-sm" href="/" aria-label="JotModel home">
+      <svg class="mark" width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+        <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+        <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
+        <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+      </svg>
+      <span class="wm"><b>jot</b><span>model</span></span>
+    </a>
+    <span class="foot-sp"></span>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="https://app.jotmodel.com">Open the app</a>
+      <a href="mailto:hello@jotmodel.com">hello@jotmodel.com</a>
+    </nav>
+  </div>
+  <div class="wrap foot-meta">
+    <span>&copy; 2026 JotModel</span>
+    <span class="foot-tag">Get out of the room&rsquo;s way.</span>
+  </div>
+</footer>
+
+<script src="/demo.js" defer></script>
+<script>
+  // Theme toggle — persists to localStorage 'jm-theme', mirrors the app.
+  (function () {
+    var html = document.documentElement;
+    function sync() {
+      var t = html.dataset.theme;
+      document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+        b.classList.toggle('on', b.dataset.themeSet === t);
+        b.setAttribute('aria-pressed', String(b.dataset.themeSet === t));
+      });
+    }
+    document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.dataset.themeSet;
+        html.dataset.theme = t;
+        try { localStorage.setItem('jm-theme', t); } catch (e) { /* ignore */ }
+        sync();
+        window.dispatchEvent(new CustomEvent('jm-theme-change'));
+      });
+    });
+    sync();
+  })();
+</script>
+
+</body>
+</html>

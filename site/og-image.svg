@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="JotModel — Type it. Drag it. It's a model.">
+  <!-- Monochrome by law: ink on paper, no brand hue.
+       Colors here mirror tokens.css LIGHT theme literals
+       (jm-bg #FCFCFD, jm-text #16181D, jm-text-mid #595F6B,
+        jm-line #E7E9ED, jm-grid #ECEDF0). SVG cannot read CSS vars. -->
+  <defs>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.4" r="1.4" fill="#ECEDF0"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#FCFCFD"/>
+  <rect width="1200" height="630" fill="url(#dots)" opacity="0.6"/>
+
+  <!-- logo mark (currentColor → ink) -->
+  <g transform="translate(96, 96) scale(1.9)" color="#16181D">
+    <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+    <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/>
+    </g>
+    <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
+    <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+  </g>
+
+  <!-- wordmark (Space Grotesk) -->
+  <text x="200" y="148" font-family="'Space Grotesk', Inter, sans-serif" font-size="52" letter-spacing="-1">
+    <tspan font-weight="700" fill="#16181D">jot</tspan><tspan font-weight="500" fill="#595F6B">model</tspan>
+  </text>
+
+  <!-- tagline / headline (Inter) -->
+  <text x="96" y="360" font-family="Inter, system-ui, sans-serif" font-weight="680" font-size="118" letter-spacing="-5" fill="#16181D">Type it. Drag it.</text>
+  <text x="96" y="476" font-family="Inter, system-ui, sans-serif" font-weight="680" font-size="118" letter-spacing="-5" fill="#16181D">It&#8217;s a model.</text>
+
+  <!-- subhead (JetBrains Mono) -->
+  <text x="98" y="556" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="27" letter-spacing="1" fill="#595F6B">A whiteboard for data-modeling conversations &#183; jotmodel.com</text>
+</svg>

@@ -1,0 +1,102 @@
+/* ============================================================
+   JotModel — design tokens
+   Two layers of color, on purpose:
+   (1) INTERFACE — neutrals + ONE quiet accent (interaction only)
+   (2) SEMANTIC  — the user's color-coding palette (canvas content only)
+   Switch themes with <html data-theme="light|dark">.
+   ============================================================ */
+
+:root{
+  /* type */
+  --jm-display:"Space Grotesk", Inter, system-ui, sans-serif; /* wordmark only */
+  --jm-ui:     Inter, system-ui, -apple-system, sans-serif;    /* everything UI */
+  --jm-mono:   "JetBrains Mono", ui-monospace, monospace;      /* fields, types */
+
+  /* space (4px base) */
+  --jm-1:4px; --jm-2:8px; --jm-3:12px; --jm-4:16px; --jm-5:20px;
+  --jm-6:24px; --jm-8:32px; --jm-10:40px; --jm-12:48px; --jm-16:64px;
+
+  /* radius */
+  --jm-r-sm:6px; --jm-r-md:9px; --jm-r-card:11px; --jm-r-lg:16px; --jm-r-pill:999px;
+
+  /* motion */
+  --jm-dur-fast:110ms; --jm-dur:170ms; --jm-ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* ---------- LIGHT (default) ---------- */
+:root, [data-theme="light"]{
+  color-scheme: light;      /* law 6 — declare it so native UI matches */
+  --jm-bg:        #FCFCFD;  /* app background        */
+  --jm-canvas:    #FFFFFF;  /* the board             */
+  --jm-grid:      #ECEDF0;  /* dot grid              */
+  --jm-surface:   #FFFFFF;  /* cards, panels         */
+  --jm-surface-2: #F5F6F8;  /* raised rows, badges   */
+  --jm-line:      #E7E9ED;  /* hairlines             */
+  --jm-line-2:    #D6D9DF;  /* stronger borders      */
+  --jm-text:      #16181D;  /* ink                   */
+  --jm-text-mid:  #595F6B;
+  --jm-text-dim:  #9499A4;
+  --jm-rel:       #C2C7D0;  /* relationship line (chrome, neutral) */
+
+  --jm-signal:      #3A63D8;  /* THE accent — interaction only */
+  --jm-signal-weak: #EBF0FD;
+  --jm-signal-text: #2D4FB8;
+  --jm-on-signal:   #FFFFFF;  /* text/icons ON the signal fill (keeps the literal in tokens) */
+
+  --jm-shadow-card:0 1px 2px rgba(16,20,30,.06), 0 4px 14px rgba(16,20,30,.05);
+  --jm-shadow-pop: 0 12px 32px rgba(16,20,30,.14);
+  --jm-ring:0 0 0 3px rgba(58,99,216,.28);
+  --jm-scrim: rgba(16,20,30,.32);  /* modal overlay */
+}
+
+/* ---------- DARK ---------- */
+[data-theme="dark"]{
+  color-scheme: dark;
+  --jm-bg:        #0F1216;
+  --jm-canvas:    #14171C;
+  --jm-grid:      #20242B;
+  --jm-surface:   #181C22;
+  --jm-surface-2: #20242C;
+  --jm-line:      #282D36;
+  --jm-line-2:    #353B45;
+  --jm-text:      #ECEEF2;
+  --jm-text-mid:  #99A0AC;
+  --jm-text-dim:  #5E646F;
+  --jm-rel:       #3A414C;
+
+  --jm-signal:      #5E86F5;
+  --jm-signal-weak: rgba(94,134,245,.16);
+  --jm-signal-text: #8FAcff;
+  --jm-on-signal:   #FFFFFF;
+
+  --jm-shadow-card:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+  --jm-shadow-pop: 0 14px 40px rgba(0,0,0,.55);
+  --jm-ring:0 0 0 3px rgba(94,134,245,.32);
+  --jm-scrim: rgba(0,0,0,.55);
+}
+
+/* ============================================================
+   SEMANTIC color-coding palette  (USER applies these to content)
+   Deliberately NO plain blue — blue is reserved for the interface.
+   Each hue has a fill (tag/border) value per theme.
+   ============================================================ */
+:root, [data-theme="light"]{
+  --sem-slate:#64748B; --sem-cyan:#0E96B3; --sem-teal:#0D9488; --sem-green:#16A34A;
+  --sem-amber:#CA8A04; --sem-orange:#E2622E; --sem-rose:#E11D6B; --sem-violet:#7C3AED;
+}
+[data-theme="dark"]{
+  --sem-slate:#94A3B8; --sem-cyan:#38BDD8; --sem-teal:#2DD4BF; --sem-green:#4ADE80;
+  --sem-amber:#FBBF24; --sem-orange:#FB8C5A; --sem-rose:#FB7199; --sem-violet:#A78BFA;
+}
+
+/* ============================================================
+   PRESENCE identity palette (Phase 3 multiplayer)
+   The ONE sanctioned extra color: per-user cursor/avatar identity ONLY.
+   Never on content fills (that's --sem-*), never on chrome (that's --jm-signal*).
+   A separate layer on purpose, so it can't be confused with either.
+   ============================================================ */
+:root{
+  --jm-presence-1:#E8590C; --jm-presence-2:#0CA678; --jm-presence-3:#7048E8;
+  --jm-presence-4:#1098AD; --jm-presence-5:#E64980; --jm-presence-6:#F08C00;
+  --jm-presence-7:#4263EB; --jm-presence-8:#2F9E44;
+}

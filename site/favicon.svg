@@ -1,0 +1,10 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    :root { color: #16181D; }
+    @media (prefers-color-scheme: dark) { :root { color: #ECEEF2; } }
+  </style>
+  <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+  <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+  <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
+  <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+</svg>

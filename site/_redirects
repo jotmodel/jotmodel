@@ -1,0 +1,6 @@
+# Cloudflare Pages redirects.
+# Single-page marketing site — no route rewrites needed today.
+# (The app lives on its own origin at app.jotmodel.com; do not proxy it here.)
+#
+# Example for later, if/when extra pages are added:
+#   /old-path  /new-path  301

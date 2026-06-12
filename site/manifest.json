@@ -1,0 +1,18 @@
+{
+  "name": "JotModel",
+  "short_name": "JotModel",
+  "description": "Type it. Drag it. It's a model. A fast whiteboard for data-modeling conversations.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#FCFCFD",
+  "background_color": "#FCFCFD",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}
