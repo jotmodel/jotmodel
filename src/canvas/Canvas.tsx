@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useRef } from 'react'
 import type { Board, Entity, Relationship, Card } from '../model/board'
 import {
-  addEntity, addFields, addRelationship, deleteEntity, deleteField, deleteRelationship,
+  addEntity, addFields, addRelationship, cycleFieldType, deleteEntity, deleteField, deleteRelationship,
   entityNameExists, moveEntity, renameEntity, renameField, setEntityColor, SEM,
   setRelationshipCard, setRelationshipEnd, setRelationshipRole,
 } from '../model/board'
@@ -131,10 +131,6 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           pendingFieldsRef.current = id
           forceUi()
         }
-      } else if (tl.k === 'endpointDown') {
-        // click (no drag) → toggle that end's cardinality
-        const r = relsRef.current.find(x => x.id === tl.relId)
-        if (r) setRelationshipCard(doc, r.id, tl.end, nextCard(tl.end === 'from' ? r.fromCard : r.toCard))
       } else if (tl.k === 'rerouting') {
         const hit = hitTest(ev.clientX, ev.clientY)
         if (hit) setRelationshipEnd(doc, tl.relId, tl.end, hit.entityId, hit.fieldId)
@@ -213,6 +209,30 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   function fieldName(entityId: string, fieldId: string): string | null {
     const e = entityById(entityId); const f = e?.fields.find(x => x.id === fieldId)
     return f?.name ?? null
+  }
+
+  // ---- "make room" push for a selected, too-close relationship ----
+  // When the two tables are closer than the inline controls need, shift both apart symmetrically
+  // (visual only — saved positions untouched). Computed each render from the current selection.
+  const PUSH_NEED = 168 // px of facing-edge gap the inline controls want
+  function computePush(): Map<string, { dx: number; dy: number }> {
+    const out = new Map<string, { dx: number; dy: number }>()
+    const sel = state.selection
+    if (sel?.type !== 'rel') return out
+    const r = rels.find(x => x.id === sel.id)
+    if (!r || r.fromId === r.toId) return out
+    const ea = entities.find(e => e.id === r.fromId), eb = entities.find(e => e.id === r.toId)
+    if (!ea || !eb) return out
+    const ra = rectOf(ea, sizesRef.current), rb = rectOf(eb, sizesRef.current)
+    const dx = rb.cx - ra.cx, dy = rb.cy - ra.cy
+    const dist = Math.hypot(dx, dy) || 1
+    const ux = dx / dist, uy = dy / dist
+    const gap = dist - (Math.abs(ux) * ra.w + Math.abs(uy) * ra.h) / 2 - (Math.abs(ux) * rb.w + Math.abs(uy) * rb.h) / 2
+    if (gap >= PUSH_NEED) return out
+    const d = (PUSH_NEED - gap) / 2
+    out.set(ea.id, { dx: -ux * d, dy: -uy * d })
+    out.set(eb.id, { dx: ux * d, dy: uy * d })
+    return out
   }
 
   // ---- viewport helpers ----
@@ -294,6 +314,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const movingId = state.tool.k === 'moving' ? state.tool.id : null
   const showHint = entities.length === 0 && state.tool.k !== 'naming'
 
+  const pushed = computePush()
+
   return (
     <div
       className="stage"
@@ -315,6 +337,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           entities={entities}
           rels={rels}
           sizes={sizesRef.current}
+          pushOffsets={pushed}
           temp={temp}
           selected={state.selection?.type === 'rel' ? state.selection : null}
           onSelectRel={(id, end) => dispatch({ t: 'selectRel', id, end })}
@@ -332,6 +355,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
             dragging={movingId === e.id}
             renaming={renameRef.current === e.id}
             autoFocusFields={e.id === state.newId}
+            offset={pushed.get(e.id) ?? null}
             onMeasure={measure}
             onSelect={() => onCardSelect(e.id)}
             onStartMove={(ev) => onCardMove(e, ev)}
@@ -353,6 +377,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
             onAddFields={(csv) => addFields(doc, e.id, csv)}
             onRenameField={(fid, name) => renameField(doc, e.id, fid, name)}
             onDeleteField={(fid) => deleteField(doc, e.id, fid)}
+            onCycleFieldType={(fid, dir) => cycleFieldType(doc, e.id, fid, dir)}
           />
         ))}
 

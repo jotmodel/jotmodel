@@ -7,6 +7,7 @@ export interface EntityCardProps {
   dragging: boolean
   renaming: boolean
   autoFocusFields: boolean
+  offset: { dx: number; dy: number } | null
   onMeasure: (id: string, el: HTMLElement | null) => void
   onSelect: () => void
   onStartMove: (e: React.MouseEvent) => void
@@ -20,6 +21,7 @@ export interface EntityCardProps {
   onAddFields: (csv: string) => void
   onRenameField: (fieldId: string, name: string) => void
   onDeleteField: (fieldId: string) => void
+  onCycleFieldType: (fieldId: string, dir: 1 | -1) => void
 }
 
 export function EntityCard(props: EntityCardProps) {
@@ -45,7 +47,13 @@ export function EntityCard(props: EntityCardProps) {
       ref={rootRef}
       className={cls}
       data-entity-id={entity.id}
-      style={{ left: entity.x, top: entity.y }}
+      style={{
+        left: entity.x,
+        top: entity.y,
+        // Transient "make room" shift while a touching relationship is selected; only set when
+        // non-zero so it never clobbers the .pop entrance animation's transform.
+        transform: props.offset ? `translate(${props.offset.dx}px, ${props.offset.dy}px)` : undefined,
+      }}
       onMouseDown={(e) => { e.stopPropagation(); props.onSelect() }}
     >
       <div
@@ -115,7 +123,18 @@ export function EntityCard(props: EntityCardProps) {
             ) : (
               <>
                 <span className={'fn' + (f.type === 'pk' ? ' pk' : '')}>{f.name}</span>
-                <span className="ty">{f.type}</span>
+                <span
+                  className="ty"
+                  role="button"
+                  tabIndex={0}
+                  title="Change type (click; ⇧-click to reverse)"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }
+                  }}
+                >{f.type}</span>
                 <button className="row-x" title="delete field" onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => { e.stopPropagation(); props.onDeleteField(f.id) }}>×</button>
               </>

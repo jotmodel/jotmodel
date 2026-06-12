@@ -114,7 +114,9 @@ body{
 .row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px;font-family:var(--jm-mono);font-size:12px;position:relative;cursor:default}
 .row .fn{color:var(--jm-text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .fn.pk{font-weight:600}
-.row .ty{font-size:10px;padding:2px 6px;border-radius:var(--jm-r-sm);color:var(--jm-text-dim);background:var(--jm-surface-2);border:1px solid var(--jm-line);flex:none}
+.row .ty{font-size:10px;padding:2px 6px;border-radius:var(--jm-r-sm);color:var(--jm-text-dim);background:var(--jm-surface-2);border:1px solid var(--jm-line);flex:none;cursor:pointer;user-select:none;transition:border-color var(--jm-dur-fast),color var(--jm-dur-fast)}
+.row .ty:hover{border-color:var(--jm-line-2);color:var(--jm-text)}
+.row .ty:focus-visible{outline:2px solid var(--jm-signal);outline-offset:1px}
 .row .fn-edit{flex:1;font-family:var(--jm-mono);font-size:12px;color:var(--jm-text);background:transparent;border:0;outline:0;caret-color:var(--jm-signal)}
 .row-x{
   position:absolute;right:6px;width:16px;height:16px;border:0;border-radius:var(--jm-r-sm);background:var(--jm-surface);

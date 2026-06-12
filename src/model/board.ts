@@ -4,7 +4,12 @@ import { IndexeddbPersistence } from 'y-indexeddb'
 // ---- types ----
 export type FieldType =
   | 'pk' | 'fk' | 'string' | 'text' | 'number' | 'boolean' | 'date' | 'timestamp' | 'email'
-export interface Field { id: string; name: string; type: FieldType }
+/** `typed` marks a type the user set by hand, so renaming won't re-infer over it. */
+export interface Field { id: string; name: string; type: FieldType; typed?: boolean }
+/** Cycle order for the click-to-change-type badge (data types first, keys last). */
+export const FIELD_TYPES: FieldType[] = [
+  'string', 'text', 'number', 'boolean', 'date', 'timestamp', 'email', 'pk', 'fk',
+]
 export type Card = 'one' | 'many'
 export interface Entity {
   id: string; name: string; x: number; y: number
@@ -148,7 +153,9 @@ export function renameField(doc: Y.Doc, entityId: string, fieldId: string, name:
   const i = arr.toArray().findIndex(f => f.id === fieldId)
   if (i < 0) return
   const f = arr.get(i)
-  edit(doc, () => { arr.delete(i, 1); arr.insert(i, [{ ...f, name, type: inferType(name) }]) })
+  // Keep a hand-set type; otherwise re-infer from the new name.
+  const type = f.typed ? f.type : inferType(name)
+  edit(doc, () => { arr.delete(i, 1); arr.insert(i, [{ ...f, name, type }]) })
 }
 export function setFieldType(doc: Y.Doc, entityId: string, fieldId: string, type: FieldType) {
   const m = entitiesMap(doc).get(entityId); if (!m) return
@@ -156,7 +163,18 @@ export function setFieldType(doc: Y.Doc, entityId: string, fieldId: string, type
   const i = arr.toArray().findIndex(f => f.id === fieldId)
   if (i < 0) return
   const f = arr.get(i)
-  edit(doc, () => { arr.delete(i, 1); arr.insert(i, [{ ...f, type }]) })
+  edit(doc, () => { arr.delete(i, 1); arr.insert(i, [{ ...f, type, typed: true }]) })
+}
+/** Advance a field's type to the next (or previous) in FIELD_TYPES; marks it user-set. */
+export function cycleFieldType(doc: Y.Doc, entityId: string, fieldId: string, dir: 1 | -1 = 1) {
+  const m = entitiesMap(doc).get(entityId); if (!m) return
+  const arr = m.get('fields') as Y.Array<Field>
+  const i = arr.toArray().findIndex(f => f.id === fieldId)
+  if (i < 0) return
+  const f = arr.get(i)
+  const n = FIELD_TYPES.length
+  const next = FIELD_TYPES[(FIELD_TYPES.indexOf(f.type) + dir + n) % n]
+  edit(doc, () => { arr.delete(i, 1); arr.insert(i, [{ ...f, type: next, typed: true }]) })
 }
 export function deleteField(doc: Y.Doc, entityId: string, fieldId: string) {
   const m = entitiesMap(doc).get(entityId); if (!m) return

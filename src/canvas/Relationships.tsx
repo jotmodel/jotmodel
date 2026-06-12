@@ -8,6 +8,7 @@ interface Props {
   entities: Entity[]
   rels: Relationship[]
   sizes: Sizes
+  pushOffsets: Map<string, { dx: number; dy: number }>
   temp: { x1: number; y1: number; x2: number; y2: number } | null
   selected: { id: string; end: 'from' | 'to' | null } | null
   onSelectRel: (id: string, end?: 'from' | 'to' | null) => void
@@ -45,8 +46,12 @@ function cardLabel(from: Card, to: Card): string {
 }
 
 export function Relationships(props: Props) {
-  const { entities, rels, sizes, temp, selected } = props
-  const rectById = new Map<string, Rect>(entities.map(e => [e.id, rectOf(e, sizes)]))
+  const { entities, rels, sizes, pushOffsets, temp, selected } = props
+  const rectById = new Map<string, Rect>(entities.map(e => {
+    const r = rectOf(e, sizes)
+    const o = pushOffsets.get(e.id)
+    return [e.id, o ? { ...r, x: r.x + o.dx, y: r.y + o.dy, cx: r.cx + o.dx, cy: r.cy + o.dy } : r]
+  }))
   const entById = new Map<string, Entity>(entities.map(e => [e.id, e]))
 
   // parallel-offset bookkeeping for multiple rels on the same pair (excludes self-loops)
@@ -75,8 +80,8 @@ export function Relationships(props: Props) {
                 onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }} />
               <path className="rline" d={loop.d} fill="none" strokeWidth={2} strokeLinecap="round" />
               {glyph(r.toCard, loop.tip.x, loop.tip.y, loop.tip.nx, loop.tip.ny)}
-              {label(r, loop.lx, loop.ly, isSel, props)}
-              {isSel && delBtn(loop.lx + 62, loop.ly, () => props.onDeleteRel(r.id))}
+              {!isSel && label(r, loop.lx, loop.ly, props)}
+              {isSel && controls(r, loop.lx, loop.ly, props)}
             </g>
           )
         }
@@ -105,12 +110,12 @@ export function Relationships(props: Props) {
             <path className="rline" d={d} fill="none" strokeWidth={2} strokeLinecap="round" />
             {glyph(r.fromCard, a.x, a.y, a.nx, a.ny)}
             {glyph(r.toCard, b.x, b.y, b.nx, b.ny)}
-            {label(r, lx, ly, isSel, props)}
+            {!isSel && label(r, lx, ly, props)}
             {isSel && (
               <>
+                {controls(r, lx, ly, props)}
                 {endpoint(a.x, a.y, () => {}, (e) => props.onEndpointDown(r.id, 'from', e))}
                 {endpoint(b.x, b.y, () => {}, (e) => props.onEndpointDown(r.id, 'to', e))}
-                {delBtn(lx + 62, ly, () => props.onDeleteRel(r.id))}
               </>
             )}
           </g>
@@ -125,50 +130,72 @@ export function Relationships(props: Props) {
   )
 }
 
-// Annotations live on a single horizontal lane centred on the line, so stacked parallels
-// never collide. Selected: a slim `1:N [as …]` strip; otherwise just the cardinality (+role).
-// A canvas-coloured plate behind the text masks the line so it reads `── as Client ──`.
+// Unselected readout: `1:N as role` on the line (canvas plate masks the line so it reads
+// `── as Client ──`). Selected controls (readout · role field · delete) render separately, at
+// the midpoint when the line is long enough, or floated into clear space when it's too short.
 const CH = 6 // monospace advance at 10px
 
-function label(r: Relationship, x: number, y: number, isSel: boolean, props: Props) {
+function label(r: Relationship, x: number, y: number, props: Props) {
   const card = cardLabel(r.fromCard, r.toCard)
-  const onCard = {
-    onMouseDown: (e: React.MouseEvent) => { e.stopPropagation(); props.onSelectRel(r.id) },
-    onClick: (e: React.MouseEvent) => { e.stopPropagation(); props.onCycleCardinality(r) },
-  }
-  if (!isSel) {
-    const txt = r.role ? `${card} as ${r.role}` : card
-    const w = txt.length * CH + 10
-    return (
-      <g>
-        <rect className="rel-label-bg" x={x - w / 2} y={y - 7} width={w} height={14} rx={4} />
-        <text className="rel-card" x={x} y={y + 3} textAnchor="middle" {...onCard}>
-          {card}{r.role ? <tspan className="rel-role-inline"> as {r.role}</tspan> : null}
-        </text>
-      </g>
-    )
-  }
+  const txt = r.role ? `${card} as ${r.role}` : card
+  const w = txt.length * CH + 10
   return (
     <g>
-      <rect className="rel-label-bg" x={x - 76} y={y - 7} width={card.length * CH + 8} height={14} rx={4} />
-      <text className="rel-card" x={x - 62} y={y + 3} textAnchor="middle" {...onCard}>{card}</text>
-      <foreignObject x={x - 44} y={y - 11} width={92} height={22} style={{ overflow: 'visible' }}>
-        <div className="rel-role-wrap">
-          <input
-            className="rel-role-input"
-            defaultValue={r.role ?? ''}
-            placeholder="as …"
-            onMouseDown={(e) => e.stopPropagation()}
-            onBlur={(e) => props.onEditRole(r.id, e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-          />
-        </div>
-      </foreignObject>
+      <rect className="rel-label-bg" x={x - w / 2} y={y - 7} width={w} height={14} rx={4} />
+      <text className="rel-card" x={x} y={y + 3} textAnchor="middle"
+        onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }}>
+        {card}{r.role ? <tspan className="rel-role-inline"> as {r.role}</tspan> : null}
+      </text>
+    </g>
+  )
+}
+
+// The editable role field, centred on (x, y).
+function roleBox(r: Relationship, x: number, y: number, props: Props) {
+  return (
+    <foreignObject x={x - 46} y={y - 11} width={92} height={22} style={{ overflow: 'visible' }}>
+      <div className="rel-role-wrap">
+        <input
+          className="rel-role-input"
+          defaultValue={r.role ?? ''}
+          placeholder="as …"
+          onMouseDown={(e) => e.stopPropagation()}
+          onBlur={(e) => props.onEditRole(r.id, e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+        />
+      </div>
+    </foreignObject>
+  )
+}
+
+// The selected controls — cardinality readout · role field · delete — laid out around (cx, cy).
+function controls(r: Relationship, cx: number, cy: number, props: Props) {
+  return (
+    <>
+      {cardReadout(r, cx - 66, cy, props)}
+      {roleBox(r, cx, cy, props)}
+      {delBtn(cx + 64, cy, () => props.onDeleteRel(r.id))}
+    </>
+  )
+}
+
+// Cardinality control + readout (`1:N`): click to cycle 1:1 → 1:N → N:M. Sits above the line
+// (clear of the role box), with a plate to mask the line behind it.
+function cardReadout(r: Relationship, x: number, y: number, props: Props) {
+  const txt = cardLabel(r.fromCard, r.toCard)
+  const w = txt.length * CH + 8
+  return (
+    <g>
+      <rect className="rel-label-bg" x={x - w / 2} y={y - 7} width={w} height={14} rx={4} />
+      <text className="rel-card" x={x} y={y + 3} textAnchor="middle"
+        onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }}
+        onClick={(e) => { e.stopPropagation(); props.onCycleCardinality(r) }}>{txt}</text>
     </g>
   )
 }
 
 function endpoint(x: number, y: number, _click: () => void, onDown: (e: React.MouseEvent) => void) {
+  // Drag to re-route this end to another table; cardinality is changed via the label.
   return <circle className="rel-end" cx={x} cy={y} r={5}
     onMouseDown={(e) => { e.stopPropagation(); onDown(e) }} />
 }
