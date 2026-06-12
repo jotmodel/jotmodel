@@ -1,0 +1,31 @@
+# JotModel — Cloudflare Worker (Phases 2–3). Authored for local `wrangler dev`;
+# real ids/secrets are filled in at deploy time (see README → Deploy).
+name = "jotmodel"
+main = "worker/index.ts"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Object: one per board, holds the authoritative Y.Doc (y-partyserver).
+[[durable_objects.bindings]]
+name = "JotBoard"
+class_name = "JotBoard"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["JotBoard"]
+
+# D1: identity, ownership, sharing (the metadata; the drawing lives in the CRDT).
+[[d1_databases]]
+binding = "DB"
+database_name = "jotmodel"
+database_id = "REPLACE_ON_DEPLOY"   # `wrangler d1 create jotmodel` prints this
+
+# R2: CRDT snapshots / exports (no egress fees).
+[[r2_buckets]]
+binding = "SNAPSHOTS"
+bucket_name = "jotmodel-snapshots"
+
+[vars]
+APP_ORIGIN = "http://localhost:5173"
+# Secrets (NOT here): set with `wrangler secret put CLERK_SECRET_KEY` and `CLERK_JWT_KEY`.
+# For local dev, put them in worker/.dev.vars (gitignored).

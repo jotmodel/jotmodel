@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>JotModel — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --jm-display:"Space Grotesk",Inter,sans-serif; --jm-ui:Inter,system-ui,sans-serif; --jm-mono:"JetBrains Mono",ui-monospace,monospace;
+  --jm-1:4px;--jm-2:8px;--jm-3:12px;--jm-4:16px;--jm-5:20px;--jm-6:24px;--jm-8:32px;--jm-10:40px;--jm-12:48px;--jm-16:64px;
+  --jm-r-sm:6px;--jm-r-md:9px;--jm-r-card:11px;--jm-r-lg:16px;--jm-r-pill:999px;
+  --jm-dur-fast:110ms;--jm-dur:170ms;--jm-ease:cubic-bezier(.2,.7,.2,1);
+}
+:root,[data-theme="light"]{
+  color-scheme:light;
+  --jm-bg:#FCFCFD;--jm-canvas:#FFFFFF;--jm-grid:#ECEDF0;--jm-surface:#FFFFFF;--jm-surface-2:#F5F6F8;
+  --jm-line:#E7E9ED;--jm-line-2:#D6D9DF;--jm-text:#16181D;--jm-text-mid:#595F6B;--jm-text-dim:#9499A4;--jm-rel:#C2C7D0;
+  --jm-signal:#3A63D8;--jm-signal-weak:#EBF0FD;--jm-signal-text:#2D4FB8;
+  --jm-shadow-card:0 1px 2px rgba(16,20,30,.06),0 4px 14px rgba(16,20,30,.05);--jm-shadow-pop:0 12px 32px rgba(16,20,30,.14);--jm-ring:0 0 0 3px rgba(58,99,216,.28);
+  --sem-slate:#64748B;--sem-cyan:#0E96B3;--sem-teal:#0D9488;--sem-green:#16A34A;--sem-amber:#CA8A04;--sem-orange:#E2622E;--sem-rose:#E11D6B;--sem-violet:#7C3AED;
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --jm-bg:#0F1216;--jm-canvas:#14171C;--jm-grid:#20242B;--jm-surface:#181C22;--jm-surface-2:#20242C;
+  --jm-line:#282D36;--jm-line-2:#353B45;--jm-text:#ECEEF2;--jm-text-mid:#99A0AC;--jm-text-dim:#5E646F;--jm-rel:#3A414C;
+  --jm-signal:#5E86F5;--jm-signal-weak:rgba(94,134,245,.16);--jm-signal-text:#8FACFF;
+  --jm-shadow-card:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35);--jm-shadow-pop:0 14px 40px rgba(0,0,0,.55);--jm-ring:0 0 0 3px rgba(94,134,245,.32);
+  --sem-slate:#94A3B8;--sem-cyan:#38BDD8;--sem-teal:#2DD4BF;--sem-green:#4ADE80;--sem-amber:#FBBF24;--sem-orange:#FB8C5A;--sem-rose:#FB7199;--sem-violet:#A78BFA;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--jm-bg);color:var(--jm-text);font-family:var(--jm-ui);line-height:1.6;-webkit-font-smoothing:antialiased;transition:background var(--jm-dur),color var(--jm-dur)}
+.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+section{padding:52px 0;border-top:1px solid var(--jm-line)}
+.eyebrow{font-family:var(--jm-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--jm-text-dim);margin:0 0 14px}
+h1,h2,h3{font-weight:600;letter-spacing:-.02em;line-height:1.16;margin:0;color:var(--jm-text)}
+h1{font-family:var(--jm-ui);font-weight:680;font-size:clamp(30px,5vw,48px);letter-spacing:-.035em}
+h2{font-size:clamp(22px,3.3vw,30px);margin-bottom:10px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:0 0 13px;color:var(--jm-text-mid);max-width:66ch}
+p strong,li strong{color:var(--jm-text);font-weight:600}
+code{font-family:var(--jm-mono);font-size:.86em;background:var(--jm-surface-2);border:1px solid var(--jm-line);border-radius:5px;padding:1px 6px;color:var(--jm-text-mid)}
+a{color:var(--jm-signal-text);text-decoration:none}
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--jm-bg) 86%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--jm-line)}
+.top .row{max-width:920px;margin:0 auto;padding:11px 28px;display:flex;align-items:center;gap:12px}
+.top .mark{height:24px;color:var(--jm-text)}
+.top .wm{font-family:var(--jm-display);font-weight:600;font-size:16px;letter-spacing:-.01em}
+.top .wm b{font-weight:700}.top .wm span{color:var(--jm-text-mid);font-weight:500}
+.top .sp{flex:1}
+.toggle{display:inline-flex;border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);overflow:hidden;font-family:var(--jm-mono);font-size:11px}
+.toggle button{padding:6px 12px;background:transparent;border:0;color:var(--jm-text-dim);cursor:pointer}
+.toggle button.on{background:var(--jm-text);color:var(--jm-bg)}
+.hero{padding:66px 0 46px}
+.hero .mk{height:46px;color:var(--jm-text);margin-bottom:24px;display:block}
+.hero h1{max-width:14ch;margin-bottom:16px}
+.hero .lede{font-size:18px;max-width:56ch}
+.mottos{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.motto{border:1px solid var(--jm-line);border-radius:var(--jm-r-md);padding:11px 15px;background:var(--jm-surface)}
+.motto .l{font-family:var(--jm-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--jm-text-dim);margin-bottom:4px}
+.motto .v{font-family:var(--jm-display);font-weight:600;font-size:15px;color:var(--jm-text)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--jm-surface);border:1px solid var(--jm-line);border-radius:var(--jm-r-lg);padding:20px;box-shadow:var(--jm-shadow-card)}
+.layer{border:1px solid var(--jm-line);border-radius:var(--jm-r-lg);padding:20px;background:var(--jm-surface)}
+.layer .tag{display:inline-block;font-family:var(--jm-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:var(--jm-r-sm);margin-bottom:12px}
+.layer .tag.ours{background:var(--jm-surface-2);color:var(--jm-text-mid);border:1px solid var(--jm-line)}
+.layer .tag.theirs{background:var(--jm-signal-weak);color:var(--jm-signal-text)}
+.swatrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sw{width:46px}.sw .chip{height:42px;border-radius:var(--jm-r-sm);border:1px solid var(--jm-line)}
+.sw .nm{font-family:var(--jm-mono);font-size:9px;color:var(--jm-text-dim);margin-top:5px;text-align:center}
+.neutral-scale{display:flex;border-radius:var(--jm-r-sm);overflow:hidden;border:1px solid var(--jm-line);margin-top:6px}
+.neutral-scale div{flex:1;height:40px}
+.rule{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--jm-line);border-left:3px solid var(--jm-signal);border-radius:0 var(--jm-r-md) var(--jm-r-md) 0;padding:16px 18px;background:var(--jm-surface);margin-top:14px}
+.rule .k{font-family:var(--jm-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--jm-signal-text);margin-bottom:6px}
+.rule p{margin:0;color:var(--jm-text)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{display:flex;align-items:center;justify-content:center;height:120px;border-radius:var(--jm-r-lg);border:1px solid var(--jm-line)}
+.tile.lt{background:#FFFFFF;color:#16181D}.tile.dk{background:#14171C;color:#ECEEF2}
+.tile .lk{display:flex;align-items:center;gap:12px}
+.tile .lk .wm{font-family:var(--jm-display);font-size:24px;font-weight:600;letter-spacing:-.01em}
+.tile .lk .wm b{font-weight:700}.tile.lt .wm span{color:#595F6B}.tile.dk .wm span{color:#99A0AC}
+.demo{border:1px solid var(--jm-line);border-radius:var(--jm-r-lg);overflow:hidden;background:var(--jm-canvas);box-shadow:var(--jm-shadow-card)}
+.demo-bar{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--jm-line);background:var(--jm-surface)}
+.demo-bar .t{font-family:var(--jm-mono);font-size:11.5px;color:var(--jm-text-dim)}
+.demo-bar .sp{flex:1}
+.demo-bar button{font-family:var(--jm-mono);font-size:11.5px;color:var(--jm-text-mid);background:transparent;border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:5px 10px;cursor:pointer}
+.demo-bar button:hover{color:var(--jm-text);border-color:var(--jm-signal)}
+#stage{position:relative;height:420px;overflow:hidden;cursor:crosshair;background:radial-gradient(circle at 1px 1px,var(--jm-grid) 1.1px,transparent 0);background-size:24px 24px}
+#rels{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:var(--jm-text-dim);font-family:var(--jm-mono);font-size:12.5px;pointer-events:none;line-height:2;z-index:0}
+.namebox{position:absolute;z-index:6;background:var(--jm-surface);border:1px solid var(--jm-signal);border-radius:var(--jm-r-md);box-shadow:var(--jm-ring),var(--jm-shadow-pop)}
+.namebox input{font-family:var(--jm-display);font-weight:600;font-size:14px;color:var(--jm-text);background:transparent;border:0;outline:0;padding:9px 12px;width:188px;caret-color:var(--jm-signal)}
+.namebox input::placeholder{color:var(--jm-text-dim);font-weight:500}
+.ent{position:absolute;z-index:2;min-width:182px;background:var(--jm-surface);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-card);box-shadow:var(--jm-shadow-card)}
+.ent.pop{animation:pop .2s var(--jm-ease)}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.ent-h{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 12px;cursor:grab;border-bottom:1px solid var(--jm-line);border-radius:var(--jm-r-card) var(--jm-r-card) 0 0}
+.ent-h .nm{font-family:var(--jm-ui);font-weight:600;font-size:13.5px;color:var(--jm-text);flex:1}
+.cdot{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--jm-line-2);background:transparent;cursor:pointer;flex:none}
+.cdot:hover{border-color:var(--jm-text-dim)}
+.ent-b{padding:3px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 12px;font-family:var(--jm-mono);font-size:12px}
+.row .fn{color:var(--jm-text)}.row .fn.pk{font-weight:600}
+.row .ty{font-size:10px;padding:2px 6px;border-radius:var(--jm-r-sm);color:var(--jm-text-dim);background:var(--jm-surface-2);border:1px solid var(--jm-line)}
+.fieldinput{padding:5px 12px}
+.fieldinput input{width:100%;font-family:var(--jm-mono);font-size:12px;color:var(--jm-text);background:transparent;border:0;outline:0;caret-color:var(--jm-signal)}
+.fieldinput input::placeholder{color:var(--jm-text-dim)}
+.handle{position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:13px;height:13px;border-radius:50%;background:var(--jm-surface);border:2px solid var(--jm-text-dim);cursor:crosshair;opacity:0;transition:opacity var(--jm-dur);z-index:3}
+.ent:hover .handle{opacity:1}.handle:hover{border-color:var(--jm-signal);box-shadow:var(--jm-ring)}
+.ent.c-slate{border-left:3px solid var(--sem-slate)}.ent.c-slate .ent-h{background:color-mix(in srgb,var(--sem-slate) 8%,transparent)}.ent.c-slate .cdot{background:var(--sem-slate);border-color:var(--sem-slate)}
+.ent.c-teal{border-left:3px solid var(--sem-teal)}.ent.c-teal .ent-h{background:color-mix(in srgb,var(--sem-teal) 9%,transparent)}.ent.c-teal .cdot{background:var(--sem-teal);border-color:var(--sem-teal)}
+.ent.c-violet{border-left:3px solid var(--sem-violet)}.ent.c-violet .ent-h{background:color-mix(in srgb,var(--sem-violet) 9%,transparent)}.ent.c-violet .cdot{background:var(--sem-violet);border-color:var(--sem-violet)}
+.ent.c-amber{border-left:3px solid var(--sem-amber)}.ent.c-amber .ent-h{background:color-mix(in srgb,var(--sem-amber) 11%,transparent)}.ent.c-amber .cdot{background:var(--sem-amber);border-color:var(--sem-amber)}
+.ent.c-rose{border-left:3px solid var(--sem-rose)}.ent.c-rose .ent-h{background:color-mix(in srgb,var(--sem-rose) 9%,transparent)}.ent.c-rose .cdot{background:var(--sem-rose);border-color:var(--sem-rose)}
+.ent.c-green{border-left:3px solid var(--sem-green)}.ent.c-green .ent-h{background:color-mix(in srgb,var(--sem-green) 9%,transparent)}.ent.c-green .cdot{background:var(--sem-green);border-color:var(--sem-green)}
+.btn{font-family:var(--jm-ui);font-weight:600;font-size:13.5px;border-radius:var(--jm-r-md);padding:8px 15px;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--jm-signal);color:#fff}
+.btn-ghost{background:transparent;color:var(--jm-text);border-color:var(--jm-line-2)}
+.spec{border:1px solid var(--jm-line);border-radius:var(--jm-r-md);padding:16px 18px;margin-bottom:10px;background:var(--jm-surface)}
+.spec .l{font-family:var(--jm-mono);font-size:10.5px;color:var(--jm-text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.tok{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid var(--jm-line);font-size:13.5px;color:var(--jm-text-mid)}
+.tok code{min-width:130px}
+ol.pr{counter-reset:s;list-style:none;padding:0;margin:6px 0 0}
+ol.pr li{counter-increment:s;position:relative;padding:11px 0 11px 40px;border-bottom:1px solid var(--jm-line);color:var(--jm-text-mid);font-size:14px}
+ol.pr li strong{color:var(--jm-text)}
+ol.pr li::before{content:counter(s);position:absolute;left:0;top:11px;width:24px;height:24px;border-radius:6px;background:var(--jm-surface-2);border:1px solid var(--jm-line);color:var(--jm-text-mid);font-family:var(--jm-mono);font-size:12px;display:flex;align-items:center;justify-content:center}
+footer{padding:34px 0 60px;color:var(--jm-text-dim);font-family:var(--jm-mono);font-size:11.5px;text-align:center}
+@media(max-width:720px){.grid2,.tiles{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="row">
+  <svg class="mark" viewBox="0 0 48 48" fill="none" aria-label="JotModel">
+    <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+    <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+    <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+  </svg>
+  <span class="wm"><b>jot</b><span>model</span></span>
+  <span class="sp"></span>
+  <span class="toggle"><button id="tlight" class="on">Light</button><button id="tdark">Dark</button></span>
+</div></div>
+
+<div class="wrap">
+
+  <section class="hero" style="border-top:0">
+    <svg class="mk" viewBox="0 0 48 48" fill="none" aria-label="JotModel">
+      <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+      <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+      <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+    </svg>
+    <h1>Quiet by design, so the model can speak.</h1>
+    <p class="lede">A near-colorless interface, one restrained accent, and color held back for one job: <strong>the user's own color-coding</strong>. The chrome gets out of the way; the data modeling is the only thing that draws the eye.</p>
+    <div class="mottos">
+      <div class="motto"><div class="l">Company motto</div><div class="v">Get out of the room's way.</div></div>
+      <div class="motto"><div class="l">Product tagline</div><div class="v">Type it. Drag it. It's a model.</div></div>
+      <div class="motto"><div class="l">The payoff</div><div class="v">Jot the model. Have the conversation.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">The one decision that shapes everything</p>
+    <h2>Two layers of color, never mixed</h2>
+    <p>In a modeling tool, <strong>color is the user's vocabulary</strong>. If the brand spends color on decoration, it competes with the meaning people assign when they color-code a domain. So JotModel keeps almost no color in its chrome — and reserves saturated color entirely for the canvas. The result: if something on the board is colored, a person made it so.</p>
+    <div class="grid2" style="margin-top:8px;align-items:start">
+      <div class="layer">
+        <span class="tag ours">Interface · ours</span>
+        <h3>Neutrals + one quiet accent</h3>
+        <p style="font-size:13.5px;margin-bottom:6px">Ink-to-paper grays carry the whole UI. A single blue — <strong>Signal</strong> — appears only on things you interact with: focus, primary action, selection. It is never decorative and never lands on canvas content.</p>
+        <div class="neutral-scale"><div style="background:#16181D"></div><div style="background:#595F6B"></div><div style="background:#9499A4"></div><div style="background:#D6D9DF"></div><div style="background:#F5F6F8"></div><div style="background:#FFFFFF"></div></div>
+        <div class="swatrow"><div class="sw"><div class="chip" style="background:var(--jm-signal)"></div><div class="nm">signal</div></div><div class="sw"><div class="chip" style="background:var(--jm-signal-weak)"></div><div class="nm">weak</div></div></div>
+      </div>
+      <div class="layer">
+        <span class="tag theirs">Color-coding · the user's</span>
+        <h3>A palette for meaning</h3>
+        <p style="font-size:13.5px;margin-bottom:6px">Calm hues people assign to entities and groups — the only saturated color on the board. <strong>No plain blue here</strong>: it's kept for the interface, so the two layers can't be confused.</p>
+        <div class="swatrow">
+          <div class="sw"><div class="chip" style="background:var(--sem-slate)"></div><div class="nm">slate</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-cyan)"></div><div class="nm">cyan</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-teal)"></div><div class="nm">teal</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-green)"></div><div class="nm">green</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-amber)"></div><div class="nm">amber</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-orange)"></div><div class="nm">orange</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-rose)"></div><div class="nm">rose</div></div>
+          <div class="sw"><div class="chip" style="background:var(--sem-violet)"></div><div class="nm">violet</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="rule">
+      <div><div class="k">The rule that makes it obvious</div>
+      <p>Interface color only ever appears on <strong>chrome you click</strong>. Semantic color only ever appears as a <strong>fill on objects you made</strong>. Same eye, two jobs — never the same place. That's how color-coding stays unmistakable without a legend.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">See it both ways</p>
+    <h2>The create-flow, now quiet</h2>
+    <p>Flip the theme up top. Notice the canvas is neutral until <em>you</em> add meaning: <strong>click a table's dot</strong> to color-code it, and watch that color stand alone against the chrome. Click empty space to make a table, type fields (types infer), drag a table's edge dot to relate.</p>
+    <div class="demo">
+      <div class="demo-bar"><span class="t">untitled board · 2 collaborators</span><span class="sp"></span><button id="seed">Example</button><button id="reset">Reset</button></div>
+      <div id="stage"><svg id="rels"></svg><div class="hint" id="hint"><b>Click anywhere</b> to add a table<br>fields are comma-separated · types infer<br>drag the edge dot to relate · click the header dot to color-code</div></div>
+    </div>
+    <p style="font-size:12.5px;color:var(--jm-text-dim);margin-top:10px">Type badges (<code>pk</code>, <code>fk</code>, <code>timestamp</code>) are neutral on purpose — metadata is shown with type and weight, not color. Color is left for the user to mean something with.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Logo</p>
+    <h2>Monochrome, both ways</h2>
+    <p>One ink. The mark is the smallest data model — two entities and a crow's-foot relationship — and it carries no brand hue, so it sits on any surface and never pretends to be color-coding.</p>
+    <div class="tiles">
+      <div class="tile lt"><span class="lk">
+        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" style="color:#16181D"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+        <span class="wm"><b>jot</b><span>model</span></span></span></div>
+      <div class="tile dk"><span class="lk">
+        <svg width="38" height="38" viewBox="0 0 48 48" fill="none" style="color:#ECEEF2"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+        <span class="wm"><b>jot</b><span>model</span></span></span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Type</p>
+    <h2>Inter does the work; mono speaks data</h2>
+    <p>Identity comes from restraint, not a loud display face. Inter carries the whole UI; the wordmark keeps a touch of character in Space Grotesk; mono is reserved for the data world — fields and types literally are mono.</p>
+    <div class="spec"><div class="l">UI &amp; headings — Inter · <code>--jm-ui</code></div><div style="font-size:24px;font-weight:680;letter-spacing:-.03em;color:var(--jm-text)">Quiet by design, so the model can speak.</div></div>
+    <div class="spec"><div class="l">Wordmark — Space Grotesk · <code>--jm-display</code></div><div style="font-family:var(--jm-display);font-weight:700;font-size:24px">jot<span style="color:var(--jm-text-mid);font-weight:500">model</span></div></div>
+    <div class="spec"><div class="l">Data — JetBrains Mono · <code>--jm-mono</code></div><div style="font-family:var(--jm-mono);font-size:13px;color:var(--jm-text-mid)">users { id pk · email string · created_at timestamp }</div></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Build spec</p>
+    <h2>Principles</h2>
+    <ol class="pr">
+      <li><strong>Chrome is quiet; color means the user said so.</strong> The app never decorates with color — neutrals + one accent for interaction, nothing more.</li>
+      <li><strong>Type-first, mouse-equal.</strong> Create and connect from keyboard or direct manipulation; neither is a fallback.</li>
+      <li><strong>No galleries, no drawers.</strong> Structure is entered inline, never configured in a panel that steals attention.</li>
+      <li><strong>Loose in the room, strict underneath.</strong> Fields stay loose during discussion; the model exports clean DBML / dbt / SQL.</li>
+      <li><strong>Light and dark are equals.</strong> Every token has both; nothing is designed for one and patched for the other.</li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="eyebrow">Tokens</p>
+    <h2>Drop in <code>tokens.css</code> and build</h2>
+    <div class="tok"><code>--jm-bg / canvas / surface</code><span>neutral surfaces, light + dark</span></div>
+    <div class="tok"><code>--jm-signal*</code><span>the one accent — interaction only</span></div>
+    <div class="tok"><code>--sem-*</code><span>semantic palette — user color-coding, content only</span></div>
+    <div class="tok"><code>--jm-r-* / --jm-1…16</code><span>radius + 4px space scale</span></div>
+    <div class="tok"><code>--jm-dur / ease</code><span>110–170ms · cubic-bezier(.2,.7,.2,1)</span></div>
+    <p style="margin-top:16px">Theme by setting <code>&lt;html data-theme="light|dark"&gt;</code>. Every value above flips with it. This page is built entirely from these tokens.</p>
+  </section>
+
+  <footer>JotModel · design system v3 · quiet by design</footer>
+</div>
+
+<script>
+(function(){
+  var html=document.documentElement;
+  var bL=document.getElementById('tlight'), bD=document.getElementById('tdark');
+  function setTheme(t){ html.dataset.theme=t; bL.classList.toggle('on',t==='light'); bD.classList.toggle('on',t==='dark'); renderRels(); }
+  bL.onclick=function(){setTheme('light');}; bD.onclick=function(){setTheme('dark');};
+
+  var stage=document.getElementById('stage'), svg=document.getElementById('rels'), hint=document.getElementById('hint');
+  var ents=[], rels=[], uid=0, relating=null, moving=null, nb=null;
+  var COLORS=['','c-slate','c-teal','c-violet','c-amber','c-rose','c-green'];
+
+  function pt(e){var r=stage.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
+  function killHint(){ if(hint) hint.style.display='none'; }
+  function relColor(){ return getComputedStyle(html).getPropertyValue('--jm-rel').trim()||'#C2C7D0'; }
+
+  function infer(name){
+    var n=(name||'').trim().toLowerCase(); if(!n) return {t:'',l:'string'};
+    if(n==='id') return {t:'pk',l:'pk'};
+    if(/_id$/.test(n)) return {t:'fk',l:'fk'};
+    if(/^(is_|has_)/.test(n)) return {t:'',l:'bool'};
+    if(/(_at$|date|time)/.test(n)) return {t:'',l:'timestamp'};
+    if(/(count|qty|amount|price|total)/.test(n)) return {t:'',l:'number'};
+    return {t:'',l:'string'};
+  }
+  function closeName(){ if(nb&&nb.parentNode) nb.parentNode.removeChild(nb); nb=null; }
+  function openName(x,y){
+    closeName(); killHint();
+    var fi=stage.querySelector('.fieldinput'); if(fi&&fi.parentNode) fi.parentNode.removeChild(fi);
+    nb=document.createElement('div'); nb.className='namebox';
+    nb.style.left=Math.min(x,stage.clientWidth-208)+'px'; nb.style.top=Math.min(y,stage.clientHeight-48)+'px';
+    var inp=document.createElement('input'); inp.placeholder='Table name…'; nb.appendChild(inp); stage.appendChild(nb); inp.focus();
+    inp.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'){ var v=inp.value.trim(); closeName(); if(v) createEntity(x,y,v,true); }
+      else if(ev.key==='Escape'){ closeName(); }
+    });
+  }
+  function createEntity(x,y,name,focusFields){
+    var id=++uid, el=document.createElement('div'); el.className='ent pop';
+    var ex=Math.max(4,Math.min(x,stage.clientWidth-200)), ey=Math.max(4,Math.min(y,stage.clientHeight-58));
+    el.style.left=ex+'px'; el.style.top=ey+'px';
+    var h=document.createElement('div'); h.className='ent-h';
+    var nm=document.createElement('span'); nm.className='nm'; nm.textContent=name;
+    var dot=document.createElement('span'); dot.className='cdot'; dot.title='color-code';
+    h.appendChild(nm); h.appendChild(dot);
+    var b=document.createElement('div'); b.className='ent-b';
+    var handle=document.createElement('div'); handle.className='handle';
+    el.appendChild(h); el.appendChild(b); el.appendChild(handle); stage.appendChild(el);
+    var ent={id:id,name:name,el:el,body:b,x:ex,y:ey,fields:[],ci:0};
+    ents.push(ent);
+    h.addEventListener('mousedown',function(e){ if(e.target===dot) return; e.preventDefault(); moving={ent:ent,dx:pt(e).x-ent.x,dy:pt(e).y-ent.y}; h.style.cursor='grabbing'; });
+    dot.addEventListener('click',function(e){ e.stopPropagation(); ent.ci=(ent.ci+1)%COLORS.length; el.className='ent'+(COLORS[ent.ci]?(' '+COLORS[ent.ci]):''); });
+    handle.addEventListener('mousedown',function(e){ e.stopPropagation(); e.preventDefault(); var p=pt(e); relating={from:ent,x:p.x,y:p.y}; });
+    if(focusFields) openFieldInput(ent);
+    renderRels(); return ent;
+  }
+  function openFieldInput(ent){
+    var holder=document.createElement('div'); holder.className='fieldinput';
+    var inp=document.createElement('input'); inp.placeholder='fields, comma-separated…  ↵'; holder.appendChild(inp);
+    ent.body.appendChild(holder); inp.focus();
+    inp.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'){ var v=inp.value.trim();
+        if(v===''){ if(holder.parentNode) holder.parentNode.removeChild(holder); renderRels(); return; }
+        v.split(',').forEach(function(raw){ var fn=raw.trim(); if(fn) addField(ent,fn); });
+        inp.value=''; ent.body.appendChild(holder); inp.focus(); renderRels();
+      } else if(ev.key==='Escape'){ if(holder.parentNode) holder.parentNode.removeChild(holder); }
+    });
+  }
+  function addField(ent,fn){
+    var ty=infer(fn); ent.fields.push({n:fn,ty:ty});
+    var row=document.createElement('div'); row.className='row';
+    var a=document.createElement('span'); a.className='fn'+(ty.t==='pk'?' pk':''); a.textContent=fn;
+    var bd=document.createElement('span'); bd.className='ty'; bd.textContent=ty.l;
+    row.appendChild(a); row.appendChild(bd);
+    var fi=ent.body.querySelector('.fieldinput'); if(fi) ent.body.insertBefore(row,fi); else ent.body.appendChild(row);
+  }
+  function ctr(e){ return {x:e.x+e.el.offsetWidth/2,y:e.y+e.el.offsetHeight/2,w:e.el.offsetWidth,h:e.el.offsetHeight}; }
+  function anc(a,b){ var ca=ctr(a),cb=ctr(b); return {x:(cb.x>ca.x?a.x+ca.w:a.x), y:ca.y+Math.max(-ca.h/2+12,Math.min(ca.h/2-12,cb.y-ca.y)), side:(cb.x>ca.x?1:-1)}; }
+  function crow(x,y,dir,col){ var ox=-dir*8;
+    return '<g stroke="'+col+'" stroke-width="1.8" stroke-linecap="round">'
+      +'<line x1="'+x+'" y1="'+y+'" x2="'+(x+ox)+'" y2="'+(y-6)+'"/>'
+      +'<line x1="'+x+'" y1="'+y+'" x2="'+(x+ox)+'" y2="'+y+'"/>'
+      +'<line x1="'+x+'" y1="'+y+'" x2="'+(x+ox)+'" y2="'+(y+6)+'"/></g>'; }
+  function renderRels(tempTo){
+    var col=relColor(), parts='';
+    rels.forEach(function(r){ var a=anc(r.from,r.to), b=anc(r.to,r.from), mx=(a.x+b.x)/2;
+      parts+='<path d="M'+a.x+' '+a.y+' C '+mx+' '+a.y+', '+mx+' '+b.y+', '+b.x+' '+b.y+'" stroke="'+col+'" stroke-width="2" fill="none" stroke-linecap="round"/>';
+      parts+=crow(b.x,b.y,b.side,col); });
+    if(tempTo&&relating){ parts+='<path d="M'+relating.x+' '+relating.y+' L '+tempTo.x+' '+tempTo.y+'" stroke="'+col+'" stroke-width="2" stroke-dasharray="5 5" fill="none" stroke-linecap="round"/>'; }
+    svg.innerHTML=parts;
+  }
+  stage.addEventListener('mousedown',function(e){ if(e.target===stage||e.target===svg||e.target===hint){ var p=pt(e); openName(p.x,p.y); } });
+  window.addEventListener('mousemove',function(e){
+    if(moving){ var p=pt(e); moving.ent.x=Math.max(4,Math.min(p.x-moving.dx,stage.clientWidth-moving.ent.el.offsetWidth-4)); moving.ent.y=Math.max(4,Math.min(p.y-moving.dy,stage.clientHeight-moving.ent.el.offsetHeight-4)); moving.ent.el.style.left=moving.ent.x+'px'; moving.ent.el.style.top=moving.ent.y+'px'; renderRels(); }
+    else if(relating){ renderRels(pt(e)); }
+  });
+  window.addEventListener('mouseup',function(e){
+    if(moving){ moving=null; document.querySelectorAll('.ent-h').forEach(function(h){h.style.cursor='grab';}); }
+    if(relating){ var tgt=e.target.closest?e.target.closest('.ent'):null, hit=null; ents.forEach(function(en){ if(en.el===tgt) hit=en; });
+      if(hit&&hit!==relating.from){ rels.push({from:relating.from,to:hit}); }
+      else if(!tgt){ var p=pt(e); var ne=createEntity(p.x,p.y,'new_table',true); rels.push({from:relating.from,to:ne}); }
+      relating=null; renderRels(); }
+  });
+  document.getElementById('reset').onclick=function(){ ents.forEach(function(en){ if(en.el.parentNode) en.el.parentNode.removeChild(en.el); }); ents=[];rels=[];uid=0; renderRels(); if(hint) hint.style.display='block'; };
+  document.getElementById('seed').onclick=function(){ document.getElementById('reset').click(); killHint();
+    var u=createEntity(36,40,'users',false); ['id','email','created_at'].forEach(function(f){addField(u,f);}); u.ci=2; u.el.className='ent c-teal';
+    var o=createEntity(330,210,'orders',false); ['id','user_id','total','placed_at'].forEach(function(f){addField(o,f);}); o.ci=3; o.el.className='ent c-violet';
+    rels.push({from:u,to:o}); renderRels(); };
+})();
+</script>
+</body>
+</html>

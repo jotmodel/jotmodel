@@ -1,0 +1,5 @@
+# Copy to worker/.dev.vars (gitignored) for local `wrangler dev`.
+# Clerk Dashboard → API keys.
+CLERK_SECRET_KEY="sk_test_..."
+# Clerk Dashboard → API keys → "Show JWT public key" → PEM Public Key (enables networkless verify).
+CLERK_JWT_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
