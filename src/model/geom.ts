@@ -62,10 +62,11 @@ export function fieldAnchor(e: Entity, fieldId: string | null, toward: Rect, rec
   return { x, y, nx, ny: 0 }
 }
 
-/** Vertical separation for the Nth of `count` relationships sharing the same pair. */
+/** Along-edge separation for the Nth of `count` relationships sharing the same pair.
+ *  Spacing leaves room for each line's label/edit lane so they don't overlap. */
 export function parallelOffset(index: number, count: number): number {
   if (count <= 1) return 0
-  return (index - (count - 1) / 2) * 16
+  return (index - (count - 1) / 2) * 22
 }
 
 /** A self-loop arc on the right edge of the card. */

@@ -161,8 +161,11 @@ body{
 .rel-card{font-family:var(--jm-mono);font-size:10px;fill:var(--jm-text-dim);cursor:pointer;user-select:none}
 .rg:hover .rel-card,.rg.sel .rel-card{fill:var(--jm-signal-text)}
 .rel-role{font-family:var(--jm-mono);font-size:10px;fill:var(--jm-text-dim)}
+.rel-role-inline{fill:var(--jm-text-dim)}
+.rel-label-bg{fill:var(--jm-canvas);pointer-events:none}
+.rel-role-wrap{height:100%;display:flex;align-items:center}
 .rel-role-input{
-  width:100%;box-sizing:border-box;font-family:var(--jm-mono);font-size:10px;text-align:center;
+  width:100%;box-sizing:border-box;font-family:var(--jm-mono);font-size:10px;line-height:1;text-align:center;
   color:var(--jm-text);background:var(--jm-surface);border:1px solid var(--jm-signal);
   border-radius:var(--jm-r-sm);outline:0;padding:2px 4px;caret-color:var(--jm-signal);
 }

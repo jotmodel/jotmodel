@@ -76,15 +76,16 @@ export function Relationships(props: Props) {
               <path className="rline" d={loop.d} fill="none" strokeWidth={2} strokeLinecap="round" />
               {glyph(r.toCard, loop.tip.x, loop.tip.y, loop.tip.nx, loop.tip.ny)}
               {label(r, loop.lx, loop.ly, isSel, props)}
-              {isSel && delBtn(loop.lx, loop.ly + 18, () => props.onDeleteRel(r.id))}
+              {isSel && delBtn(loop.lx + 62, loop.ly, () => props.onDeleteRel(r.id))}
             </g>
           )
         }
 
         // ---- straight relationship (with parallel offset) ----
         const grp = groups.get(pairKey(r.fromId, r.toId))!
-        const off = parallelOffset(grp.indexOf(r.id), grp.length)
-        const reserve = parallelOffset(grp.length - 1, grp.length) // half-band: keep parallels on-edge
+        const idx = grp.indexOf(r.id), n = grp.length
+        const off = parallelOffset(idx, n)
+        const reserve = parallelOffset(n - 1, n) // half-band: keep parallels on-edge
         const a: Anchor = r.fromField ? fieldAnchor(ea, r.fromField, rb, ra) : anchor(ra, rb, off, reserve)
         const b: Anchor = r.toField ? fieldAnchor(eb, r.toField, ra, rb) : anchor(rb, ra, off, reserve)
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2
@@ -95,7 +96,7 @@ export function Relationships(props: Props) {
         // scaled by verticality, since horizontal parallels already separate vertically.
         const dxL = b.x - a.x, dyL = b.y - a.y
         const vert = Math.abs(dyL) / (Math.abs(dxL) + Math.abs(dyL) + 0.001)
-        const t = 0.5 + off / 16 * 0.16 * vert
+        const t = 0.5 + (idx - (n - 1) / 2) * 0.16 * vert
         const lx = a.x + dxL * t, ly = a.y + dyL * t
         return (
           <g key={r.id} className={cls}>
@@ -109,7 +110,7 @@ export function Relationships(props: Props) {
               <>
                 {endpoint(a.x, a.y, () => {}, (e) => props.onEndpointDown(r.id, 'from', e))}
                 {endpoint(b.x, b.y, () => {}, (e) => props.onEndpointDown(r.id, 'to', e))}
-                {delBtn(mx, my + 18, () => props.onDeleteRel(r.id))}
+                {delBtn(lx + 62, ly, () => props.onDeleteRel(r.id))}
               </>
             )}
           </g>
@@ -124,16 +125,35 @@ export function Relationships(props: Props) {
   )
 }
 
+// Annotations live on a single horizontal lane centred on the line, so stacked parallels
+// never collide. Selected: a slim `1:N [as …]` strip; otherwise just the cardinality (+role).
+// A canvas-coloured plate behind the text masks the line so it reads `── as Client ──`.
+const CH = 6 // monospace advance at 10px
+
 function label(r: Relationship, x: number, y: number, isSel: boolean, props: Props) {
+  const card = cardLabel(r.fromCard, r.toCard)
+  const onCard = {
+    onMouseDown: (e: React.MouseEvent) => { e.stopPropagation(); props.onSelectRel(r.id) },
+    onClick: (e: React.MouseEvent) => { e.stopPropagation(); props.onCycleCardinality(r) },
+  }
+  if (!isSel) {
+    const txt = r.role ? `${card} as ${r.role}` : card
+    const w = txt.length * CH + 10
+    return (
+      <g>
+        <rect className="rel-label-bg" x={x - w / 2} y={y - 7} width={w} height={14} rx={4} />
+        <text className="rel-card" x={x} y={y + 3} textAnchor="middle" {...onCard}>
+          {card}{r.role ? <tspan className="rel-role-inline"> as {r.role}</tspan> : null}
+        </text>
+      </g>
+    )
+  }
   return (
     <g>
-      <text className="rel-card" x={x} y={y - 6} textAnchor="middle"
-        onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }}
-        onClick={(e) => { e.stopPropagation(); props.onCycleCardinality(r) }}>
-        {cardLabel(r.fromCard, r.toCard)}
-      </text>
-      {isSel ? (
-        <foreignObject x={x - 60} y={y + 4} width={120} height={22}>
+      <rect className="rel-label-bg" x={x - 76} y={y - 7} width={card.length * CH + 8} height={14} rx={4} />
+      <text className="rel-card" x={x - 62} y={y + 3} textAnchor="middle" {...onCard}>{card}</text>
+      <foreignObject x={x - 44} y={y - 11} width={92} height={22} style={{ overflow: 'visible' }}>
+        <div className="rel-role-wrap">
           <input
             className="rel-role-input"
             defaultValue={r.role ?? ''}
@@ -142,10 +162,8 @@ function label(r: Relationship, x: number, y: number, isSel: boolean, props: Pro
             onBlur={(e) => props.onEditRole(r.id, e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
           />
-        </foreignObject>
-      ) : (
-        r.role && <text className="rel-role" x={x} y={y + 12} textAnchor="middle">as {r.role}</text>
-      )}
+        </div>
+      </foreignObject>
     </g>
   )
 }
