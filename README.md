@@ -24,8 +24,8 @@ npm run typecheck  # client + worker type-check
 **Canvas (the product).**
 - Create: click empty canvas → name → `Enter` → type comma-separated fields (types infer) → `Enter`.
 - Natural-language type inference (`email`→email, `paid?`→boolean, `placed_at`→timestamp, …) — gentle, optional, overridable.
-- Relate: drag a card's edge dot — or **a field row** (`as <field>`) — drop on a table to connect, on empty to spawn a related table, on its **own** table for a self-loop. Parallel offset for multiple links between a pair.
-- Cardinality: click a relationship endpoint to toggle one(bar)↔many(crow's-foot) → 1:1 / 1:N / N:M; midpoint `1:N` label (click to cycle). Re-route by dragging an endpoint (click-vs-drag threshold). Role label editable inline.
+- Relate: drag **any of a card's edges** (a dot tracks your pointer along the border) — or **a field row** (`as <field>`) — drop on a table to connect (the connector snatches onto the edge, then settles into its routed port), on empty to spawn a related table, on its **own** table for a self-loop. Parallel offset for multiple links between a pair.
+- Cardinality: select a relationship and **click its `1:N` label** to cycle 1:1 → 1:N → N:M (one = bar, many = crow's-foot); keyboard `1`/`N`/`Space` on the focused end. Endpoints are **drag-to-reroute only** (no click action). Role (`as …`) label editable inline.
 - Move (drag header), rename (double-click entity/field, `Enter`/`F2`), field add/rename/delete, color-code (header dot → `--sem` hue), delete (no confirm — undo has your back).
 - **Infinite canvas:** space/middle-drag or trackpad to pan, ⌘/Ctrl-scroll (or pinch) to zoom around the cursor, fit-to-content, full keyboard parity (arrows pan, `+`/`-` zoom, ⌘0 reset, ⇧1 fit).
 - **Undo/redo** (`Y.UndoManager`, per-user) via ⌘Z / ⇧⌘Z and toolbar.
