@@ -25,7 +25,14 @@ database_id = "REPLACE_ON_DEPLOY"   # `wrangler d1 create jotmodel` prints this
 binding = "SNAPSHOTS"
 bucket_name = "jotmodel-snapshots"
 
+# Custom domain for the API + WebSocket relay. `wrangler deploy` provisions it (domain must
+# already be on this Cloudflare account). The app talks to it via VITE_WORKER_HOST.
+[[routes]]
+pattern = "api.jotmodel.com"
+custom_domain = true
+
 [vars]
-APP_ORIGIN = "http://localhost:5173"
+# Production origin — must EXACTLY equal the app origin and Clerk's `azp` (no trailing slash).
+APP_ORIGIN = "https://app.jotmodel.com"
+# For local `wrangler dev`, override this to http://localhost:5173 in worker/.dev.vars.
 # Secrets (NOT here): set with `wrangler secret put CLERK_SECRET_KEY` and `CLERK_JWT_KEY`.
-# For local dev, put them in worker/.dev.vars (gitignored).

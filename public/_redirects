@@ -1,0 +1,3 @@
+# SPA fallback for client routes (/b/:id, /sign-in, ...). Static assets take precedence;
+# everything else serves index.html so react-router can resolve the path. (Cloudflare Pages)
+/*    /index.html   200

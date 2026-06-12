@@ -4,11 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#FCFCFD" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0F1216" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Open Graph (mainly for shared board links) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JotModel" />
+    <meta property="og:description" content="A fast whiteboard for data-modeling conversations." />
+    <meta property="og:url" content="https://app.jotmodel.com" />
+    <meta property="og:image" content="https://jotmodel.com/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <title>JotModel</title>
+    <!-- Cloudflare Web Analytics (privacy-friendly, no cookie banner). Uncomment and set the
+         token from the Cloudflare dashboard at launch:
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "REPLACE_WITH_CF_ANALYTICS_TOKEN"}'></script>
+    -->
+
     <script>
       // Set the theme before first paint to avoid a flash. Stored choice wins;
       // otherwise follow the OS. Keeps the <meta color-scheme> in sync too.

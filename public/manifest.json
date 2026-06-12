@@ -1,0 +1,12 @@
+{
+  "name": "JotModel",
+  "short_name": "JotModel",
+  "description": "A fast whiteboard for data-modeling conversations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FCFCFD",
+  "theme_color": "#FCFCFD",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

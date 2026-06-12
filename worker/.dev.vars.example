@@ -3,3 +3,6 @@
 CLERK_SECRET_KEY="sk_test_..."
 # Clerk Dashboard → API keys → "Show JWT public key" → PEM Public Key (enables networkless verify).
 CLERK_JWT_KEY="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----"
+# Local override of the production APP_ORIGIN in wrangler.toml — your Vite dev origin.
+# Must match Clerk's `azp` (the frontend origin) and the app's fetch origin for CORS.
+APP_ORIGIN="http://localhost:5173"
