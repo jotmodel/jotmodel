@@ -1,23 +1,7 @@
-import { useBoard } from './model/useBoard'
-import { TopBar } from './ui/TopBar'
-import { Canvas } from './canvas/Canvas'
-import './styles/tokens.css'
-import './styles/app.css'
+import { Board } from './app/Board'
 
+/** Phase-1 local-only entry: a single board in the browser, no accounts, no relay.
+ *  The routed, account-aware app lives in app/AppRouter (loaded when a Clerk key is set). */
 export default function App() {
-  const { board, entities, rels, canUndo, canRedo, undo, redo } = useBoard()
-  return (
-    <div className="app">
-      <TopBar
-        board={board}
-        entities={entities}
-        rels={rels}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onUndo={undo}
-        onRedo={redo}
-      />
-      <Canvas board={board} entities={entities} rels={rels} />
-    </div>
-  )
+  return <Board />
 }

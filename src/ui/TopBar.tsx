@@ -5,19 +5,7 @@ import {
 import { importUpdate } from '../model/board'
 import type { Board, Entity, Relationship } from '../model/board'
 import { ShareDialog } from '../screens/ShareDialog'
-
-function Mark() {
-  return (
-    <svg className="mark" viewBox="0 0 48 48" fill="none" aria-label="JotModel">
-      <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" fill="none" />
-      <g stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-        <line x1="26.5" y1="36" x2="30" y2="32.6" /><line x1="26.5" y1="36" x2="30" y2="36" /><line x1="26.5" y1="36" x2="30" y2="39.4" />
-      </g>
-      <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor" />
-      <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" strokeWidth="2.8" />
-    </svg>
-  )
-}
+import { Mark, Wordmark } from './Brand'
 
 export interface TopBarProps {
   board: Board
@@ -65,7 +53,7 @@ export function TopBar({ board, entities, rels, canUndo, canRedo, onUndo, onRedo
   return (
     <div className="topbar">
       <Mark />
-      <span className="wm"><b>jot</b><span>model</span></span>
+      <Wordmark />
 
       <span className="sep" />
       <button className="btn icon" title="Undo (⌘Z)" disabled={!canUndo} onClick={onUndo}>↶</button>

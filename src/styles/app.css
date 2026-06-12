@@ -239,3 +239,38 @@ body{
 .cloud-form[disabled]{opacity:.55}
 .field{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;color:var(--jm-text)}
 .field select{font-family:var(--jm-ui);font-size:13px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:5px 8px}
+.btn.icon.danger{color:var(--sem-rose);border-color:var(--sem-rose);font-size:11px;font-weight:600;padding:6px 8px}
+.linklike{background:transparent;border:0;color:var(--jm-signal-text);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
+
+/* ---- auth screen (Clerk re-skinned) — scaffold, pending design review ---- */
+.auth-screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px 20px;background:var(--jm-bg)}
+.auth-brand{display:flex;align-items:center;gap:10px}
+.auth-brand .mark{height:26px;color:var(--jm-text)}
+.jm-clerk-card{box-shadow:var(--jm-shadow-pop)!important;border:1px solid var(--jm-line-2)!important}
+
+/* ---- home / board list — scaffold, pending design review ---- */
+.home{min-height:100%;display:flex;flex-direction:column;background:var(--jm-bg)}
+.home-bar{display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid var(--jm-line);background:var(--jm-surface)}
+.home-bar .mark{height:22px;color:var(--jm-text)}
+.home-bar .sp{flex:1}
+.home-main{width:min(760px,92vw);margin:0 auto;padding:40px 0;flex:1}
+.home-title{font-family:var(--jm-ui);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--jm-text);margin:0 0 20px}
+.home-error{font-size:13px;color:var(--sem-rose);background:color-mix(in srgb,var(--sem-rose) 8%,transparent);border:1px solid color-mix(in srgb,var(--sem-rose) 30%,transparent);border-radius:var(--jm-r-md);padding:9px 12px}
+.board-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.board-row{display:flex;align-items:center;gap:8px;border:1px solid var(--jm-line);border-radius:var(--jm-r-md);background:var(--jm-surface);transition:border-color var(--jm-dur-fast)}
+.board-row:hover{border-color:var(--jm-line-2)}
+.board-open{flex:1;display:flex;align-items:baseline;gap:12px;text-align:left;background:transparent;border:0;cursor:pointer;padding:13px 14px;border-radius:var(--jm-r-md)}
+.board-name{font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text)}
+.board-time{font-family:var(--jm-mono);font-size:11px;color:var(--jm-text-dim)}
+.board-rename{flex:1;font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;margin:12px 14px;caret-color:var(--jm-signal)}
+.board-actions{display:flex;align-items:center;gap:4px;padding-right:10px;opacity:0;transition:opacity var(--jm-dur-fast)}
+.board-row:hover .board-actions,.board-row:focus-within .board-actions{opacity:1}
+
+/* ---- routed status screens (404 / 403) — scaffold, pending design review ---- */
+.status-screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
+.status-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.status-brand .mark{height:24px;color:var(--jm-text)}
+.status-card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:42ch}
+.status-code{font-family:var(--jm-mono);font-size:12px;letter-spacing:.16em;color:var(--jm-text-dim)}
+.status-card h1{font-family:var(--jm-ui);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--jm-text);margin:0}
+.status-card .btn{margin-top:6px;text-decoration:none}

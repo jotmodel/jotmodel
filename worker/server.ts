@@ -21,6 +21,11 @@ export class JotBoard extends YServer {
 
   async onSave(): Promise<void> {
     await this.env.SNAPSHOTS.put(this.snapshotKey, Y.encodeStateAsUpdate(this.document))
+    // Keep the board list's "recently edited" ordering honest without a client round-trip.
+    // `this.name` is the board id (the Durable Object's name). Best-effort: a missing row
+    // (e.g. a board deleted while open) is a harmless no-op.
+    await this.env.DB.prepare('UPDATE boards SET updated_at=? WHERE id=?')
+      .bind(Date.now(), this.name).run().catch(() => {})
   }
 
   onConnect(conn: Connection<ConnState>, ctx: ConnectionContext) {

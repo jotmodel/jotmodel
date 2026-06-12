@@ -1,14 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 const render = (node: React.ReactNode) => root.render(<React.StrictMode>{node}</React.StrictMode>)
 
-// Phase 1 is local-only. When a Clerk key is configured, lazy-load the auth shell
-// (Phase 2) so the default bundle stays Clerk-free.
+// With a Clerk key (always set in production) load the full routed app — accounts, cloud
+// boards, sharing, multiplayer. Without one, fall back to the Clerk-free local-only Phase-1
+// board so the default dev bundle stays lean and works with zero backend.
 if (import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
-  import('./screens/AuthGate').then(({ AuthApp }) => render(<AuthApp />))
+  import('./app/AppRouter').then(({ AppRouter }) => render(<AppRouter />))
 } else {
-  render(<App />)
+  import('./App').then(({ default: App }) => render(<App />))
 }

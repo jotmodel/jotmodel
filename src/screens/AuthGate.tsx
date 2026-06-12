@@ -1,26 +1,36 @@
-import { ClerkProvider, SignedIn, SignedOut, SignIn } from '@clerk/clerk-react'
-import App from '../App'
-import { ScaffoldScreen } from './Scaffold'
-
-const KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string
+import { SignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
+import { Navigate, useSearchParams } from 'react-router-dom'
+import { Mark, Wordmark } from '../ui/Brand'
+import { clerkAppearance } from './clerkAppearance'
+import { DesignReviewFlag } from './Scaffold'
+import '../styles/tokens.css'
+import '../styles/app.css'
 
 /**
- * Phase 2 auth shell, activated only when VITE_CLERK_PUBLISHABLE_KEY is set (main.tsx
- * loads this lazily so Phase 1 stays Clerk-free). Signed-in users get the board; the
- * sign-in screen is a scaffold — Clerk's default UI is unstyled and flagged for design review.
+ * Sign-in screen. Clerk owns the form (sessions, MFA, OAuth); we only re-skin it to the
+ * design tokens (see clerkAppearance). Routing is hash-based so Clerk manages its own
+ * sub-steps without router coupling. Once signed in, we send the user to `?redirect=` (or home).
+ * Flagged for design review per CLAUDE.md — the final auth visuals are not yet signed off.
  */
-export function AuthApp() {
+export function SignInScreen() {
+  const [sp] = useSearchParams()
+  const redirect = sp.get('redirect') || '/'
   return (
-    <ClerkProvider publishableKey={KEY}>
-      <SignedOut>
-        <ScaffoldScreen title="Sign in to JotModel">
-          <p className="muted">Accounts + cloud save (Phase 2). The control below is Clerk's default UI — final auth visuals are pending design review.</p>
-          <SignIn routing="hash" />
-        </ScaffoldScreen>
-      </SignedOut>
+    <>
       <SignedIn>
-        <App />
+        <Navigate to={redirect} replace />
       </SignedIn>
-    </ClerkProvider>
+      <SignedOut>
+        <div className="auth-screen">
+          <header className="auth-brand">
+            <Mark />
+            <Wordmark />
+            <DesignReviewFlag />
+          </header>
+          <SignIn routing="hash" appearance={clerkAppearance} />
+          <p className="hint-note">Accounts &amp; cloud save · final auth visuals pending design review.</p>
+        </div>
+      </SignedOut>
+    </>
   )
 }
