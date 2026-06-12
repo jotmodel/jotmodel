@@ -153,6 +153,8 @@ body{
 .redge.r-l{left:-9px;width:11px;top:0;bottom:0}
 .redge.r-r{right:-9px;width:11px;top:0;bottom:0}
 .redge.r-b{left:0;right:0;bottom:-9px;height:11px}
+/* top rim — child of the card root (others are in the body), straddling the true top border */
+.redge.r-t{left:0;right:0;top:-9px;height:11px}
 
 /* user color-coding (the only color on the canvas) */
 .ent.c-slate{border-left:3px solid var(--sem-slate)} .ent.c-slate .ent-h{background:color-mix(in srgb,var(--sem-slate) 8%,transparent)} .ent.c-slate .cdot{background:var(--sem-slate);border-color:var(--sem-slate)}

@@ -77,8 +77,10 @@ on the thing it changes** — no menus, no drawers.
 - **Relate from the table edge.** The relate-drag starts from **anywhere on the card's border**, not
   just a dot — left/right/bottom edge strips all arm the same drag, and **the relate dot follows the
   pointer**, snapping to the nearest of those edges so the connector is always under the mouse (it
-  hides over the header). The strips sit *below* the header (header stays drag-to-move) and field rows keep their
-  `as <field>` relate. Like a field-drag, it's a **pending** drag: a press that doesn't pass the
+  hides over the header). The left/right/bottom strips sit *below* the header; the **top edge** has
+  its own thin rim strip straddling the true top border, mostly *above* the card so it claims only
+  the top ~2px of the header — so all four edges relate while the header interior **stays
+  drag-to-move**. Field rows keep their `as <field>` relate. Like a field-drag, it's a **pending** drag: a press that doesn't pass the
   ~5px threshold just selects the table; passing it draws the dashed line. *(Chosen over the single
   13px hover dot, which forced you to hunt for the connector.)*
 - **Plug / snatch on connect.** A relate (or reroute) drag has a **magnetic feel** in three beats.

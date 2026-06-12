@@ -216,6 +216,11 @@ export function EntityCard(props: EntityCardProps) {
         )}
       </div>
 
+      {/* Top-edge relate. Sibling of the root (not the body), so it sits on the card's true top
+          border — a thin rim straddling it, mostly *above* the card so it doesn't eat the header's
+          move zone (only the top ~2px of the header is given to relate, mirroring the other edges). */}
+      <div className="redge r-t" title="drag to relate" onMouseDown={(e) => props.onStartRelate(e)} />
+
       <div ref={handleRef} className="handle" title="drag to relate"
         onMouseDown={(e) => props.onStartRelate(e)} />
     </div>
