@@ -98,6 +98,8 @@ body{
 .ent.pop{animation:pop .2s var(--jm-ease)}
 @keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 .ent.selected{border-color:var(--jm-signal);box-shadow:var(--jm-ring),var(--jm-shadow-card)}
+/* armed to receive a relate/reroute drag — reaches out with a fuller signal ring */
+.ent.armed{border-color:var(--jm-signal);box-shadow:0 0 0 3px var(--jm-signal-weak),0 0 0 1px var(--jm-signal),var(--jm-shadow-pop);transition:box-shadow var(--jm-dur-fast),border-color var(--jm-dur-fast)}
 .ent.dragging{box-shadow:var(--jm-shadow-pop);cursor:grabbing}
 .ent.dragging .ent-h{cursor:grabbing}
 .ent-h{
@@ -165,11 +167,20 @@ body{
 /* relationships — neutral by default, signal on hover/selected (group color drives glyphs + line) */
 .rg{color:var(--jm-rel)}
 .rg:hover,.rg.sel{color:var(--jm-signal)}
-.rels .rline{stroke:var(--jm-rel)}
+.rels .rline{stroke:var(--jm-rel);transition:stroke .22s var(--jm-ease)}
 .rg:hover .rline,.rg.sel .rline{stroke:var(--jm-signal)}
-.rels .glyph{stroke:var(--jm-rel);fill:none}
+.rels .glyph{stroke:var(--jm-rel);fill:none;transition:stroke .22s var(--jm-ease)}
 .rg:hover .glyph,.rg.sel .glyph{stroke:var(--jm-signal)}
-.rels .temp{stroke:var(--jm-rel)}
+.rels .temp{stroke:var(--jm-rel);transition:stroke var(--jm-dur-fast)}
+/* the dragged connector head, riding under the pointer; signal-tinted while over a target */
+.temp-tip{fill:var(--jm-rel);transition:fill var(--jm-dur-fast);transform-box:fill-box;transform-origin:center}
+.temp-wrap.armed .temp{stroke:var(--jm-signal)}
+/* snatch — the head pops onto the table border the instant the drag grabs a target (replayed on
+   remount, keyed by the armed table). Reads as a magnetic seat in place, under the pointer. */
+.temp-wrap.armed .temp-tip{fill:var(--jm-signal);animation:snatch .19s var(--jm-ease)}
+@keyframes snatch{0%{transform:scale(2.6);opacity:.4}55%{transform:scale(.82)}100%{transform:scale(1)}}
+/* plug settle — the seating end glides in (geometry, in JS) signal-hot, then cools to neutral */
+.rg.settling .rline,.rg.settling .glyph{stroke:var(--jm-signal);transition:none}
 .rel-card{font-family:var(--jm-mono);font-size:10px;fill:var(--jm-text-dim);cursor:pointer;user-select:none}
 .rg:hover .rel-card,.rg.sel .rel-card{fill:var(--jm-signal-text)}
 .rel-role{font-family:var(--jm-mono);font-size:10px;fill:var(--jm-text-dim)}

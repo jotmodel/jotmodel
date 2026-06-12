@@ -6,7 +6,7 @@ import {
   setRelationshipCard, setRelationshipEnd, setRelationshipRole,
 } from '../model/board'
 import {
-  rectOf, fieldAnchor, HEADER_H, ROW_H, BODY_PAD, type Sizes,
+  rectOf, fieldAnchor, HEADER_H, ROW_H, BODY_PAD, type Sizes, type Rect,
 } from '../model/geom'
 import { reducer, initialState, type Pt } from './reducer'
 import { EntityCard } from './EntityCard'
@@ -71,6 +71,10 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const pushRef = useRef<{ offsets: Map<string, { dx: number; dy: number }>; amt: number; target: number; timer: ReturnType<typeof setTimeout> | null }>({ offsets: new Map(), amt: 0, target: 0, timer: null })
   const [, forceUi] = useReducer((n: number) => n + 1, 0)
   const dupRef = useRef<string | null>(null)
+  // A relationship that just seated into an entity: its new end glides from the drop point into its
+  // routed port (amt 1→0, ease-out) — the "plug" settle. Driven by a timer (rAF pauses on hidden tabs).
+  const plugRef = useRef<{ relId: string; end: 'from' | 'to'; drop: Pt; amt: number } | null>(null)
+  const plugTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // ---- coordinates ----
   function screenToWorld(clientX: number, clientY: number) {
@@ -87,6 +91,48 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     return { entityId: card.dataset.entityId!, fieldId: row?.dataset.fieldId ?? null }
   }
   const entityById = (id: string) => entitiesRef.current.find(e => e.id === id) || null
+
+  // Magnetic capture for a relate/reroute drag: the table whose rect (grown by a capture radius)
+  // the pointer is over — so the connector "snatches" onto a port a touch before the cursor lands.
+  // The drag's own origin table is *inset* instead, so dragging out across your own card doesn't
+  // instantly snap to a self-loop. Topmost (last-drawn) table wins.
+  function relateSnapTarget(x: number, y: number, originId: string): Entity | null {
+    for (let i = entitiesRef.current.length - 1; i >= 0; i--) {
+      const e = entitiesRef.current[i]
+      const r = rectOf(e, sizesRef.current)
+      const m = e.id === originId ? -8 : 14
+      if (x >= r.x - m && x <= r.x + r.w + m && y >= r.y - m && y <= r.y + r.h + m) return e
+    }
+    return null
+  }
+  // Nearest point on a table's border to the pointer — where the connector seats ("snatches") while
+  // hovering a target. Keeps the seat under the pointer (on the rim it crossed), not a far port.
+  function edgeSnap(r: Rect, px: number, py: number): Pt {
+    const cx = Math.max(r.x, Math.min(r.x + r.w, px))
+    const cy = Math.max(r.y, Math.min(r.y + r.h, py))
+    const dl = cx - r.x, dr = r.x + r.w - cx, dt = cy - r.y, db = r.y + r.h - cy
+    const m = Math.min(dl, dr, dt, db)
+    if (m === dl) return { x: r.x, y: cy }
+    if (m === dr) return { x: r.x + r.w, y: cy }
+    if (m === dt) return { x: cx, y: r.y }
+    return { x: cx, y: r.y + r.h }
+  }
+  // Glide the just-seated end from the drop point toward its routed port (exponential ease-out).
+  function plugStep() {
+    const p = plugRef.current
+    if (!p) return
+    p.amt = p.amt < 0.03 ? 0 : p.amt * 0.78
+    if (p.amt > 0) plugTimer.current = setTimeout(plugStep, 16)
+    else plugRef.current = null
+    forceUi()
+  }
+  // Start the plug settle: the `end` of `relId` slides in from where the pointer let go (`drop`).
+  function firePlug(relId: string, end: 'from' | 'to', drop: Pt) {
+    if (plugTimer.current) clearTimeout(plugTimer.current)
+    plugRef.current = { relId, end, drop, amt: 1 }
+    plugTimer.current = setTimeout(plugStep, 16)
+    forceUi()
+  }
 
   // Everything the marquee box (world units) touches: entities whose rect it overlaps, and rels
   // whose line it crosses (approximated by the segment between the two tables' centres; a self-loop
@@ -188,9 +234,15 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       }
       if (tl.k === 'relating') {
         const hit = hitTest(ev.clientX, ev.clientY)
+        // Prefer the precise DOM hit (gives field-level targeting); fall back to the magnetic capture
+        // target so anything that looked *armed* actually connects, even a few px off the card.
+        const tEnt = hit?.entityId ?? relateSnapTarget(p.x, p.y, tl.fromId)?.id ?? null
+        const tField = hit?.fieldId ?? null
         const role = tl.fromField ? fieldName(tl.fromId, tl.fromField) : null
-        if (hit) {
-          addRelationship(doc, tl.fromId, hit.entityId, { fromField: tl.fromField, toField: hit.fieldId, role })
+        if (tEnt) {
+          const rid = addRelationship(doc, tl.fromId, tEnt, { fromField: tl.fromField, toField: tField, role })
+          const te = entityById(tEnt)
+          firePlug(rid, 'to', te ? edgeSnap(rectOf(te, sizesRef.current), p.x, p.y) : { x: p.x, y: p.y })
         } else {
           const id = addEntity(doc, p.x - 91, p.y - 18, 'new_table')
           addRelationship(doc, tl.fromId, id, { fromField: tl.fromField, role })
@@ -201,7 +253,14 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
         }
       } else if (tl.k === 'rerouting') {
         const hit = hitTest(ev.clientX, ev.clientY)
-        if (hit) setRelationshipEnd(doc, tl.relId, tl.end, hit.entityId, hit.fieldId)
+        const r = relsRef.current.find(x => x.id === tl.relId)
+        const originId = r ? (tl.end === 'from' ? r.fromId : r.toId) : tl.relId
+        const tEnt = hit?.entityId ?? relateSnapTarget(p.x, p.y, originId)?.id ?? null
+        if (tEnt) {
+          setRelationshipEnd(doc, tl.relId, tl.end, tEnt, hit?.fieldId ?? null)
+          const te = entityById(tEnt)
+          firePlug(tl.relId, tl.end, te ? edgeSnap(rectOf(te, sizesRef.current), p.x, p.y) : { x: p.x, y: p.y })
+        }
       } else if (tl.k === 'pressing') {
         // pressed empty canvas and released without dragging → the create-flow name box
         dispatch({ t: 'openName', at: { x: tl.x0, y: tl.y0 } })
@@ -341,6 +400,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.selection])
   useEffect(() => () => { const p = pushRef.current; if (p.timer) { clearTimeout(p.timer); p.timer = null } }, [])
+  useEffect(() => () => { if (plugTimer.current) clearTimeout(plugTimer.current) }, [])
 
   // ---- viewport helpers ----
   function zoomCenter(factor: number) {
@@ -431,16 +491,29 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     setRelationshipCard(doc, r.id, 'from', next[0]); setRelationshipCard(doc, r.id, 'to', next[1])
   }
 
-  // temp drag line
-  let temp: { x1: number; y1: number; x2: number; y2: number } | null = null
+  // temp drag line. Off a table the tip trails the pointer (dashed). Over a target the connector
+  // *snatches* onto that table's border at the point under the pointer and the table arms — a
+  // magnetic seat in place. The final move to the routed port is the post-release plug glide.
+  let temp: { x1: number; y1: number; x2: number; y2: number; armed: boolean; tid: string | null } | null = null
+  let armedId: string | null = null
   const tool = state.tool
-  if (tool.k === 'relating') temp = { x1: tool.from.x, y1: tool.from.y, x2: tool.cur.x, y2: tool.cur.y }
-  else if (tool.k === 'rerouting') {
+  if (tool.k === 'relating') {
+    const tgt = relateSnapTarget(tool.cur.x, tool.cur.y, tool.fromId)
+    armedId = tgt?.id ?? null
+    const s = tgt ? edgeSnap(rectOf(tgt, sizesRef.current), tool.cur.x, tool.cur.y) : { x: tool.cur.x, y: tool.cur.y }
+    temp = { x1: tool.from.x, y1: tool.from.y, x2: s.x, y2: s.y, armed: !!tgt, tid: armedId }
+  } else if (tool.k === 'rerouting') {
     const relId = tool.relId, end = tool.end, cur = tool.cur
     const r = rels.find(x => x.id === relId)
     if (r) {
       const fe = entityById(end === 'from' ? r.toId : r.fromId)
-      if (fe) { const a = edgeAnchorWorld(fe); temp = { x1: a.x, y1: a.y, x2: cur.x, y2: cur.y } }
+      if (fe) {
+        const a = edgeAnchorWorld(fe)
+        const tgt = relateSnapTarget(cur.x, cur.y, end === 'from' ? r.fromId : r.toId)
+        armedId = tgt?.id ?? null
+        const s = tgt ? edgeSnap(rectOf(tgt, sizesRef.current), cur.x, cur.y) : { x: cur.x, y: cur.y }
+        temp = { x1: a.x, y1: a.y, x2: s.x, y2: s.y, armed: !!tgt, tid: armedId }
+      }
     }
   }
 
@@ -480,6 +553,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           temp={temp}
           selected={state.selection?.type === 'rel' ? state.selection : null}
           groupSelected={state.selected.rels}
+          plug={plugRef.current}
           onSelectRel={(id, end) => dispatch({ t: 'selectRel', id, end })}
           onDeleteRel={(id) => { deleteRelationship(doc, id); dispatch({ t: 'clearSel' }) }}
           onEndpointDown={onEndpointDown}
@@ -498,6 +572,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
             key={e.id}
             entity={e}
             selected={state.selected.entities.includes(e.id)}
+            armed={armedId === e.id}
             dragging={movingId === e.id}
             renaming={renameRef.current === e.id}
             autoFocusFields={e.id === state.newId}

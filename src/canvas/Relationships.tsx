@@ -9,11 +9,13 @@ interface Props {
   rels: Relationship[]
   sizes: Sizes
   pushOffsets: Map<string, { dx: number; dy: number }>
-  temp: { x1: number; y1: number; x2: number; y2: number } | null
+  temp: { x1: number; y1: number; x2: number; y2: number; armed: boolean; tid: string | null } | null
   selected: { id: string; end: 'from' | 'to' | null } | null
   // Rels in the multi-select group: highlighted like a single selection, but without the inline
   // controls (those only make sense for one active rel — see `selected`).
   groupSelected: string[]
+  // The relationship whose new end is gliding in from the drop point (`amt` 1→0) — the plug settle.
+  plug: { relId: string; end: 'from' | 'to'; drop: { x: number; y: number }; amt: number } | null
   onSelectRel: (id: string, end?: 'from' | 'to' | null) => void
   onDeleteRel: (id: string) => void
   onEndpointDown: (relId: string, end: 'from' | 'to', e: React.MouseEvent) => void
@@ -49,7 +51,7 @@ function cardLabel(from: Card, to: Card): string {
 }
 
 export function Relationships(props: Props) {
-  const { entities, rels, sizes, pushOffsets, temp, selected, groupSelected } = props
+  const { entities, rels, sizes, pushOffsets, temp, selected, groupSelected, plug } = props
   const rectById = new Map<string, Rect>(entities.map(e => {
     const r = rectOf(e, sizes)
     const o = pushOffsets.get(e.id)
@@ -72,7 +74,8 @@ export function Relationships(props: Props) {
         const ea = entById.get(r.fromId), eb = entById.get(r.toId)
         if (!ra || !rb || !ea || !eb) return null
         const isSel = selected?.id === r.id
-        const cls = 'rg' + (isSel || groupSelected.includes(r.id) ? ' sel' : '')
+        const settling = plug?.relId === r.id
+        const cls = 'rg' + (isSel || groupSelected.includes(r.id) ? ' sel' : '') + (settling ? ' settling' : '')
 
         // ---- self-loop ----
         if (r.fromId === r.toId) {
@@ -96,10 +99,16 @@ export function Relationships(props: Props) {
         const reserve = parallelOffset(n - 1, n) // half-band: keep parallels on-edge
         const a: Anchor = r.fromField ? fieldAnchor(ea, r.fromField, rb, ra) : anchor(ra, rb, off, reserve)
         const b: Anchor = r.toField ? fieldAnchor(eb, r.toField, ra, rb) : anchor(rb, ra, off, reserve)
+        // Plug settle: ease the just-seated end in from the drop point toward its routed anchor.
+        let ax = a.x, ay = a.y, bx = b.x, by = b.y
+        if (settling && plug) {
+          if (plug.end === 'to') { bx = b.x + (plug.drop.x - b.x) * plug.amt; by = b.y + (plug.drop.y - b.y) * plug.amt }
+          else { ax = a.x + (plug.drop.x - a.x) * plug.amt; ay = a.y + (plug.drop.y - a.y) * plug.amt }
+        }
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2
         // Leave each card perpendicular to its edge → smooth in any orientation.
-        const k = Math.max(30, 0.5 * Math.hypot(b.x - a.x, b.y - a.y))
-        const d = `M${a.x} ${a.y} C ${a.x + a.nx * k} ${a.y + a.ny * k}, ${b.x + b.nx * k} ${b.y + b.ny * k}, ${b.x} ${b.y}`
+        const k = Math.max(30, 0.5 * Math.hypot(bx - ax, by - ay))
+        const d = `M${ax} ${ay} C ${ax + a.nx * k} ${ay + a.ny * k}, ${bx + b.nx * k} ${by + b.ny * k}, ${bx} ${by}`
         // Slide each parallel label along its line so they don't stack on the same point —
         // scaled by verticality, since horizontal parallels already separate vertically.
         const dxL = b.x - a.x, dyL = b.y - a.y
@@ -111,14 +120,14 @@ export function Relationships(props: Props) {
             <path className="hit" d={d} fill="none" strokeWidth={12} stroke="transparent"
               onMouseDown={(e) => { e.stopPropagation(); props.onSelectRel(r.id) }} />
             <path className="rline" d={d} fill="none" strokeWidth={2} strokeLinecap="round" />
-            {glyph(r.fromCard, a.x, a.y, a.nx, a.ny)}
-            {glyph(r.toCard, b.x, b.y, b.nx, b.ny)}
+            {glyph(r.fromCard, ax, ay, a.nx, a.ny)}
+            {glyph(r.toCard, bx, by, b.nx, b.ny)}
             {!isSel && label(r, lx, ly, props)}
             {isSel && (
               <>
                 {controls(r, lx, ly, props)}
-                {endpoint(a.x, a.y, () => {}, (e) => props.onEndpointDown(r.id, 'from', e))}
-                {endpoint(b.x, b.y, () => {}, (e) => props.onEndpointDown(r.id, 'to', e))}
+                {endpoint(ax, ay, () => {}, (e) => props.onEndpointDown(r.id, 'from', e))}
+                {endpoint(bx, by, () => {}, (e) => props.onEndpointDown(r.id, 'to', e))}
               </>
             )}
           </g>
@@ -126,8 +135,13 @@ export function Relationships(props: Props) {
       })}
 
       {temp && (
-        <path className="rline temp" d={`M${temp.x1} ${temp.y1} L ${temp.x2} ${temp.y2}`}
-          fill="none" strokeWidth={2} strokeDasharray="5 5" strokeLinecap="round" />
+        <g className={'rg temp-wrap' + (temp.armed ? ' armed' : '')}>
+          <path className="rline temp" d={`M${temp.x1} ${temp.y1} L ${temp.x2} ${temp.y2}`}
+            fill="none" strokeWidth={2} strokeDasharray={temp.armed ? 'none' : '5 5'} strokeLinecap="round" />
+          {/* The connector head. Keyed by the armed table so it remounts — replaying the snatch pop —
+              each time the drag grabs a fresh target; over empty canvas it just trails the pointer. */}
+          <circle key={temp.tid ?? 'free'} className="temp-tip" cx={temp.x2} cy={temp.y2} r={temp.armed ? 4.5 : 3} />
+        </g>
       )}
     </svg>
   )

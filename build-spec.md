@@ -81,6 +81,19 @@ on the thing it changes** — no menus, no drawers.
   `as <field>` relate. Like a field-drag, it's a **pending** drag: a press that doesn't pass the
   ~5px threshold just selects the table; passing it draws the dashed line. *(Chosen over the single
   13px hover dot, which forced you to hunt for the connector.)*
+- **Plug / snatch on connect.** A relate (or reroute) drag has a **magnetic feel** in three beats.
+  *(1) Trail:* off any table the dashed tip follows the pointer. *(2) Snatch:* when the pointer
+  comes within a ~14px capture radius of a target, that table **arms** (fuller signal ring) and the
+  connector head **snatches onto the table's border at the point under the pointer** — seated *in
+  place, where the pointer is* (the nearest-edge projection, not a far port center), with a quick
+  pop and the line going solid signal. The drag's **own origin table is inset (~8px)** so dragging
+  out across your own card doesn't arm a self-loop. *(3) Reorganize:* on release the seated end
+  **glides from that edge seat into its routed port** (exponential ease-out, ~220ms), signal-hot
+  during the glide and then **cooling to neutral `--jm-rel`**. So the order is *follow → snatch onto
+  the edge under the pointer → release → reorganize with animation* — never a mid-drag teleport to a
+  spot the pointer isn't. The drop also connects via the same capture target (not just a pixel-exact
+  DOM hit), so anything that *looked* armed actually connects. Pure feedback on the existing gesture;
+  no new action, no keyboard change.
 - **Multiple relationships / roles ("as").** **Drag from the field row** → the link takes that
   field's word (`as sender`); a second from `recipient` draws a parallel offset line `as
   recipient`. From the table edge instead → a small pre-filled, editable midpoint label. *Keyboard:*

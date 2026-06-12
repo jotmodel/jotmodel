@@ -9,6 +9,7 @@ const EDGE_GATE = 24
 export interface EntityCardProps {
   entity: Entity
   selected: boolean
+  armed: boolean
   dragging: boolean
   renaming: boolean
   autoFocusFields: boolean
@@ -30,7 +31,7 @@ export interface EntityCardProps {
 }
 
 export function EntityCard(props: EntityCardProps) {
-  const { entity, selected, dragging, renaming, autoFocusFields } = props
+  const { entity, selected, armed, dragging, renaming, autoFocusFields } = props
   const [showField, setShowField] = useState(autoFocusFields)
   const [editing, setEditing] = useState<string | null>(null) // field id being renamed
   const fieldRef = useRef<HTMLInputElement>(null)
@@ -81,7 +82,7 @@ export function EntityCard(props: EntityCardProps) {
   useEffect(() => { if (showField) fieldRef.current?.focus() }, [showField])
   useEffect(() => { if (autoFocusFields) setShowField(true) }, [autoFocusFields])
 
-  const cls = ['ent', 'pop', selected ? 'selected' : '', dragging ? 'dragging' : '',
+  const cls = ['ent', 'pop', selected ? 'selected' : '', armed ? 'armed' : '', dragging ? 'dragging' : '',
     entity.color ? `c-${entity.color}` : ''].filter(Boolean).join(' ')
 
   return (
