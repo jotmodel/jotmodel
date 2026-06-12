@@ -5,6 +5,9 @@ import type { Entity } from '../model/board'
 const HEADER_FALLBACK = 38
 // The relate dot only appears within this many px of a relate-edge (keeps it clear of row controls).
 const EDGE_GATE = 24
+// The top edge sits on the header, so its dot uses a tighter band — only near the top border —
+// leaving the rest of the header reading as the move zone.
+const TOP_GATE = 10
 
 export interface EntityCardProps {
   entity: Entity
@@ -51,16 +54,24 @@ export function EntityCard(props: EntityCardProps) {
     const lx = (e.clientX - rect.left) / scale
     const ly = (e.clientY - rect.top) / scale
     const headerH = headerRef.current?.offsetHeight ?? HEADER_FALLBACK
-    if (ly < headerH) { dot.style.opacity = '0'; return }
-    const sy = Math.max(headerH, Math.min(H, ly))
-    const cands = [
-      { x: 0, y: sy, d: lx },                                  // left edge
-      { x: W, y: sy, d: W - lx },                              // right edge
-      { x: Math.max(0, Math.min(W, lx)), y: H, d: H - ly },    // bottom edge
-    ]
-    const best = cands.reduce((a, b) => (b.d < a.d ? b : a))
-    // Only show near an edge — keep the dot out of the way while reaching for in-row controls.
-    if (best.d > EDGE_GATE) { dot.style.opacity = '0'; return }
+    const cx = Math.max(0, Math.min(W, lx))
+    let best: { x: number; y: number } | null = null
+    if (ly < headerH) {
+      // Over the header: only the thin top rim relates. Snap the dot to the top edge when the pointer
+      // is near that border; otherwise hide it so the header interior still reads as the move zone.
+      if (ly <= TOP_GATE) best = { x: cx, y: 0 }
+    } else {
+      const sy = Math.min(H, ly)
+      const cands = [
+        { x: 0, y: sy, d: lx },                                  // left edge
+        { x: W, y: sy, d: W - lx },                              // right edge
+        { x: cx, y: H, d: H - ly },                              // bottom edge
+      ]
+      const b = cands.reduce((a, c) => (c.d < a.d ? c : a))
+      // Only show near an edge — keep the dot out of the way while reaching for in-row controls.
+      if (b.d <= EDGE_GATE) best = { x: b.x, y: b.y }
+    }
+    if (!best) { dot.style.opacity = '0'; return }
     dot.style.left = `${best.x}px`
     dot.style.top = `${best.y}px`
     dot.style.right = 'auto'
