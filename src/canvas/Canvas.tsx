@@ -38,6 +38,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const renameRef = useRef<string | null>(null)
   // Entity that should focus its field input once its name is committed (relate-create flow).
   const pendingFieldsRef = useRef<string | null>(null)
+  // Animated "make room" push: target offsets per entity, plus a 0→1 glide amount.
+  const pushRef = useRef<{ offsets: Map<string, { dx: number; dy: number }>; amt: number; target: number; timer: ReturnType<typeof setTimeout> | null }>({ offsets: new Map(), amt: 0, target: 0, timer: null })
   const [, forceUi] = useReducer((n: number) => n + 1, 0)
   const dupRef = useRef<string | null>(null)
 
@@ -234,6 +236,27 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     out.set(eb.id, { dx: ux * d, dy: uy * d })
     return out
   }
+  // Glide the push amount toward its target each frame (timer, not rAF — rAF pauses when the page
+  // is hidden, which would leave the controls cramped). Cards and the line both read `amt`, so they
+  // move together.
+  function pushStep() {
+    const p = pushRef.current
+    p.timer = null
+    const speed = 0.18
+    p.amt = p.amt < p.target ? Math.min(p.target, p.amt + speed) : Math.max(p.target, p.amt - speed)
+    forceUi()
+    if (p.amt !== p.target) p.timer = setTimeout(pushStep, 16)
+    else if (p.amt === 0) p.offsets = new Map()
+  }
+  useEffect(() => {
+    const p = pushRef.current
+    const target = computePush()
+    if (target.size) { p.offsets = target; p.target = 1 } else { p.target = 0 }
+    if (p.timer) clearTimeout(p.timer)
+    p.timer = setTimeout(pushStep, 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.selection])
+  useEffect(() => () => { const p = pushRef.current; if (p.timer) { clearTimeout(p.timer); p.timer = null } }, [])
 
   // ---- viewport helpers ----
   function zoomCenter(factor: number) {
@@ -314,7 +337,12 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const movingId = state.tool.k === 'moving' ? state.tool.id : null
   const showHint = entities.length === 0 && state.tool.k !== 'naming'
 
-  const pushed = computePush()
+  // Interpolated push offsets (target offsets scaled by the current glide amount).
+  const pushed = new Map<string, { dx: number; dy: number }>()
+  if (pushRef.current.amt > 0) {
+    const amt = pushRef.current.amt
+    for (const [id, o] of pushRef.current.offsets) pushed.set(id, { dx: o.dx * amt, dy: o.dy * amt })
+  }
 
   return (
     <div
