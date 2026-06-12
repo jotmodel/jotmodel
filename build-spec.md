@@ -29,7 +29,10 @@ the code is the source of truth and you don't need it again. The always-on rules
   relationship. Otherwise **leave it a plain field** — never force a guess, demand a convention,
   or make anyone rename to be understood. Always overridable; the model works fully untyped.
 - **Relate:** drag an entity's edge handle → dashed line follows the cursor → drop on empty canvas
-  = new related table; drop on an existing table = connect.
+  = new related table; drop on an existing table = connect. A table made by dropping on empty canvas
+  opens with its **name focused** (type to replace `new_table`); committing the name jumps to its
+  field input — the same name→fields flow as click-create. (Click-create's name box focuses on open
+  via `preventDefault` on the canvas mousedown, so the input isn't blurred on mouseup.)
 - **Move:** drag the entity header. **Color-code:** click the header dot → assign a `--sem` hue
   (left bar + faint header tint). Relationship lines are neutral (`--jm-rel`), never colored.
 
@@ -40,13 +43,20 @@ Build every state listed. A state not listed = stop and ask.
 - **Entity card:** default · hover · selected (signal ring) · dragging · color-coded (per `--sem`)
   · field-focused · renaming (inline) · empty. Header = name + color dot + relate handle (hover)
   + delete `×` (hover, far corner).
-- **Field row:** default · pk (weight, neutral badge) · fk · editing · renaming · hover delete `×`.
-  Badge always neutral.
+- **Field row:** default · pk (weight, neutral badge) · fk · editing · renaming · hover delete `×`
+  · **type badge** (click / focus+Enter to change the type — see *Interaction decisions*). Badge
+  always neutral, even while interactive (focus ring is `--jm-signal`, fill stays neutral).
 - **Name / field input:** focused (signal ring) · placeholder · duplicate-name → ask, don't guess.
 - **Relationship:** default neutral · hover/selected (signal) · dragging (dashed) · cardinality
-  **1:1 / 1:N / N:M** (single bar = "one", crow's-foot = "many") + midpoint `1:N` label · role
-  label `as …` · parallel offset when >1 to the same pair · self-loop · endpoints draggable
-  (re-route) · midpoint `×` (delete).
+  **1:1 / 1:N / N:M** (single bar = "one", crow's-foot = "many"). Routing is **orientation-aware**:
+  a line leaves the **nearest edges** — sides when the tables sit side-by-side, top/bottom when
+  stacked — and curves out perpendicular to each edge. Multiple links to the same pair **fan apart**
+  along that edge (band-fit so they never collapse onto the corner). Each link's annotations sit on
+  a **single lane on its own line**, with a canvas-coloured plate masking the line so it reads
+  `── 1:N as client ──`; when selected, that lane shows `1:N` (cardinality) · the `as …` field · the
+  `×` delete. Endpoints (shown when selected) are **drag-to-reroute** handles only. Self-loop = arc
+  on one edge. When the two tables are too close for the inline controls, they temporarily make room
+  (see *Interaction decisions*).
 - **Buttons:** primary (`--jm-signal`) · ghost (hairline) · disabled.
 - **Canvas:** dot grid, light + dark.
 - **Presence cursors (multiplayer):** the ONE sanctioned extra color — per-user identity colors on
@@ -57,10 +67,11 @@ Build every state listed. A state not listed = stop and ask.
 Each obeys the laws and pairs a mouse path with a keyboard path. Unifying idea: **the control sits
 on the thing it changes** — no menus, no drawers.
 
-- **Change cardinality (1:1 / 1:N / N:M).** The endpoint *is* the control: hover the line, **click
-  an end** to toggle one (bar) ↔ many (crow's-foot); independent ends give all four states;
-  midpoint reads `1:N`. *Keyboard:* select line → `1`/`N` sets the focused end, `Space` toggles.
-  *Fallback:* click the `1:N` label to cycle 1:1 → 1:N → N:M.
+- **Change cardinality (1:1 / 1:N / N:M).** Select the line, then **click its `1:N` label** to cycle
+  1:1 → 1:N → N:M; the label is on the selected control lane and updates live. *Keyboard:* select
+  line → `1`/`N` sets the focused end, `Space` toggles. *(History: the endpoints once toggled each
+  end, but that fought the role field and overlapped the delete — cardinality is the label only,
+  endpoints are reroute-only. Don't move cardinality back onto the endpoints.)*
 - **Multiple relationships / roles ("as").** **Drag from the field row** → the link takes that
   field's word (`as sender`); a second from `recipient` draws a parallel offset line `as
   recipient`. From the table edge instead → a small pre-filled, editable midpoint label. *Keyboard:*
@@ -68,12 +79,23 @@ on the thing it changes** — no menus, no drawers.
 - **Self-relationship.** The relate drag may **drop on its own table** → a self-loop arc with a
   role label (e.g. `as manager`). Same gesture, target = source.
 - **Re-route.** **Drag a relationship endpoint** onto a different table/field to rebind that end;
-  drop in empty space snaps back (cancel). Click vs. drag on the endpoint split by a small drag
-  threshold (click = cardinality toggle, drag = re-route). *Keyboard:* delete, then redraw.
-- **Delete a relationship.** Select the line → `Delete`/`Backspace`; mouse-only gets a midpoint
-  `×` on hover. Undo restores.
+  drop in empty space snaps back (cancel). The endpoint is **drag-only** (no click action).
+  *Keyboard:* delete, then redraw.
+- **Delete a relationship.** Select the line → `Delete`/`Backspace`; mouse-only gets the `×` on the
+  selected control lane (right of the `as …` field). Undo restores.
 - **Rename an entity or field.** **Double-click the name** → edit in place → `Enter` commits,
   `Esc` cancels, `Tab` jumps to the next field. *Keyboard:* select → `Enter`/`F2`.
 - **Delete an entity or field.** Select → `Delete`; hover gives a far-corner `×` (entity) or
   row-end `×` (field). Deleting an entity removes its relationships. Undo restores — **no confirm
   dialog** (modals are friction).
+- **Change a field's type (override inference).** **Click the type badge** to cycle the types
+  (`string → text → number → boolean → date → timestamp → email → pk → fk`); **⇧-click reverses**.
+  *Keyboard:* focus the badge → `Enter`/`Space` (`⇧` reverses). A hand-set type is remembered (a
+  `typed` flag), so **renaming the field no longer re-infers over it**; untouched fields still infer.
+  This is the concrete answer to inference being "always overridable."
+- **Make room for relationship controls.** When a selected relationship's two tables sit too close
+  for the inline `1:N · as … · ×` controls to fit, **both tables glide apart symmetrically** to open
+  the gap, and **glide back** on deselect. **Visual only** — saved positions and undo history are
+  untouched. The glide is driven by a **timer, not `requestAnimationFrame`** (rAF pauses on hidden
+  tabs, which would leave the room un-made). *(Chosen over floating the controls off the line — the
+  user preferred moving the tables.)*
