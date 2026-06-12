@@ -16,15 +16,28 @@ export type Tool =
   | { k: 'idle' }
   | { k: 'naming'; at: Pt }
   | { k: 'moving'; id: string; dx: number; dy: number }
+  | { k: 'movingMany'; items: { id: string; dx: number; dy: number }[] }
   | { k: 'relating'; fromId: string; fromField: string | null; from: Pt; cur: Pt }
   | { k: 'panning'; sx: number; sy: number; tx0: number; ty0: number }
   | { k: 'endpointDown'; relId: string; end: 'from' | 'to'; sx0: number; sy0: number; cur: Pt }
   | { k: 'rerouting'; relId: string; end: 'from' | 'to'; cur: Pt }
+  // empty-canvas press: not yet a drag. Releasing without moving opens the name box (create);
+  // moving past the threshold turns it into a marquee selection.
+  | { k: 'pressing'; sx0: number; sy0: number; x0: number; y0: number }
+  | { k: 'marquee'; x0: number; y0: number; cur: Pt }
+
+/** Multi-selection: ids of every selected entity and relationship. */
+export interface SelSet { entities: string[]; rels: string[] }
+const EMPTY_SET: SelSet = { entities: [], rels: [] }
 
 export interface CanvasState {
   tool: Tool
   view: View
+  // `selection` is the single "active" selection that drives inline controls (rel cardinality,
+  // endpoints, rename-on-Enter). `selected` is the full multi-select group used for move + delete.
+  // When exactly one thing is selected the two agree; a multi-marquee leaves `selection` null.
   selection: Sel | null
+  selected: SelSet
   newId: string | null // entity whose field input should auto-focus
 }
 
@@ -32,7 +45,15 @@ export const initialState: CanvasState = {
   tool: { k: 'idle' },
   view: { tx: 0, ty: 0, scale: 1 },
   selection: null,
+  selected: EMPTY_SET,
   newId: null,
+}
+
+/** A single selection exists only when exactly one thing (entity xor rel) is selected. */
+function deriveSel(set: SelSet): Sel | null {
+  if (set.entities.length === 1 && set.rels.length === 0) return { type: 'entity', id: set.entities[0] }
+  if (set.rels.length === 1 && set.entities.length === 0) return { type: 'rel', id: set.rels[0], end: null }
+  return null
 }
 
 const clampScale = (s: number) => Math.max(MIN_SCALE, Math.min(MAX_SCALE, s))
@@ -52,8 +73,11 @@ export type Action =
   | { t: 'openName'; at: Pt }
   | { t: 'closeName' }
   | { t: 'startMove'; id: string; dx: number; dy: number }
+  | { t: 'startMoveMany'; items: { id: string; dx: number; dy: number }[] }
   | { t: 'startRelate'; fromId: string; fromField: string | null; from: Pt }
   | { t: 'startPan'; sx: number; sy: number }
+  | { t: 'startPress'; sx: number; sy: number; x: number; y: number }
+  | { t: 'setSelected'; entities: string[]; rels: string[] }
   | { t: 'startEndpoint'; relId: string; end: 'from' | 'to'; sx: number; sy: number; cur: Pt }
   | { t: 'pointerMove'; world: Pt; sx: number; sy: number; ddx: number; ddy: number }
   | { t: 'endTool' }
@@ -68,25 +92,40 @@ export function reducer(s: CanvasState, a: Action): CanvasState {
     case 'selectEntity':
       // Preserve an in-flight tool (e.g. the header's start-move dispatched just before this);
       // only a still-open namebox should close on selecting a card.
-      return { ...s, selection: { type: 'entity', id: a.id }, tool: s.tool.k === 'naming' ? { k: 'idle' } : s.tool }
+      return { ...s, selection: { type: 'entity', id: a.id }, selected: { entities: [a.id], rels: [] }, tool: s.tool.k === 'naming' ? { k: 'idle' } : s.tool }
     case 'selectRel':
-      return { ...s, selection: { type: 'rel', id: a.id, end: a.end ?? null } }
+      return { ...s, selection: { type: 'rel', id: a.id, end: a.end ?? null }, selected: { entities: [], rels: [a.id] } }
+    case 'setSelected': {
+      const set: SelSet = { entities: a.entities, rels: a.rels }
+      return { ...s, selected: set, selection: deriveSel(set) }
+    }
     case 'clearSel':
-      return { ...s, selection: null }
+      return { ...s, selection: null, selected: EMPTY_SET }
     case 'openName':
-      return { ...s, tool: { k: 'naming', at: a.at }, selection: null }
+      return { ...s, tool: { k: 'naming', at: a.at }, selection: null, selected: EMPTY_SET }
     case 'closeName':
       return s.tool.k === 'naming' ? { ...s, tool: { k: 'idle' } } : s
     case 'startMove':
       return { ...s, tool: { k: 'moving', id: a.id, dx: a.dx, dy: a.dy } }
+    case 'startMoveMany':
+      return { ...s, tool: { k: 'movingMany', items: a.items } }
+    case 'startPress':
+      return { ...s, tool: { k: 'pressing', sx0: a.sx, sy0: a.sy, x0: a.x, y0: a.y } }
     case 'startRelate':
       return { ...s, tool: { k: 'relating', fromId: a.fromId, fromField: a.fromField, from: a.from, cur: a.from } }
     case 'startPan':
       return { ...s, tool: { k: 'panning', sx: a.sx, sy: a.sy, tx0: s.view.tx, ty0: s.view.ty } }
     case 'startEndpoint':
-      return { ...s, tool: { k: 'endpointDown', relId: a.relId, end: a.end, sx0: a.sx, sy0: a.sy, cur: a.cur }, selection: { type: 'rel', id: a.relId, end: a.end } }
+      return { ...s, tool: { k: 'endpointDown', relId: a.relId, end: a.end, sx0: a.sx, sy0: a.sy, cur: a.cur }, selection: { type: 'rel', id: a.relId, end: a.end }, selected: { entities: [], rels: [a.relId] } }
     case 'pointerMove': {
       const tl = s.tool
+      if (tl.k === 'pressing') {
+        // promote to a marquee once the pointer travels past the click/drag threshold
+        if (Math.hypot(a.sx - tl.sx0, a.sy - tl.sy0) > THRESHOLD)
+          return { ...s, tool: { k: 'marquee', x0: tl.x0, y0: tl.y0, cur: a.world }, selection: null, selected: EMPTY_SET }
+        return s
+      }
+      if (tl.k === 'marquee') return { ...s, tool: { ...tl, cur: a.world } }
       if (tl.k === 'relating') return { ...s, tool: { ...tl, cur: a.world } }
       if (tl.k === 'rerouting') return { ...s, tool: { ...tl, cur: a.world } }
       if (tl.k === 'panning')
@@ -109,7 +148,7 @@ export function reducer(s: CanvasState, a: Action): CanvasState {
     case 'setNewId':
       return { ...s, newId: a.id }
     case 'escape':
-      return { ...s, tool: { k: 'idle' }, selection: null }
+      return { ...s, tool: { k: 'idle' }, selection: null, selected: EMPTY_SET }
     default:
       return s
   }

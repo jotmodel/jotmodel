@@ -99,3 +99,14 @@ on the thing it changes** — no menus, no drawers.
   untouched. The glide is driven by a **timer, not `requestAnimationFrame`** (rAF pauses on hidden
   tabs, which would leave the room un-made). *(Chosen over floating the controls off the line — the
   user preferred moving the tables.)*
+- **Marquee (drag-select).** **Press empty canvas and drag** → a signal-coloured rectangle follows
+  the cursor; on release, every entity it overlaps and every relationship whose line it crosses
+  becomes selected. A press that **releases without moving** still opens the create name box — the
+  click-create flow is unchanged, it just fires on mouse-up once we know it wasn't a drag (≤5px =
+  click, >5px = marquee). The selected **group moves together** (drag any member's header) and
+  **deletes together** (`Delete`/`Backspace`); the group stays selected after a move. Pressing a
+  member keeps the group so a drag moves it all, but a **plain click on a member collapses** the
+  selection to just that card (Figma-style). *Keyboard:* `⌘/Ctrl-A` selects all · `Esc` clears ·
+  `Delete` removes the group. *(Selection is multi: `selected = {entities, rels}`; a single active
+  selection — the one that still shows inline rel controls / rename-on-Enter — exists only when
+  exactly one thing is selected, so a multi-marquee shows highlight without per-item controls.)*

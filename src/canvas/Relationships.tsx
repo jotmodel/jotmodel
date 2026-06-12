@@ -11,6 +11,9 @@ interface Props {
   pushOffsets: Map<string, { dx: number; dy: number }>
   temp: { x1: number; y1: number; x2: number; y2: number } | null
   selected: { id: string; end: 'from' | 'to' | null } | null
+  // Rels in the multi-select group: highlighted like a single selection, but without the inline
+  // controls (those only make sense for one active rel — see `selected`).
+  groupSelected: string[]
   onSelectRel: (id: string, end?: 'from' | 'to' | null) => void
   onDeleteRel: (id: string) => void
   onEndpointDown: (relId: string, end: 'from' | 'to', e: React.MouseEvent) => void
@@ -46,7 +49,7 @@ function cardLabel(from: Card, to: Card): string {
 }
 
 export function Relationships(props: Props) {
-  const { entities, rels, sizes, pushOffsets, temp, selected } = props
+  const { entities, rels, sizes, pushOffsets, temp, selected, groupSelected } = props
   const rectById = new Map<string, Rect>(entities.map(e => {
     const r = rectOf(e, sizes)
     const o = pushOffsets.get(e.id)
@@ -69,7 +72,7 @@ export function Relationships(props: Props) {
         const ea = entById.get(r.fromId), eb = entById.get(r.toId)
         if (!ra || !rb || !ea || !eb) return null
         const isSel = selected?.id === r.id
-        const cls = 'rg' + (isSel ? ' sel' : '')
+        const cls = 'rg' + (isSel || groupSelected.includes(r.id) ? ' sel' : '')
 
         // ---- self-loop ----
         if (r.fromId === r.toId) {

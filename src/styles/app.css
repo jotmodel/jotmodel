@@ -70,6 +70,10 @@ body{
 .hint b{color:var(--jm-signal)}
 .hint .hint-kbd{font-size:11px;opacity:.8}
 
+/* marquee (drag-select rectangle) — chrome, so signal-coloured; sits under cards + lines */
+.marquee{position:absolute;z-index:0;pointer-events:none;background:var(--jm-signal-weak);
+  border:1px solid var(--jm-signal);border-radius:var(--jm-r-sm)}
+
 /* name box */
 .namebox{
   position:absolute;z-index:6;background:var(--jm-surface);border:1px solid var(--jm-signal);

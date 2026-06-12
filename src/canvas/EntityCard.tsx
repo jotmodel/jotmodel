@@ -9,7 +9,7 @@ export interface EntityCardProps {
   autoFocusFields: boolean
   offset: { dx: number; dy: number } | null
   onMeasure: (id: string, el: HTMLElement | null) => void
-  onSelect: () => void
+  onSelect: (e: React.MouseEvent) => void
   onStartMove: (e: React.MouseEvent) => void
   onStartRelate: (e: React.MouseEvent) => void
   onFieldPointerDown: (fieldId: string, e: React.MouseEvent) => void
@@ -54,7 +54,7 @@ export function EntityCard(props: EntityCardProps) {
         // non-zero so it never clobbers the .pop entrance animation's transform.
         transform: props.offset ? `translate(${props.offset.dx}px, ${props.offset.dy}px)` : undefined,
       }}
-      onMouseDown={(e) => { e.stopPropagation(); props.onSelect() }}
+      onMouseDown={(e) => { e.stopPropagation(); props.onSelect(e) }}
     >
       <div
         className="ent-h"

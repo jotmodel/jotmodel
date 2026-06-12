@@ -16,6 +16,32 @@ interface Hit { entityId: string; fieldId: string | null }
 
 const nextCard = (c: Card): Card => (c === 'one' ? 'many' : 'one')
 
+// ---- marquee geometry (world units) ----
+interface Box { x: number; y: number; w: number; h: number }
+const boxFrom = (x0: number, y0: number, x1: number, y1: number): Box =>
+  ({ x: Math.min(x0, x1), y: Math.min(y0, y1), w: Math.abs(x1 - x0), h: Math.abs(y1 - y0) })
+const boxesOverlap = (a: Box, b: Box) =>
+  a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+const ptInBox = (px: number, py: number, b: Box) =>
+  px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h
+// Proper-crossing test for segments AB and CD.
+function segCross(ax: number, ay: number, bx: number, by: number, cx: number, cy: number, dx: number, dy: number) {
+  const d1 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+  const d2 = (bx - ax) * (dy - ay) - (by - ay) * (dx - ax)
+  const d3 = (dx - cx) * (ay - cy) - (dy - cy) * (ax - cx)
+  const d4 = (dx - cx) * (by - cy) - (dy - cy) * (bx - cx)
+  return (d1 > 0) !== (d2 > 0) && (d3 > 0) !== (d4 > 0)
+}
+// Does segment AB touch box B (endpoint inside, or crossing any edge)?
+function segHitsBox(ax: number, ay: number, bx: number, by: number, b: Box) {
+  if (ptInBox(ax, ay, b) || ptInBox(bx, by, b)) return true
+  const r = b.x + b.w, bot = b.y + b.h
+  return segCross(ax, ay, bx, by, b.x, b.y, r, b.y) ||
+    segCross(ax, ay, bx, by, r, b.y, r, bot) ||
+    segCross(ax, ay, bx, by, r, bot, b.x, bot) ||
+    segCross(ax, ay, bx, by, b.x, bot, b.x, b.y)
+}
+
 export function Canvas({ board, entities, rels }: { board: Board; entities: Entity[]; rels: Relationship[] }) {
   const doc = board.doc
   const stageRef = useRef<HTMLDivElement>(null)
@@ -36,6 +62,9 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
   const spaceRef = useRef(false)
   const pendingRelate = useRef<{ fromId: string; fromField: string; from: Pt; sx: number; sy: number } | null>(null)
   const renameRef = useRef<string | null>(null)
+  // Press on a member of a multi-selection: keep the group (so a drag moves it all), but if the
+  // pointer is released without dragging, collapse the selection to just that card on mouseup.
+  const collapseRef = useRef<{ id: string; sx: number; sy: number } | null>(null)
   // Entity that should focus its field input once its name is committed (relate-create flow).
   const pendingFieldsRef = useRef<string | null>(null)
   // Animated "make room" push: target offsets per entity, plus a 0→1 glide amount.
@@ -58,6 +87,31 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     return { entityId: card.dataset.entityId!, fieldId: row?.dataset.fieldId ?? null }
   }
   const entityById = (id: string) => entitiesRef.current.find(e => e.id === id) || null
+
+  // Everything the marquee box (world units) touches: entities whose rect it overlaps, and rels
+  // whose line it crosses (approximated by the segment between the two tables' centres; a self-loop
+  // counts when the box meets its table).
+  function marqueeHits(x0: number, y0: number, x1: number, y1: number): { entities: string[]; rels: string[] } {
+    const box = boxFrom(x0, y0, x1, y1)
+    const entities: string[] = []
+    for (const e of entitiesRef.current) {
+      const r = rectOf(e, sizesRef.current)
+      if (boxesOverlap(box, { x: r.x, y: r.y, w: r.w, h: r.h })) entities.push(e.id)
+    }
+    const rels: string[] = []
+    for (const rel of relsRef.current) {
+      const ea = entityById(rel.fromId), eb = entityById(rel.toId)
+      if (!ea || !eb) continue
+      if (rel.fromId === rel.toId) {
+        const r = rectOf(ea, sizesRef.current)
+        if (boxesOverlap(box, { x: r.x, y: r.y, w: r.w, h: r.h })) rels.push(rel.id)
+        continue
+      }
+      const ra = rectOf(ea, sizesRef.current), rb = rectOf(eb, sizesRef.current)
+      if (segHitsBox(ra.cx, ra.cy, rb.cx, rb.cy, box)) rels.push(rel.id)
+    }
+    return { entities, rels }
+  }
 
   // ---- measuring (content-sized cards → relationship anchors track real width) ----
   function ensureRO(): ResizeObserver {
@@ -105,6 +159,9 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     function onMove(ev: MouseEvent) {
       const p = screenToWorld(ev.clientX, ev.clientY)
       const tl = stateRef.current.tool
+      // Any real drag cancels the pending click-collapse — the press was a move, not a click.
+      const cc = collapseRef.current
+      if (cc && Math.hypot(p.sx - cc.sx, p.sy - cc.sy) > 5) collapseRef.current = null
       // field-drag becomes a relate once it passes the threshold
       const pr = pendingRelate.current
       if (pr && Math.hypot(p.sx - pr.sx, p.sy - pr.sy) > 5) {
@@ -113,6 +170,8 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       }
       if (tl.k === 'moving') {
         moveEntity(doc, tl.id, p.x - tl.dx, p.y - tl.dy)
+      } else if (tl.k === 'movingMany') {
+        for (const it of tl.items) moveEntity(doc, it.id, p.x - it.dx, p.y - it.dy)
       }
       dispatch({ t: 'pointerMove', world: { x: p.x, y: p.y }, sx: p.sx, sy: p.sy, ddx: 0, ddy: 0 })
     }
@@ -120,6 +179,13 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       const tl = stateRef.current.tool
       const p = screenToWorld(ev.clientX, ev.clientY)
       pendingRelate.current = null
+      // Released on a group member without dragging → collapse selection to just that card.
+      if (collapseRef.current) {
+        dispatch({ t: 'selectEntity', id: collapseRef.current.id })
+        collapseRef.current = null
+        dispatch({ t: 'endTool' })
+        return
+      }
       if (tl.k === 'relating') {
         const hit = hitTest(ev.clientX, ev.clientY)
         const role = tl.fromField ? fieldName(tl.fromId, tl.fromField) : null
@@ -136,6 +202,15 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
       } else if (tl.k === 'rerouting') {
         const hit = hitTest(ev.clientX, ev.clientY)
         if (hit) setRelationshipEnd(doc, tl.relId, tl.end, hit.entityId, hit.fieldId)
+      } else if (tl.k === 'pressing') {
+        // pressed empty canvas and released without dragging → the create-flow name box
+        dispatch({ t: 'openName', at: { x: tl.x0, y: tl.y0 } })
+        return
+      } else if (tl.k === 'marquee') {
+        const caught = marqueeHits(tl.x0, tl.y0, p.x, p.y)
+        dispatch({ t: 'setSelected', entities: caught.entities, rels: caught.rels })
+        dispatch({ t: 'endTool' })
+        return
       }
       dispatch({ t: 'endTool' })
     }
@@ -150,13 +225,22 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
         return
       }
       if (meta && (ev.key === 'y' || ev.key === 'Y')) { if (!typing) { ev.preventDefault(); board.undo.redo() } return }
+      if (meta && (ev.key === 'a' || ev.key === 'A')) {
+        if (typing) return
+        ev.preventDefault()
+        dispatch({ t: 'setSelected', entities: entitiesRef.current.map(e => e.id), rels: relsRef.current.map(r => r.id) })
+        return
+      }
       if (typing) return
       const sel = stateRef.current.selection
+      const seld = stateRef.current.selected
       if (ev.key === 'Escape') { dispatch({ t: 'escape' }); renameRef.current = null; dupRef.current = null; forceUi(); return }
       if (ev.key === ' ') { spaceRef.current = true; if (stageRef.current) stageRef.current.style.cursor = 'grab' }
-      if ((ev.key === 'Delete' || ev.key === 'Backspace') && sel) {
-        if (sel.type === 'entity') deleteEntity(doc, sel.id)
-        else deleteRelationship(doc, sel.id)
+      if ((ev.key === 'Delete' || ev.key === 'Backspace') && (seld.entities.length || seld.rels.length)) {
+        // Delete the whole selected group. Rels first, then entities (deleting an entity also
+        // sweeps its own rels). Within the 350ms capture window this is one undo step.
+        for (const id of seld.rels) deleteRelationship(doc, id)
+        for (const id of seld.entities) deleteEntity(doc, id)
         dispatch({ t: 'clearSel' }); return
       }
       if (sel?.type === 'entity' && (ev.key === 'Enter' || ev.key === 'F2')) {
@@ -286,19 +370,43 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
     const p = screenToWorld(ev.clientX, ev.clientY)
     if (spaceRef.current || ev.button === 1) { ev.preventDefault(); dispatch({ t: 'startPan', sx: p.sx, sy: p.sy }); return }
     if (ev.button !== 0) return
-    // Keep the browser from moving focus to <body> on mouseup, so the name input's
-    // focus (set on mount) sticks instead of being yanked away.
+    // Keep the browser from moving focus to <body> / starting a text selection; the name
+    // input set on mount then keeps its focus. A bare press waits: release-in-place opens the
+    // name box (create), drag-past-threshold becomes a marquee selection (see onUp / pointerMove).
     ev.preventDefault()
-    dispatch({ t: 'openName', at: { x: p.x, y: p.y } })
+    dispatch({ t: 'startPress', sx: p.sx, sy: p.sy, x: p.x, y: p.y })
     dupRef.current = null
   }
 
   // ---- card callbacks ----
-  function onCardSelect(id: string) { dispatch({ t: 'selectEntity', id }) }
+  function inGroup(id: string) {
+    const sd = stateRef.current.selected
+    return sd.entities.includes(id) && sd.entities.length + sd.rels.length > 1
+  }
+  // Pressing a card that's already part of a multi-selection keeps the group (so a drag can move
+  // it all); a release without dragging then collapses to just that card (see onUp). Pressing any
+  // other card selects just that one immediately.
+  function onCardSelect(id: string, ev: React.MouseEvent) {
+    if (inGroup(id)) {
+      const p = screenToWorld(ev.clientX, ev.clientY)
+      collapseRef.current = { id, sx: p.sx, sy: p.sy }
+    } else {
+      collapseRef.current = null
+      dispatch({ t: 'selectEntity', id })
+    }
+  }
   function onCardMove(e: Entity, ev: React.MouseEvent) {
     const p = screenToWorld(ev.clientX, ev.clientY)
-    dispatch({ t: 'selectEntity', id: e.id })
-    dispatch({ t: 'startMove', id: e.id, dx: p.x - e.x, dy: p.y - e.y })
+    if (inGroup(e.id)) {
+      const items = stateRef.current.selected.entities.map(id => {
+        const en = entityById(id)
+        return { id, dx: p.x - (en?.x ?? 0), dy: p.y - (en?.y ?? 0) }
+      })
+      dispatch({ t: 'startMoveMany', items })
+    } else {
+      dispatch({ t: 'selectEntity', id: e.id })
+      dispatch({ t: 'startMove', id: e.id, dx: p.x - e.x, dy: p.y - e.y })
+    }
   }
   function onCardRelateHandle(e: Entity) {
     dispatch({ t: 'startRelate', fromId: e.id, fromField: null, from: edgeAnchorWorld(e) })
@@ -368,6 +476,7 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           pushOffsets={pushed}
           temp={temp}
           selected={state.selection?.type === 'rel' ? state.selection : null}
+          groupSelected={state.selected.rels}
           onSelectRel={(id, end) => dispatch({ t: 'selectRel', id, end })}
           onDeleteRel={(id) => { deleteRelationship(doc, id); dispatch({ t: 'clearSel' }) }}
           onEndpointDown={onEndpointDown}
@@ -375,17 +484,23 @@ export function Canvas({ board, entities, rels }: { board: Board; entities: Enti
           onEditRole={(id, role) => setRelationshipRole(doc, id, role)}
         />
 
+        {state.tool.k === 'marquee' && (() => {
+          const t = state.tool
+          const b = boxFrom(t.x0, t.y0, t.cur.x, t.cur.y)
+          return <div className="marquee" style={{ left: b.x, top: b.y, width: b.w, height: b.h }} />
+        })()}
+
         {entities.map((e) => (
           <EntityCard
             key={e.id}
             entity={e}
-            selected={state.selection?.type === 'entity' && state.selection.id === e.id}
+            selected={state.selected.entities.includes(e.id)}
             dragging={movingId === e.id}
             renaming={renameRef.current === e.id}
             autoFocusFields={e.id === state.newId}
             offset={pushed.get(e.id) ?? null}
             onMeasure={measure}
-            onSelect={() => onCardSelect(e.id)}
+            onSelect={(ev) => onCardSelect(e.id, ev)}
             onStartMove={(ev) => onCardMove(e, ev)}
             onStartRelate={() => onCardRelateHandle(e)}
             onFieldPointerDown={(fieldId, ev) => onFieldPointerDown(e, fieldId, ev)}
