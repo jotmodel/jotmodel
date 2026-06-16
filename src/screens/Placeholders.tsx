@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { SignedIn, SignedOut, useClerk } from '@clerk/clerk-react'
 import { ScaffoldScreen } from './Scaffold'
 import { Mark, Wordmark } from '../ui/Brand'
 
@@ -6,15 +8,19 @@ import { Mark, Wordmark } from '../ui/Brand'
 // Not routed in Phase 1; kept as honest starting points (CLAUDE.md: scaffold, don't invent).
 
 /** A routed full-screen status (404 / forbidden / offline). Scaffold — pending design review. */
-function StatusScreen({ code, title, body }: { code: string; title: string; body: string }) {
+function StatusScreen({ code, title, body, actions }: {
+  code: string; title: string; body: string; actions?: ReactNode
+}) {
   return (
     <div className="status-screen">
+      {/* the Mark is the smallest data model — a calm, monochrome 'empty board' backdrop (law 1/6) */}
+      <span className="status-bg-mark" aria-hidden="true"><Mark /></span>
       <Link to="/" className="status-brand" aria-label="Home"><Mark /><Wordmark /></Link>
       <div className="status-card">
         <span className="status-code">{code}</span>
         <h1>{title}</h1>
         <p className="muted">{body}</p>
-        <Link to="/" className="btn primary">Back to your boards</Link>
+        {actions ?? <Link to="/" className="btn btn-primary">Back to your boards</Link>}
       </div>
     </div>
   )
@@ -24,14 +30,31 @@ export const NotFound = () => (
   <StatusScreen code="404" title="Not found" body="That board or page doesn’t exist — it may have been deleted or the link is wrong." />
 )
 export const Forbidden = () => (
-  <StatusScreen code="403" title="No access" body="You don’t have permission to open this board. Ask the owner for an invite or a share link." />
+  <StatusScreen
+    code="403"
+    title="No access"
+    body="This board is private, or it’s shared with a different account than the one you’re signed into."
+    actions={
+      <>
+        <SignedOut>
+          <Link to="/sign-in" className="btn btn-primary">Sign in</Link>
+        </SignedOut>
+        <SignedIn>
+          <Link to="/" className="btn btn-primary">Back to your boards</Link>
+          <SwitchAccount />
+        </SignedIn>
+      </>
+    }
+  />
 )
 
-export const Home = () => (
-  <ScaffoldScreen title="Your boards">
-    <p className="muted">Board list, search, and “new board” (Phase 2). Pending design review.</p>
-  </ScaffoldScreen>
-)
+/** Quiet escape hatch on a 403: sign out so the user can come back as a different account. */
+function SwitchAccount() {
+  const clerk = useClerk()
+  return <button className="linklike" onClick={() => clerk.signOut()}>Switch account</button>
+}
+
+// NOTE: the live, routed Home is src/screens/Home.tsx (a real board index). No placeholder Home here.
 export const Settings = () => (
   <ScaffoldScreen title="Settings">
     <p className="muted">Account, theme, and preferences. Pending design review.</p>

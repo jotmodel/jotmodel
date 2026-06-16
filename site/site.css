@@ -62,7 +62,8 @@ h1, h2, h3 {
 h2 { font-size: clamp(26px, 3.6vw, 38px); letter-spacing: -.028em; }
 h3 { font-size: 17px; margin: 0 0 var(--jm-1); }
 p { margin: 0 0 var(--jm-3); color: var(--jm-text-mid); }
-.muted { color: var(--jm-text-mid); font-weight: 600; }
+/* headline emphasis (the second clause of a hero h2) — NOT the app's quiet-text .muted */
+.h-accent { color: var(--jm-text-mid); font-weight: 600; }
 
 code {
   font-family: var(--jm-mono);

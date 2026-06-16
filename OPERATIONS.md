@@ -75,12 +75,34 @@ the deploy quick-start is in `README.md`.
    negative-cache). Verify on a clean resolver / cellular, or `echo "104.18.34.146
    clerk.jotmodel.com" >> /etc/hosts` then run via Playwright: sign in → create board → reload
    persists → open in 2 browsers (presence cursors converge) → share-link viewer is read-only.
-3. **Design-review sign-off** (CLAUDE.md law 8) still pending for the new surfaces built from tokens:
-   Home/board-list, themed Clerk auth, ShareDialog, 404/403, the view-only canvas affordance, the
-   presence interaction, and the whole marketing site.
+3. **Design-review pass (in progress).** Objective contract-compliance fixes done across all surfaces
+   (wordmark typeface scoping, modal Esc/focus-trap, menu/toggle ARIA, missing review flags, stray
+   colour/JS literals, read-only dead tab-stop, reduced-motion guard). Added a sanctioned chrome
+   danger layer `--jm-danger*` to both `tokens.css` (PROVISIONAL hues `#C9362C`/`#F2766B` — safe to
+   re-tune). Amended law 7 (Space Grotesk = wordmark **+** the create-flow `.namebox`).
+   **Signed off (on branch `design-review-pass`, not yet merged to `main`):** presence (new palette
+   w/ dark values + per-colour ink + every hue ΔE≥25 from `--jm-signal`; top-bar roster;
+   deterministic anon names; cursor smoothing), view-only (on-canvas cue, Share hidden for viewers,
+   selection kept for inspection), Home/board-list v1 (monochrome row icons, danger-token delete,
+   canvas board-title rename), ShareDialog (link summary + revoke, flag dropped), 404/403/error
+   (faint Mark backdrop, auth-aware 403 recovery), and the button-class + `.muted` cross-surface
+   seams. **Still pending:** themed Clerk auth, marketing-site ratification, presence halo
+   attribution, and the remaining seams (single-source brand mark, app-vs-site cursor glyph, unified
+   status/loading frame, toggle padding).
 4. Optional: broaden the CI token (Workers Routes + DNS + D1 + R2 edit) to auto-deploy the worker
    too; add error tracking/analytics (Cloudflare Web Analytics snippet is commented in `index.html`).
 5. `develop` branch is behind `main` — fast-forward it if you keep using it.
+6. **Flat "projects" (board grouping) — captured, not yet built.** One level: a board belongs to at
+   most one project; Home shows a project list + an "All boards" view. Scope:
+   - **D1:** new `projects` table (`id`, `owner_id`, `name`, `created_at`) + a nullable
+     `boards.project_id` (NULL = root / "All boards"); index on `project_id`. Apply to remote with
+     `npm run db:remote`.
+   - **API / worker:** list/create/rename/delete projects (owner-scoped ACL like boards); `listBoards`
+     returns `project_id`; add a "move board to project" endpoint. New routes in `worker/rest.ts` →
+     needs a **manual worker deploy** (see CI/CD note above).
+   - **UI (Home):** project list + "All boards", create project, rename via **double-click** (the
+     sanctioned rename gesture), move a board into a project. Extends the existing Home v1 list.
+   - Already live: rename-by-double-click on Home rows **and** the canvas board title (top bar).
 
 ## Verify current state next session
 

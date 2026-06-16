@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
           <span className="status-code">error</span>
           <h1>Something broke</h1>
           <p className="muted">An unexpected error occurred. Reloading usually fixes it — your board is saved locally.</p>
-          <button className="btn primary" onClick={() => location.reload()}>Reload</button>
+          <button className="btn btn-primary" onClick={() => location.reload()}>Reload</button>
         </div>
       </div>
     )

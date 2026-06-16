@@ -5,8 +5,8 @@ import type { Board } from '../model/board'
 import { api, type GetToken, type Role } from '../lib/api'
 
 /**
- * Share. Owners can mint a role-scoped, optionally-expiring link (capability token); everyone
- * keeps the portable, local-first `.jotmodel` file. Final link visuals pending design review.
+ * Share. Owners can mint a role-scoped, optionally-expiring link (capability token), see what it
+ * grants, and revoke it; everyone keeps the portable, local-first `.jotmodel` file.
  */
 export function ShareDialog({ board, boardId, getToken, role, onClose }: {
   board: Board
@@ -18,7 +18,7 @@ export function ShareDialog({ board, boardId, getToken, role, onClose }: {
   const canLink = !!(boardId && getToken && role === 'owner')
   const [linkRole, setLinkRole] = useState<'viewer' | 'editor'>('viewer')
   const [expires, setExpires] = useState('0')
-  const [link, setLink] = useState<string | null>(null)
+  const [minted, setMinted] = useState<{ url: string; token: string; role: 'viewer' | 'editor'; days: number } | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -29,16 +29,24 @@ export function ShareDialog({ board, boardId, getToken, role, onClose }: {
     try {
       const days = Number(expires) || undefined
       const res = await api.createShare(getToken, boardId, linkRole, days)
-      setLink(res.url)
+      setMinted({ url: res.url, token: res.token, role: linkRole, days: days ?? 0 })
     } catch (e: any) { setError(e.message ?? String(e)) } finally { setBusy(false) }
   }
-  async function copy() {
-    if (!link) return
-    try { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
+  async function revoke() {
+    if (!minted || !boardId || !getToken) return
+    setBusy(true); setError(null)
+    try { await api.revokeShare(getToken, boardId, minted.token); setMinted(null); setCopied(false) }
+    catch (e: any) { setError(e.message ?? String(e)) } finally { setBusy(false) }
   }
+  async function copy() {
+    if (!minted) return
+    try { await navigator.clipboard.writeText(minted.url); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
+  }
+  const summary = (m: NonNullable<typeof minted>) =>
+    `Anyone with the link can ${m.role === 'editor' ? 'edit' : 'view'} · ${m.days ? `expires in ${m.days} day${m.days === 1 ? '' : 's'}` : 'never expires'}`
 
   return (
-    <ScaffoldModal title="Share" onClose={onClose}>
+    <ScaffoldModal title="Share" onClose={onClose} flagged={false}>
       <div className="stack">
         <p className="muted">Send a link, or take the model anywhere as a portable file.</p>
 
@@ -60,15 +68,22 @@ export function ShareDialog({ board, boardId, getToken, role, onClose }: {
                   <option value="30">in 30 days</option>
                 </select>
               </label>
-              <button className="btn primary" onClick={createLink} disabled={busy}>
+              <button className="btn btn-primary" onClick={createLink} disabled={busy}>
                 {busy ? 'Creating…' : 'Create link'}
               </button>
             </div>
             {error && <p className="home-error">{error}</p>}
-            {link && (
-              <div className="share-link">
-                <input readOnly value={link} onFocus={e => e.target.select()} />
-                <button className="btn" onClick={copy}>{copied ? 'Copied' : 'Copy'}</button>
+            {minted && (
+              <div className="stack">
+                <p className="hint-note">{summary(minted)}</p>
+                <div className="share-link">
+                  <input readOnly value={minted.url} onFocus={e => e.target.select()} />
+                  <button className="btn" onClick={copy}>{copied ? 'Copied' : 'Copy'}</button>
+                </div>
+                <div className="row-between">
+                  <span className="small">Anyone who already has this link will lose access.</span>
+                  <button className="linklike" onClick={revoke} disabled={busy}>Revoke link</button>
+                </div>
               </div>
             )}
           </>
@@ -84,7 +99,6 @@ export function ShareDialog({ board, boardId, getToken, role, onClose }: {
         <button className="btn" onClick={() => { download('board.jotmodel', exportJotmodel(board.doc)); onClose() }}>
           Download .jotmodel
         </button>
-        <p className="hint-note">Scaffold — final share visuals pending design review.</p>
       </div>
     </ScaffoldModal>
   )

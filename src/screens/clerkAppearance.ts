@@ -13,7 +13,7 @@ export const clerkAppearance = {
     colorBackground: 'var(--jm-surface)',
     colorInputBackground: 'var(--jm-surface)',
     colorInputText: 'var(--jm-text)',
-    colorDanger: 'var(--sem-rose)',
+    colorDanger: 'var(--jm-danger)',
     fontFamily: 'var(--jm-ui)',
     borderRadius: 'var(--jm-r-md)',
   },

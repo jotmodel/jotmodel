@@ -45,8 +45,15 @@
 
   --jm-shadow-card:0 1px 2px rgba(16,20,30,.06), 0 4px 14px rgba(16,20,30,.05);
   --jm-shadow-pop: 0 12px 32px rgba(16,20,30,.14);
+  --jm-shadow-cursor:0 1px 1px rgba(16,20,30,.28);  /* presence cursor keyline */
   --jm-ring:0 0 0 3px rgba(58,99,216,.28);
   --jm-scrim: rgba(16,20,30,.32);  /* modal overlay */
+
+  /* destructive / error — a sanctioned chrome accent (sibling of --jm-signal), NEVER on content.
+     PROPOSED hues, pending design sign-off; adjust freely (raw hex is the human's call, law 7). */
+  --jm-danger:      #C9362C;  /* delete/error icon + border */
+  --jm-danger-weak: #FBEAE8;  /* error banner fill */
+  --jm-danger-text: #A82A22;  /* error text on light surface */
 }
 
 /* ---------- DARK ---------- */
@@ -71,8 +78,14 @@
 
   --jm-shadow-card:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
   --jm-shadow-pop: 0 14px 40px rgba(0,0,0,.55);
+  --jm-shadow-cursor:0 1px 2px rgba(0,0,0,.5);
   --jm-ring:0 0 0 3px rgba(94,134,245,.32);
   --jm-scrim: rgba(0,0,0,.55);
+
+  /* destructive / error — tuned lighter for the dark canvas (see light block) */
+  --jm-danger:      #F2766B;
+  --jm-danger-weak: rgba(242,118,107,.16);
+  --jm-danger-text: #FCA59B;
 }
 
 /* ============================================================
@@ -95,8 +108,22 @@
    Never on content fills (that's --sem-*), never on chrome (that's --jm-signal*).
    A separate layer on purpose, so it can't be confused with either.
    ============================================================ */
-:root{
-  --jm-presence-1:#E8590C; --jm-presence-2:#0CA678; --jm-presence-3:#7048E8;
-  --jm-presence-4:#1098AD; --jm-presence-5:#E64980; --jm-presence-6:#F08C00;
-  --jm-presence-7:#4263EB; --jm-presence-8:#2F9E44;
+/* Each identity hue ships a paired ink (--jm-presence-N-ink) so the name pill always clears WCAG
+   AA, and a tuned dark set so the layer is a designed equal in both themes (law 6). Every hue sits
+   ΔE>=25 from --jm-signal so a peer is never mistaken for the interaction accent (law 2). */
+:root, [data-theme="light"]{
+  --jm-presence-1:#E8590C; --jm-presence-2:#0E9E6E; --jm-presence-3:#8A3FE0;
+  --jm-presence-4:#0E8DA8; --jm-presence-5:#E6457E; --jm-presence-6:#D97A00;
+  --jm-presence-7:#C42E9B; --jm-presence-8:#19833A;
+  --jm-presence-1-ink:#15181D; --jm-presence-2-ink:#15181D; --jm-presence-3-ink:#FFFFFF;
+  --jm-presence-4-ink:#15181D; --jm-presence-5-ink:#15181D; --jm-presence-6-ink:#15181D;
+  --jm-presence-7-ink:#FFFFFF; --jm-presence-8-ink:#FFFFFF;
+}
+[data-theme="dark"]{
+  --jm-presence-1:#FF7A45; --jm-presence-2:#2DD4A0; --jm-presence-3:#C77DF0;
+  --jm-presence-4:#3FBFD9; --jm-presence-5:#FF6FA3; --jm-presence-6:#F0A93B;
+  --jm-presence-7:#E879CE; --jm-presence-8:#5BC46B;
+  --jm-presence-1-ink:#15181D; --jm-presence-2-ink:#15181D; --jm-presence-3-ink:#15181D;
+  --jm-presence-4-ink:#15181D; --jm-presence-5-ink:#15181D; --jm-presence-6-ink:#15181D;
+  --jm-presence-7-ink:#15181D; --jm-presence-8-ink:#15181D;
 }

@@ -50,8 +50,9 @@
   function after(ms, fn) { timers.push(setTimeout(fn, ms)); }
 
   function relColor() {
+    // --jm-rel always resolves once tokens.css is loaded; currentColor is a theme-safe fallback
     return getComputedStyle(document.documentElement)
-      .getPropertyValue('--jm-rel').trim() || '#C2C7D0';
+      .getPropertyValue('--jm-rel').trim() || 'currentColor';
   }
 
   function px(frac, axis) {

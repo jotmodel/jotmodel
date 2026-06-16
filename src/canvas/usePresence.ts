@@ -8,6 +8,7 @@ export interface Peer {
   clientId: number
   name: string
   color: string
+  ink: string
   cursor: { x: number; y: number } | null
   selection: SelSet
 }
@@ -15,7 +16,22 @@ export interface Peer {
 /** Deterministic per-client identity colour from the sanctioned presence palette (law 2 — this
  *  is the ONE place a third colour layer is allowed; never on content or chrome). */
 export function presenceColor(clientId: number): string {
-  return `var(--jm-presence-${(Math.abs(clientId) % 8) + 1})`
+  return `var(--jm-presence-${presenceSlot(clientId)})`
+}
+
+/** The paired pill-text ink for that identity colour — guarantees WCAG AA on the name pill in
+ *  both themes (each slot's ink is black-or-white per the palette, defined in tokens.css). */
+export function presenceInk(clientId: number): string {
+  return `var(--jm-presence-${presenceSlot(clientId)}-ink)`
+}
+
+const presenceSlot = (clientId: number) => (Math.abs(clientId) % 8) + 1
+
+/** Friendly, deterministic display name for an anonymous peer, so several guests are told apart by
+ *  more than colour alone (pairs with the per-client presence colour). */
+const GUEST_NAMES = ['Otter', 'Finch', 'Maple', 'Heron', 'Sable', 'Wren', 'Cedar', 'Lark', 'Fox', 'Moth', 'Reed', 'Vale']
+export function guestName(clientId: number): string {
+  return `Guest · ${GUEST_NAMES[Math.abs(clientId) % GUEST_NAMES.length]}`
 }
 
 /** Live connection state for the quiet top-bar dot. Null when there is no relay (local-only). */
@@ -44,16 +60,20 @@ export function usePresence(awareness: Awareness | null, name: string) {
 
   useEffect(() => {
     if (!awareness) { setPeers([]); return }
-    awareness.setLocalStateField('user', { name, color: presenceColor(awareness.clientID) })
+    const localName = name && name !== 'Guest' ? name : guestName(awareness.clientID)
+    awareness.setLocalStateField('user', {
+      name: localName, color: presenceColor(awareness.clientID), ink: presenceInk(awareness.clientID),
+    })
     const update = () => {
       const out: Peer[] = []
       awareness.getStates().forEach((state, clientId) => {
         if (clientId === awareness.clientID) return
-        const user = (state.user ?? {}) as { name?: string; color?: string }
+        const user = (state.user ?? {}) as { name?: string; color?: string; ink?: string }
         out.push({
           clientId,
-          name: user.name || 'Guest',
+          name: user.name || guestName(clientId),
           color: user.color || presenceColor(clientId),
+          ink: user.ink || presenceInk(clientId),
           cursor: (state.cursor as { x: number; y: number } | undefined) ?? null,
           selection: (state.selection as SelSet | undefined) ?? { entities: [], rels: [] },
         })

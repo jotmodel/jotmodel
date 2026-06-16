@@ -12,8 +12,9 @@ the code is the source of truth and you don't need it again. The always-on rules
 - **The one accent:** `--jm-signal`, `--jm-signal-weak`, `--jm-signal-text`. Interaction only.
 - **Semantic palette (user color-coding):** `--sem-slate|cyan|teal|green|amber|orange|rose|violet`.
   **No plain blue** — blue is reserved for the interface.
-- **Type:** `--jm-ui` = Inter (UI + headings) · `--jm-display` = Space Grotesk (**wordmark only**)
-  · `--jm-mono` = JetBrains Mono (fields, types, code).
+- **Type:** `--jm-ui` = Inter (UI + headings) · `--jm-display` = Space Grotesk (**wordmark + the
+  create-flow name box** — `.namebox input`; nowhere else) · `--jm-mono` = JetBrains Mono (fields,
+  types, code).
 - **Space:** `--jm-1`…`--jm-16` (4px base). **Radius:** `--jm-r-sm|md|card|lg|pill`.
   **Motion:** `--jm-dur-fast|dur`, `--jm-ease`; entities pop in; feedback under ~200ms.
 - Metadata (`pk`, `fk`, `timestamp`) is shown with **type and weight, never color** — badges stay
@@ -108,7 +109,9 @@ on the thing it changes** — no menus, no drawers.
 - **Delete a relationship.** Select the line → `Delete`/`Backspace`; mouse-only gets the `×` on the
   selected control lane (right of the `as …` field). Undo restores.
 - **Rename an entity or field.** **Double-click the name** → edit in place → `Enter` commits,
-  `Esc` cancels, `Tab` jumps to the next field. *Keyboard:* select → `Enter`/`F2`.
+  `Esc` cancels, `Tab` jumps to the next field. *Keyboard:* select → `Enter`/`F2`. This
+  double-click-to-rename (with `Enter`/`F2` parity) is the **consistent rename gesture app-wide** —
+  board titles (the top-bar title) and the board index's rows/projects rename the same way.
 - **Delete an entity or field.** Select → `Delete`; hover gives a far-corner `×` (entity) or
   row-end `×` (field). Deleting an entity removes its relationships. Undo restores — **no confirm
   dialog** (modals are friction).

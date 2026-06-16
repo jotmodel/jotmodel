@@ -190,9 +190,9 @@ export function EntityCard(props: EntityCardProps) {
                 <span className={'fn' + (f.type === 'pk' ? ' pk' : '')}>{f.name}</span>
                 <span
                   className="ty"
-                  role="button"
-                  tabIndex={0}
-                  title="Change type (click; ⇧-click to reverse)"
+                  role={props.readOnly ? undefined : 'button'}
+                  tabIndex={props.readOnly ? undefined : 0}
+                  title={props.readOnly ? undefined : 'Change type (click; ⇧-click to reverse)'}
                   onMouseDown={(e) => e.stopPropagation()}
                   onClick={(e) => { e.stopPropagation(); if (!props.readOnly) props.onCycleFieldType(f.id, e.shiftKey ? -1 : 1) }}
                   onDoubleClick={(e) => e.stopPropagation()}

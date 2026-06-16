@@ -30,7 +30,8 @@ reads **natural language**; it never requires conventions, syntax, or code. User
 6. **Light and dark are equals.** Every token has both; always declare `color-scheme`. Logo is
    monochrome.
 7. **`tokens.css` is the only palette.** No color/size literal in a component — raw hex lives only
-   there. Type: Inter = UI, Space Grotesk = wordmark only, JetBrains Mono = data.
+   there. Type: Inter = UI, JetBrains Mono = data, Space Grotesk = the wordmark **and** the
+   create-flow name box (the canvas's one branded typographic moment) — nowhere else.
 
 ## Proposing interactions (encouraged)
 

@@ -13,15 +13,19 @@ body{
   border-bottom:1px solid var(--jm-line);background:var(--jm-surface);
 }
 .topbar .mark{height:22px;color:var(--jm-text)}
-.topbar .wm{font-family:var(--jm-display);font-weight:600;font-size:16px;letter-spacing:-.01em}
-.topbar .wm b{font-weight:700}.topbar .wm span{color:var(--jm-text-mid);font-weight:500}
+/* wordmark — shared primitive (Brand.tsx); Space Grotesk wherever it appears (law 7), not just the top bar */
+.wm{font-family:var(--jm-display);font-weight:600;font-size:16px;letter-spacing:-.01em}
+.wm b{font-weight:700}.wm span{color:var(--jm-text-mid);font-weight:500}
 .topbar .sp{flex:1}
 .topbar .sep{width:1px;height:22px;background:var(--jm-line);margin:0 2px}
-.topbar .board-title{font-family:var(--jm-ui);font-weight:500;font-size:13px;color:var(--jm-text-mid);max-width:30ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .board-title{font-family:var(--jm-ui);font-weight:500;font-size:13px;color:var(--jm-text-mid);max-width:30ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:var(--jm-r-sm)}
+.topbar .board-title[tabindex]{cursor:text}
+.topbar .board-title[tabindex]:focus-visible{outline:none;box-shadow:var(--jm-ring)}
+.board-title-edit{font-family:var(--jm-ui);font-weight:500;font-size:13px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;max-width:30ch;padding:0;caret-color:var(--jm-signal)}
 .share-link{display:flex;gap:6px}
 .share-link input{flex:1;font-family:var(--jm-mono);font-size:11px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:7px 9px;outline:0}
 
-/* buttons — aligns with the design system: .btn + .btn.primary / .btn.ghost */
+/* buttons — design-system convention: .btn base + .btn-primary / .btn-icon / .btn-danger */
 .btn{
   font-family:var(--jm-ui);font-weight:600;font-size:13px;border-radius:var(--jm-r-md);
   padding:7px 13px;cursor:pointer;border:1px solid var(--jm-line-2);
@@ -29,10 +33,11 @@ body{
 }
 .btn:hover{border-color:var(--jm-signal)}
 .btn:focus-visible{outline:none;box-shadow:var(--jm-ring)}
-.btn.primary{background:var(--jm-signal);color:var(--jm-on-signal);border-color:transparent}
-.btn.primary:hover{filter:brightness(1.05)}
+.btn-primary{background:var(--jm-signal);color:var(--jm-on-signal);border-color:transparent}
+.btn-primary:hover{filter:brightness(1.05)}
 .btn:disabled{opacity:.45;cursor:default;border-color:var(--jm-line)}
-.btn.icon{padding:7px 9px;font-size:14px;line-height:1}
+.btn-icon{padding:7px 9px;font-size:14px;line-height:1}
+.btn-icon svg{display:block}
 .toggle{display:inline-flex;border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);overflow:hidden;font-family:var(--jm-mono);font-size:11px}
 .toggle button{padding:6px 11px;background:transparent;border:0;color:var(--jm-text-dim);cursor:pointer}
 .toggle button.on{background:var(--jm-text);color:var(--jm-bg)}
@@ -242,7 +247,8 @@ body{
 .cloud-form[disabled]{opacity:.55}
 .field{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;color:var(--jm-text)}
 .field select{font-family:var(--jm-ui);font-size:13px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:5px 8px}
-.btn.icon.danger{color:var(--sem-rose);border-color:var(--sem-rose);font-size:11px;font-weight:600;padding:6px 8px}
+.btn-danger{color:var(--jm-danger);border-color:var(--jm-danger);font-size:11px;font-weight:600;padding:6px 8px}
+.btn-danger:hover{border-color:var(--jm-danger)}
 .linklike{background:transparent;border:0;color:var(--jm-signal-text);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
 
 /* ---- auth screen (Clerk re-skinned) — scaffold, pending design review ---- */
@@ -258,7 +264,7 @@ body{
 .home-bar .sp{flex:1}
 .home-main{width:min(760px,92vw);margin:0 auto;padding:40px 0;flex:1}
 .home-title{font-family:var(--jm-ui);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--jm-text);margin:0 0 20px}
-.home-error{font-size:13px;color:var(--sem-rose);background:color-mix(in srgb,var(--sem-rose) 8%,transparent);border:1px solid color-mix(in srgb,var(--sem-rose) 30%,transparent);border-radius:var(--jm-r-md);padding:9px 12px}
+.home-error{font-size:13px;color:var(--jm-danger-text);background:var(--jm-danger-weak);border:1px solid color-mix(in srgb,var(--jm-danger) 30%,transparent);border-radius:var(--jm-r-md);padding:9px 12px}
 .board-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .board-row{display:flex;align-items:center;gap:8px;border:1px solid var(--jm-line);border-radius:var(--jm-r-md);background:var(--jm-surface);transition:border-color var(--jm-dur-fast)}
 .board-row:hover{border-color:var(--jm-line-2)}
@@ -271,11 +277,25 @@ body{
 
 /* ---- presence (multiplayer) — cursors + pills use ONLY the presence palette ---- */
 .presence-layer{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
-.peer-cursor{position:absolute;transform:translate(-2px,-2px);display:flex;align-items:flex-start;gap:0;will-change:left,top}
-.peer-cursor svg{display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+/* remote cursors are published throttled (~40ms); a short linear glide turns the steps into smooth
+   motion. Guarded by prefers-reduced-motion below. */
+.peer-cursor{position:absolute;transform:translate(-2px,-2px);display:flex;align-items:flex-start;gap:0;
+  will-change:left,top;transition:left var(--jm-dur-fast) linear,top var(--jm-dur-fast) linear}
+.peer-cursor svg{display:block;filter:drop-shadow(var(--jm-shadow-cursor))}
+/* pill text colour comes from the peer's paired ink (inline style, set in Presence.tsx); the
+   --jm-text fallback only applies if a peer somehow published no ink. */
 .peer-pill{margin:-1px 0 0 -2px;font-family:var(--jm-ui);font-weight:600;font-size:10.5px;line-height:1;
-  color:var(--jm-on-signal);padding:3px 7px;border-radius:var(--jm-r-pill);white-space:nowrap;
+  color:var(--jm-text);padding:3px 7px;border-radius:var(--jm-r-pill);white-space:nowrap;
   box-shadow:var(--jm-shadow-card)}
+
+/* presence roster (top bar) — overlapping peer chips; identity colour on the avatar (presence
+   layer) with its paired ink, neutral on the +N overflow. Scaffold — pending design review. */
+.roster{display:inline-flex;align-items:center;margin-right:2px}
+.roster .ava{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--jm-ui);font-weight:600;font-size:10px;line-height:1;
+  border:1.5px solid var(--jm-surface);margin-left:-6px;box-shadow:var(--jm-shadow-card)}
+.roster .ava:first-child{margin-left:0}
+.roster .ava-more{background:var(--jm-surface-2);color:var(--jm-text-mid)}
 
 /* connection status dot — chrome, so neutral/signal only (never semantic colours) */
 .conn{display:inline-flex;align-items:center;gap:6px;font-family:var(--jm-mono);font-size:10px;color:var(--jm-text-dim)}
@@ -284,11 +304,18 @@ body{
 .conn-dot.syncing,.conn-dot.connecting{background:var(--jm-signal);animation:conn-pulse 1.2s var(--jm-ease) infinite}
 .conn-dot.offline{background:var(--jm-text-dim)}
 @keyframes conn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* accessibility — stop the only continuous (infinite) chrome animation when the user opts out */
+@media (prefers-reduced-motion: reduce){
+  .conn-dot.syncing,.conn-dot.connecting{animation:none}
+  .peer-cursor{transition:none}
+}
 
 /* peer selection halo on an entity card (the colour comes from the peer, via inline style) */
 .ent.peer-haloed{transition:outline-color var(--jm-dur)}
 
-/* view-only board (a share viewer): hide every editing affordance, keep inspect/pan/select */
+/* view-only board (a share viewer): hide every editing affordance, but KEEP select/marquee/pan on
+   purpose — a viewer can highlight ("point at") a table or line while screen-sharing. The tag + cue
+   below are non-board chrome: scaffold, pending design review. */
 .stage.readonly{cursor:default}
 .ent.readonly .ent-x,.ent.readonly .handle,.ent.readonly .redge,
 .ent.readonly .addfield,.ent.readonly .fieldinput,.ent.readonly .row-x{display:none}
@@ -296,9 +323,18 @@ body{
 .ent.readonly .cdot,.ent.readonly .ty{cursor:default;pointer-events:none}
 .viewonly-tag{font-family:var(--jm-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
   color:var(--jm-text-dim);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);padding:3px 9px}
+/* on-canvas read-only cue — low corner, mirrors the zoom/conn chrome (neutral only, never signal). */
+.viewonly-cue{position:absolute;left:14px;bottom:14px;z-index:8;font-family:var(--jm-mono);font-size:10px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--jm-text-dim);background:var(--jm-surface);
+  border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);padding:5px 11px;
+  box-shadow:var(--jm-shadow-card);pointer-events:none}
 
-/* ---- routed status screens (404 / 403) — scaffold, pending design review ---- */
-.status-screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
+/* ---- routed status screens (404 / 403 / crash) ---- */
+.status-screen{position:relative;overflow:hidden;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
+/* faint monochrome brand-Mark watermark behind the card (currentColor = --jm-grid, no accent) */
+.status-bg-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none;line-height:0;color:var(--jm-grid)}
+.status-bg-mark .mark{width:min(440px,60vh);height:auto}
+.status-brand,.status-card{position:relative;z-index:1}
 .status-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
 .status-brand .mark{height:24px;color:var(--jm-text)}
 .status-card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:42ch}
