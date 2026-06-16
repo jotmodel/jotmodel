@@ -11,7 +11,9 @@ export function DesignReviewFlag({ note }: { note?: string }) {
   return <span className="review-flag" title="Scaffold — pending design review">◆ design review{note ? ` · ${note}` : ''}</span>
 }
 
-export function ScaffoldModal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+export function ScaffoldModal({ title, onClose, children, flagged = true }: {
+  title: string; onClose: () => void; children: ReactNode; flagged?: boolean
+}) {
   const modalRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
 
@@ -44,7 +46,7 @@ export function ScaffoldModal({ title, onClose, children }: { title: string; onC
            role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <div className="modal-h">
           <h2 id={titleId}>{title}</h2>
-          <DesignReviewFlag />
+          {flagged && <DesignReviewFlag />}
           <span className="sp" />
           <button className="btn icon" aria-label="close" onClick={onClose}>×</button>
         </div>
