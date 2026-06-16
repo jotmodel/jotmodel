@@ -329,8 +329,12 @@ body{
   border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);padding:5px 11px;
   box-shadow:var(--jm-shadow-card);pointer-events:none}
 
-/* ---- routed status screens (404 / 403) — scaffold, pending design review ---- */
-.status-screen{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
+/* ---- routed status screens (404 / 403 / crash) ---- */
+.status-screen{position:relative;overflow:hidden;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:32px;background:var(--jm-bg)}
+/* faint monochrome brand-Mark watermark behind the card (currentColor = --jm-grid, no accent) */
+.status-bg-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none;line-height:0;color:var(--jm-grid)}
+.status-bg-mark .mark{width:min(440px,60vh);height:auto}
+.status-brand,.status-card{position:relative;z-index:1}
 .status-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
 .status-brand .mark{height:24px;color:var(--jm-text)}
 .status-card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:42ch}
