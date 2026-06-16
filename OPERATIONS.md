@@ -80,13 +80,15 @@ the deploy quick-start is in `README.md`.
    colour/JS literals, read-only dead tab-stop, reduced-motion guard). Added a sanctioned chrome
    danger layer `--jm-danger*` to both `tokens.css` (PROVISIONAL hues `#C9362C`/`#F2766B` — safe to
    re-tune). Amended law 7 (Space Grotesk = wordmark **+** the create-flow `.namebox`).
-   **Signed off:** presence (new palette w/ dark values + per-colour ink + every hue ΔE≥25 from
-   `--jm-signal`; top-bar roster; deterministic anon names; cursor smoothing), the view-only
-   affordance (on-canvas cue, Share hidden for viewers, selection kept for inspection), and
-   Home/board-list v1 (monochrome row icons, danger-token delete). **Still pending:** themed Clerk
-   auth, ShareDialog, 404/403 final visual + 403 recovery flow, marketing-site ratification, presence
-   halo attribution, and cross-surface seams (button class system `.btn.primary`→`.btn-primary`,
-   single-source brand mark, unified status/loading frame).
+   **Signed off (on branch `design-review-pass`, not yet merged to `main`):** presence (new palette
+   w/ dark values + per-colour ink + every hue ΔE≥25 from `--jm-signal`; top-bar roster;
+   deterministic anon names; cursor smoothing), view-only (on-canvas cue, Share hidden for viewers,
+   selection kept for inspection), Home/board-list v1 (monochrome row icons, danger-token delete,
+   canvas board-title rename), ShareDialog (link summary + revoke, flag dropped), 404/403/error
+   (faint Mark backdrop, auth-aware 403 recovery), and the button-class + `.muted` cross-surface
+   seams. **Still pending:** themed Clerk auth, marketing-site ratification, presence halo
+   attribution, and the remaining seams (single-source brand mark, app-vs-site cursor glyph, unified
+   status/loading frame, toggle padding).
 4. Optional: broaden the CI token (Workers Routes + DNS + D1 + R2 edit) to auto-deploy the worker
    too; add error tracking/analytics (Cloudflare Web Analytics snippet is commented in `index.html`).
 5. `develop` branch is behind `main` — fast-forward it if you keep using it.
