@@ -72,7 +72,7 @@ function BoardList() {
         <Mark /><Wordmark />
         <DesignReviewFlag />
         <span className="sp" />
-        <button className="btn primary" onClick={create} disabled={busy} autoFocus>New board</button>
+        <button className="btn btn-primary" onClick={create} disabled={busy} autoFocus>New board</button>
         <UserButton appearance={clerkAppearance} />
       </header>
 
@@ -135,14 +135,14 @@ function BoardRow({ board, confirming, onOpen, onRename, onDelete, onCancelDelet
         </button>
       )}
       <span className="board-actions">
-        <button className="btn icon" title="Rename" aria-label="Rename board" onClick={() => setEditing(true)}><IconRename /></button>
+        <button className="btn btn-icon" title="Rename" aria-label="Rename board" onClick={() => setEditing(true)}><IconRename /></button>
         {confirming ? (
           <>
-            <button className="btn icon danger" title="Confirm delete" onClick={onDelete}>Delete?</button>
-            <button className="btn icon" title="Cancel" aria-label="Cancel delete" onClick={onCancelDelete}>×</button>
+            <button className="btn btn-danger" title="Confirm delete" onClick={onDelete}>Delete?</button>
+            <button className="btn btn-icon" title="Cancel" aria-label="Cancel delete" onClick={onCancelDelete}>×</button>
           </>
         ) : (
-          <button className="btn icon" title="Delete" aria-label="Delete board" onClick={onDelete}><IconTrash /></button>
+          <button className="btn btn-icon" title="Delete" aria-label="Delete board" onClick={onDelete}><IconTrash /></button>
         )}
       </span>
     </li>

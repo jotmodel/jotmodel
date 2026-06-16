@@ -20,7 +20,7 @@ function StatusScreen({ code, title, body, actions }: {
         <span className="status-code">{code}</span>
         <h1>{title}</h1>
         <p className="muted">{body}</p>
-        {actions ?? <Link to="/" className="btn primary">Back to your boards</Link>}
+        {actions ?? <Link to="/" className="btn btn-primary">Back to your boards</Link>}
       </div>
     </div>
   )
@@ -37,10 +37,10 @@ export const Forbidden = () => (
     actions={
       <>
         <SignedOut>
-          <Link to="/sign-in" className="btn primary">Sign in</Link>
+          <Link to="/sign-in" className="btn btn-primary">Sign in</Link>
         </SignedOut>
         <SignedIn>
-          <Link to="/" className="btn primary">Back to your boards</Link>
+          <Link to="/" className="btn btn-primary">Back to your boards</Link>
           <SwitchAccount />
         </SignedIn>
       </>

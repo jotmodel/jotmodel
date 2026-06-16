@@ -116,8 +116,8 @@ export function TopBar(props: TopBarProps) {
       {!readOnly && (
         <>
           <span className="sep" />
-          <button className="btn icon" title="Undo (⌘Z)" disabled={!canUndo} onClick={onUndo}>↶</button>
-          <button className="btn icon" title="Redo (⇧⌘Z)" disabled={!canRedo} onClick={onRedo}>↷</button>
+          <button className="btn btn-icon" title="Undo (⌘Z)" disabled={!canUndo} onClick={onUndo}>↶</button>
+          <button className="btn btn-icon" title="Redo (⇧⌘Z)" disabled={!canRedo} onClick={onRedo}>↷</button>
         </>
       )}
 

@@ -48,7 +48,7 @@ export function ScaffoldModal({ title, onClose, children, flagged = true }: {
           <h2 id={titleId}>{title}</h2>
           {flagged && <DesignReviewFlag />}
           <span className="sp" />
-          <button className="btn icon" aria-label="close" onClick={onClose}>×</button>
+          <button className="btn btn-icon" aria-label="close" onClick={onClose}>×</button>
         </div>
         <div className="modal-b">{children}</div>
       </div>

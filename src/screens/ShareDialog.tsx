@@ -68,7 +68,7 @@ export function ShareDialog({ board, boardId, getToken, role, onClose }: {
                   <option value="30">in 30 days</option>
                 </select>
               </label>
-              <button className="btn primary" onClick={createLink} disabled={busy}>
+              <button className="btn btn-primary" onClick={createLink} disabled={busy}>
                 {busy ? 'Creating…' : 'Create link'}
               </button>
             </div>

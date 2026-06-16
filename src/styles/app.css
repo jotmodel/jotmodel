@@ -25,7 +25,7 @@ body{
 .share-link{display:flex;gap:6px}
 .share-link input{flex:1;font-family:var(--jm-mono);font-size:11px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:7px 9px;outline:0}
 
-/* buttons — aligns with the design system: .btn + .btn.primary / .btn.ghost */
+/* buttons — design-system convention: .btn base + .btn-primary / .btn-icon / .btn-danger */
 .btn{
   font-family:var(--jm-ui);font-weight:600;font-size:13px;border-radius:var(--jm-r-md);
   padding:7px 13px;cursor:pointer;border:1px solid var(--jm-line-2);
@@ -33,11 +33,11 @@ body{
 }
 .btn:hover{border-color:var(--jm-signal)}
 .btn:focus-visible{outline:none;box-shadow:var(--jm-ring)}
-.btn.primary{background:var(--jm-signal);color:var(--jm-on-signal);border-color:transparent}
-.btn.primary:hover{filter:brightness(1.05)}
+.btn-primary{background:var(--jm-signal);color:var(--jm-on-signal);border-color:transparent}
+.btn-primary:hover{filter:brightness(1.05)}
 .btn:disabled{opacity:.45;cursor:default;border-color:var(--jm-line)}
-.btn.icon{padding:7px 9px;font-size:14px;line-height:1}
-.btn.icon svg{display:block}
+.btn-icon{padding:7px 9px;font-size:14px;line-height:1}
+.btn-icon svg{display:block}
 .toggle{display:inline-flex;border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);overflow:hidden;font-family:var(--jm-mono);font-size:11px}
 .toggle button{padding:6px 11px;background:transparent;border:0;color:var(--jm-text-dim);cursor:pointer}
 .toggle button.on{background:var(--jm-text);color:var(--jm-bg)}
@@ -247,8 +247,8 @@ body{
 .cloud-form[disabled]{opacity:.55}
 .field{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;color:var(--jm-text)}
 .field select{font-family:var(--jm-ui);font-size:13px;color:var(--jm-text);background:var(--jm-surface-2);border:1px solid var(--jm-line-2);border-radius:var(--jm-r-sm);padding:5px 8px}
-.btn.icon.danger{color:var(--jm-danger);border-color:var(--jm-danger);font-size:11px;font-weight:600;padding:6px 8px}
-.btn.icon.danger:hover{border-color:var(--jm-danger)}
+.btn-danger{color:var(--jm-danger);border-color:var(--jm-danger);font-size:11px;font-weight:600;padding:6px 8px}
+.btn-danger:hover{border-color:var(--jm-danger)}
 .linklike{background:transparent;border:0;color:var(--jm-signal-text);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
 
 /* ---- auth screen (Clerk re-skinned) — scaffold, pending design review ---- */
