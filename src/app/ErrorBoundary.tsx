@@ -1,4 +1,5 @@
 import { Component, type ReactNode } from 'react'
+import { DesignReviewFlag } from '../screens/Scaffold'
 import '../styles/tokens.css'
 import '../styles/app.css'
 
@@ -23,6 +24,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
           <h1>Something broke</h1>
           <p className="muted">An unexpected error occurred. Reloading usually fixes it — your board is saved locally.</p>
           <button className="btn primary" onClick={() => location.reload()}>Reload</button>
+          <DesignReviewFlag />
         </div>
       </div>
     )

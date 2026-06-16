@@ -3,6 +3,7 @@ import { SignedIn, SignedOut, useAuth, UserButton } from '@clerk/clerk-react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { api, type BoardSummary } from '../lib/api'
 import { Mark, Wordmark } from '../ui/Brand'
+import { IconRename, IconTrash } from '../ui/icons'
 import { clerkAppearance } from './clerkAppearance'
 import { DesignReviewFlag } from './Scaffold'
 import '../styles/tokens.css'
@@ -134,14 +135,14 @@ function BoardRow({ board, confirming, onOpen, onRename, onDelete, onCancelDelet
         </button>
       )}
       <span className="board-actions">
-        <button className="btn icon" title="Rename" onClick={() => setEditing(true)}>✎</button>
+        <button className="btn icon" title="Rename" aria-label="Rename board" onClick={() => setEditing(true)}><IconRename /></button>
         {confirming ? (
           <>
             <button className="btn icon danger" title="Confirm delete" onClick={onDelete}>Delete?</button>
-            <button className="btn icon" title="Cancel" onClick={onCancelDelete}>×</button>
+            <button className="btn icon" title="Cancel" aria-label="Cancel delete" onClick={onCancelDelete}>×</button>
           </>
         ) : (
-          <button className="btn icon" title="Delete" onClick={onDelete}>🗑</button>
+          <button className="btn icon" title="Delete" aria-label="Delete board" onClick={onDelete}><IconTrash /></button>
         )}
       </span>
     </li>

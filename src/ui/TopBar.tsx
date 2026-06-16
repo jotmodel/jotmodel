@@ -6,8 +6,9 @@ import { importUpdate } from '../model/board'
 import type { Board, Entity, Relationship } from '../model/board'
 import { ShareDialog } from '../screens/ShareDialog'
 import { Mark, Wordmark } from './Brand'
-import type { ConnStatus } from '../canvas/usePresence'
-import type { GetToken, Role } from '../lib/api'
+import { PeerRoster } from './PeerRoster'
+import type { ConnStatus, Peer } from '../canvas/usePresence'
+import { api, type GetToken, type Role } from '../lib/api'
 
 export interface TopBarProps {
   board: Board
@@ -19,6 +20,7 @@ export interface TopBarProps {
   onRedo: () => void
   // Cloud / multiplayer — all optional; the local-only path passes none.
   status?: ConnStatus | null
+  peers?: Peer[]
   readOnly?: boolean
   title?: string
   boardId?: string
@@ -38,8 +40,21 @@ export function TopBar(props: TopBarProps) {
   )
   const [menu, setMenu] = useState(false)
   const [share, setShare] = useState(false)
+  const [titleVal, setTitleVal] = useState(title ?? '')
+  const [editingTitle, setEditingTitle] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Rename the board from the canvas (double-click the title, or Enter/F2 when focused). Owner/
+  // editor only; needs the cloud handle (boardId + getToken) — local-only boards carry no title.
+  const canRename = !readOnly && !!props.boardId && !!props.getToken
+  function commitTitle(v: string) {
+    const t = v.trim()
+    setEditingTitle(false)
+    if (!t || t === titleVal) return
+    setTitleVal(t)
+    if (props.boardId && props.getToken) api.renameBoard(props.getToken, props.boardId, t).catch(() => { /* keep optimistic value */ })
+  }
 
   function setT(t: 'light' | 'dark') {
     document.documentElement.dataset.theme = t
@@ -49,8 +64,9 @@ export function TopBar(props: TopBarProps) {
 
   useEffect(() => {
     function onDoc(e: MouseEvent) { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(false) }
-    if (menu) document.addEventListener('mousedown', onDoc)
-    return () => document.removeEventListener('mousedown', onDoc)
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') setMenu(false) }
+    if (menu) { document.addEventListener('mousedown', onDoc); document.addEventListener('keydown', onKey) }
+    return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey) }
   }, [menu])
 
   const sql = (d: Dialect) => { download(`model.${d}.sql`, toSQL(entities, rels, d)); setMenu(false) }
@@ -69,8 +85,33 @@ export function TopBar(props: TopBarProps) {
     <div className="topbar">
       <Mark />
       <Wordmark />
-      {title && <><span className="sep" /><span className="board-title" title={title}>{title}</span></>}
-      {readOnly && <span className="viewonly-tag" title="You have view-only access to this board">View only</span>}
+      {title && (
+        <>
+          <span className="sep" />
+          {editingTitle ? (
+            <input
+              className="board-title-edit"
+              defaultValue={titleVal}
+              autoFocus
+              onMouseDown={(e) => e.stopPropagation()}
+              onBlur={(e) => commitTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitTitle((e.target as HTMLInputElement).value)
+                else if (e.key === 'Escape') setEditingTitle(false)
+              }}
+            />
+          ) : (
+            <span
+              className="board-title"
+              title={canRename ? `${titleVal} — double-click to rename` : titleVal}
+              tabIndex={canRename ? 0 : undefined}
+              onDoubleClick={canRename ? () => setEditingTitle(true) : undefined}
+              onKeyDown={canRename ? (e) => { if (e.key === 'Enter' || e.key === 'F2') { e.preventDefault(); setEditingTitle(true) } } : undefined}
+            >{titleVal}</span>
+          )}
+        </>
+      )}
+      {readOnly && <span className="viewonly-tag" role="status" title="You have view-only access to this board">View only</span>}
 
       {!readOnly && (
         <>
@@ -82,6 +123,7 @@ export function TopBar(props: TopBarProps) {
 
       <span className="sp" />
 
+      <PeerRoster peers={props.peers ?? []} />
       {status && (
         <span className="conn" title={`Multiplayer: ${STATUS_LABEL[status]}`}>
           <span className={`conn-dot ${status}`} />{STATUS_LABEL[status]}
@@ -89,7 +131,7 @@ export function TopBar(props: TopBarProps) {
       )}
 
       <div className="menu" ref={menuRef}>
-        <button className="btn" onClick={() => setMenu(m => !m)}>Export ▾</button>
+        <button className="btn" aria-haspopup="true" aria-expanded={menu} onClick={() => setMenu(m => !m)}>Export ▾</button>
         {menu && (
           <div className="menu-pop">
             <button onClick={() => { download('model.dbml', toDBML(entities, rels)); setMenu(false) }}>DBML <span className="k">.dbml</span></button>
@@ -108,20 +150,25 @@ export function TopBar(props: TopBarProps) {
       </div>
       <input ref={fileRef} type="file" accept=".jotmodel,application/json" hidden onChange={onPickFile} />
 
-      <button className="btn" onClick={() => setShare(true)}>Share</button>
-      {share && (
-        <ShareDialog
-          board={board}
-          boardId={props.boardId}
-          getToken={props.getToken}
-          role={props.role}
-          onClose={() => setShare(false)}
-        />
+      {/* a viewer can't grant access they don't have — no Share in read-only (Export stays). */}
+      {!readOnly && (
+        <>
+          <button className="btn" onClick={() => setShare(true)}>Share</button>
+          {share && (
+            <ShareDialog
+              board={board}
+              boardId={props.boardId}
+              getToken={props.getToken}
+              role={props.role}
+              onClose={() => setShare(false)}
+            />
+          )}
+        </>
       )}
 
-      <span className="toggle">
-        <button className={theme === 'light' ? 'on' : ''} onClick={() => setT('light')}>Light</button>
-        <button className={theme === 'dark' ? 'on' : ''} onClick={() => setT('dark')}>Dark</button>
+      <span className="toggle" role="group" aria-label="Color theme">
+        <button className={theme === 'light' ? 'on' : ''} aria-pressed={theme === 'light'} onClick={() => setT('light')}>Light</button>
+        <button className={theme === 'dark' ? 'on' : ''} aria-pressed={theme === 'dark'} onClick={() => setT('dark')}>Dark</button>
       </span>
 
       {props.userSlot}

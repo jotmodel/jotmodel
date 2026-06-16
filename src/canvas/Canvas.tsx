@@ -12,8 +12,7 @@ import { reducer, initialState, type Pt } from './reducer'
 import { EntityCard } from './EntityCard'
 import { Relationships } from './Relationships'
 import { Presence } from './Presence'
-import { usePresence } from './usePresence'
-import type { Awareness } from 'y-protocols/awareness'
+import type { Peer, SelSet } from './usePresence'
 
 interface Hit { entityId: string; fieldId: string | null }
 
@@ -45,16 +44,16 @@ function segHitsBox(ax: number, ay: number, bx: number, by: number, b: Box) {
     segCross(ax, ay, bx, by, b.x, bot, b.x, b.y)
 }
 
-export function Canvas({ board, entities, rels, awareness = null, presenceName = 'Guest', readOnly = false }: {
+export function Canvas({ board, entities, rels, peers, setCursor, setSelection, readOnly = false }: {
   board: Board; entities: Entity[]; rels: Relationship[]
-  awareness?: Awareness | null; presenceName?: string; readOnly?: boolean
+  peers: Peer[]; setCursor: (c: { x: number; y: number } | null) => void
+  setSelection: (s: SelSet) => void; readOnly?: boolean
 }) {
   const doc = board.doc
   const stageRef = useRef<HTMLDivElement>(null)
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  // ---- presence (multiplayer) ----
-  const { peers, setCursor, setSelection } = usePresence(awareness, presenceName)
+  // ---- presence (multiplayer) — the hook lives in Board so the top-bar roster shares one feed ----
   const setCursorRef = useRef(setCursor); setCursorRef.current = setCursor
   const lastCursorPub = useRef(0)
   // Latest read-only flag for the once-attached global listeners (mirrors the entitiesRef pattern).
@@ -664,6 +663,10 @@ export function Canvas({ board, entities, rels, awareness = null, presenceName =
         <button title="Zoom in (+)" onClick={() => zoomCenter(1.2)}>+</button>
         <button title="Fit to content (⇧1)" onClick={fitToContent}>⤢</button>
       </div>
+
+      {/* read-only mode cue — stays legible anywhere on the board (the top-bar pill can scroll out of
+          view). aria-hidden: the pill already announces the mode, so this is visual reinforcement. */}
+      {readOnly && <div className="viewonly-cue" aria-hidden="true">Viewing · read only</div>}
     </div>
   )
 }

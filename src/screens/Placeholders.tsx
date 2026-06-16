@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ScaffoldScreen } from './Scaffold'
+import { ScaffoldScreen, DesignReviewFlag } from './Scaffold'
 import { Mark, Wordmark } from '../ui/Brand'
 
 // Phase 2+ screens — scaffolded from tokens + primitives and flagged for design review.
@@ -15,6 +15,7 @@ function StatusScreen({ code, title, body }: { code: string; title: string; body
         <h1>{title}</h1>
         <p className="muted">{body}</p>
         <Link to="/" className="btn primary">Back to your boards</Link>
+        <DesignReviewFlag />
       </div>
     </div>
   )
@@ -27,11 +28,7 @@ export const Forbidden = () => (
   <StatusScreen code="403" title="No access" body="You don’t have permission to open this board. Ask the owner for an invite or a share link." />
 )
 
-export const Home = () => (
-  <ScaffoldScreen title="Your boards">
-    <p className="muted">Board list, search, and “new board” (Phase 2). Pending design review.</p>
-  </ScaffoldScreen>
-)
+// NOTE: the live, routed Home is src/screens/Home.tsx (a real board index). No placeholder Home here.
 export const Settings = () => (
   <ScaffoldScreen title="Settings">
     <p className="muted">Account, theme, and preferences. Pending design review.</p>

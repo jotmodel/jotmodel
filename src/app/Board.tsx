@@ -2,7 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import type YProvider from 'y-partyserver/provider'
 import { useBoard } from '../model/useBoard'
 import { makeRelayProvider, type RelayOptions } from '../model/provider'
-import { useConnectionStatus } from '../canvas/usePresence'
+import { useConnectionStatus, usePresence } from '../canvas/usePresence'
 import type { Role } from '../lib/api'
 import { TopBar } from '../ui/TopBar'
 import { Canvas } from '../canvas/Canvas'
@@ -40,6 +40,7 @@ export function Board({ relay, role, presenceName, boardTitle, userSlot }: Board
     attachProvider,
   })
   const status = useConnectionStatus(provider)
+  const { peers, setCursor, setSelection } = usePresence(provider?.awareness ?? null, presenceName ?? 'Guest')
   const readOnly = role === 'viewer'
 
   return (
@@ -53,6 +54,7 @@ export function Board({ relay, role, presenceName, boardTitle, userSlot }: Board
         onUndo={undo}
         onRedo={redo}
         status={status}
+        peers={peers}
         readOnly={readOnly}
         title={boardTitle}
         boardId={relay?.boardId}
@@ -64,8 +66,9 @@ export function Board({ relay, role, presenceName, boardTitle, userSlot }: Board
         board={board}
         entities={entities}
         rels={rels}
-        awareness={provider?.awareness ?? null}
-        presenceName={presenceName ?? 'Guest'}
+        peers={peers}
+        setCursor={setCursor}
+        setSelection={setSelection}
         readOnly={readOnly}
       />
     </div>
