@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore: ['**.md', 'docs/**']  # doc-only changes don't trigger a redeploy
   pull_request:
     branches: [main]
   workflow_dispatch: {}  # manual "Run workflow" → also enables the worker deploy job
