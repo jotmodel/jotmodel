@@ -12,10 +12,10 @@
     "test:watch": "vitest",
     "dev:worker": "wrangler dev",
     "db:local": "wrangler d1 execute jotmodel --local --file worker/db/schema.sql",
-    "db:remote": "wrangler d1 execute jotmodel --file worker/db/schema.sql",
+    "db:remote": "wrangler d1 execute jotmodel --remote --file worker/db/schema.sql",
     "deploy:worker": "wrangler deploy",
-    "deploy:app": "npm run build && wrangler pages deploy dist --project-name jotmodel-app",
-    "deploy:site": "wrangler pages deploy site --project-name jotmodel-site"
+    "deploy:app": "npm run build && wrangler pages deploy dist --project-name jotmodel-app --branch main",
+    "deploy:site": "wrangler pages deploy site --project-name jotmodel-site --branch main"
   },
   "dependencies": {
     "@clerk/backend": "^3.7.0",

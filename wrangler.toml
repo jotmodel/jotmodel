@@ -18,7 +18,7 @@ new_sqlite_classes = ["JotBoard"]
 [[d1_databases]]
 binding = "DB"
 database_name = "jotmodel"
-database_id = "REPLACE_ON_DEPLOY"   # `wrangler d1 create jotmodel` prints this
+database_id = "b19c42df-8010-432a-91e0-92cf504662d9"   # `wrangler d1 create jotmodel` prints this
 
 # R2: CRDT snapshots / exports (no egress fees).
 [[r2_buckets]]
