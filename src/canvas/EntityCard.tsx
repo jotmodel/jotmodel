@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Entity } from '../model/board'
+import { initials, type PeerHalo } from './usePresence'
 
 // Header height fallback before .ent-h is measured (matches the design system / geom HEADER_H).
 const HEADER_FALLBACK = 38
@@ -33,8 +34,8 @@ export interface EntityCardProps {
   onCycleFieldType: (fieldId: string, dir: 1 | -1) => void
   /** View-only (share viewer): hide every editing affordance, keep inspect. */
   readOnly?: boolean
-  /** A peer's selection halo colour for this card (presence palette), or null. */
-  peerColor?: string | null
+  /** A peer's selection halo (presence palette) for this card — colour + who — or null. */
+  peer?: PeerHalo | null
 }
 
 export function EntityCard(props: EntityCardProps) {
@@ -98,7 +99,7 @@ export function EntityCard(props: EntityCardProps) {
   useEffect(() => { if (autoFocusFields) setShowField(true) }, [autoFocusFields])
 
   const cls = ['ent', 'pop', selected ? 'selected' : '', armed ? 'armed' : '', dragging ? 'dragging' : '',
-    props.readOnly ? 'readonly' : '', props.peerColor ? 'peer-haloed' : '',
+    props.readOnly ? 'readonly' : '', props.peer ? 'peer-haloed' : '',
     entity.color ? `c-${entity.color}` : ''].filter(Boolean).join(' ')
 
   return (
@@ -113,13 +114,21 @@ export function EntityCard(props: EntityCardProps) {
         // non-zero so it never clobbers the .pop entrance animation's transform.
         transform: props.offset ? `translate(${props.offset.dx}px, ${props.offset.dy}px)` : undefined,
         // A peer's selection halo (presence palette) — outline doesn't disturb layout or shadows.
-        outline: props.peerColor ? `2px solid ${props.peerColor}` : undefined,
-        outlineOffset: props.peerColor ? '2px' : undefined,
+        outline: props.peer ? `2px solid ${props.peer.color}` : undefined,
+        outlineOffset: props.peer ? '2px' : undefined,
       }}
       onMouseDown={(e) => { e.stopPropagation(); props.onSelect(e) }}
       onMouseMove={onCardMouseMove}
       onMouseLeave={onCardMouseLeave}
     >
+      {/* Who selected it: a small initials tag in the peer's identity colour, pinned to the corner
+          so the colour halo gains attribution (matches the roster + cursor pill). */}
+      {props.peer && (
+        <span className="peer-tag" style={{ background: props.peer.color, color: props.peer.ink }}
+          role="img" aria-label={`Selected by ${props.peer.name}`} title={`Selected by ${props.peer.name}`}>
+          {initials(props.peer.name)}
+        </span>
+      )}
       <div
         ref={headerRef}
         className="ent-h"

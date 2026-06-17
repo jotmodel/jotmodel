@@ -15,7 +15,11 @@ the deploy quick-start is in `README.md`.
 
 ## Cloudflare resources (account `a5e8d83cb53d250f2615b1b758ae4dbb`, jotmodel.app@gmail.com)
 
-- **Zone** `jotmodel.com` → id `42f0eb54d20ebc423dfef5733e139604`
+- **Zone** `jotmodel.com` → id `42f0eb54d20ebc423dfef5733e139604`. **Plan: Pro (~$20/mo, upgraded
+  2026-06-16).** The upgrade exists to disable **ECH** (see Gotchas) — Free zones force ECH on with no
+  toggle. **Do not downgrade to Free** without re-checking ECH, or `ERR_SSL_VERSION_OR_CIPHER_MISMATCH`
+  returns for some browsers. (Distinct from the account-level **Workers Paid** sub that backs Durable
+  Objects — the two are billed and managed separately.)
 - **D1** `jotmodel` → id `b19c42df-8010-432a-91e0-92cf504662d9` (pinned in `wrangler.toml`); schema in
   `worker/db/schema.sql` (tables: users, boards, members, share_links — **applied to remote**)
 - **R2** bucket `jotmodel-snapshots` (CRDT snapshots, key `board/{id}.ydoc`)
@@ -66,6 +70,17 @@ the deploy quick-start is in `README.md`.
 - Clerk DNS CNAMEs must be **DNS-only (grey cloud)**; proxied breaks SSL/Frontend API.
 - Querying a Clerk subdomain *before* its DNS exists can leave a sticky `NXDOMAIN` negative-cache on
   your resolver/LAN (use `1.1.1.1` or wait the TTL). Not a deploy issue.
+- **ECH → `ERR_SSL_VERSION_OR_CIPHER_MISMATCH` for *some* browsers** (hit us 2026-06-16). Cloudflare
+  advertised **Encrypted ClientHello** in the HTTPS DNS records (SvcParam key `5`, ECHConfig `fe0d`,
+  public_name `cloudflare-ech.com`) for all three hosts. DoH-enabled browsers behind a TLS-mangling
+  AV/proxy/middlebox fail the ECH handshake; browsers without DoH never try ECH — hence "some
+  browsers." The rest of TLS was healthy (dual ECDSA+RSA certs, TLS 1.2/1.3, valid per-host SANs), so
+  **check the HTTPS RR for `ech=` before chasing cipher/cert theories.** Diagnose:
+  `curl -s 'https://cloudflare-dns.com/dns-query?name=app.jotmodel.com&type=HTTPS' -H 'accept: application/dns-json'`
+  (key `5` / bytes `fe 0d` / ASCII `cloudflare-ech.com` = ECH on). **Fix:** SSL/TLS → Edge
+  Certificates → Encrypted ClientHello → **Disabled** (needs **Pro+**; Free can't toggle), or
+  `PATCH /zones/42f0eb54d20ebc423dfef5733e139604/settings/ech {"value":"off"}`. Propagation ≤ record
+  TTL (300s). **Disabled 2026-06-16** — keep it off; a Free downgrade silently re-enables it.
 
 ## Outstanding / next steps
 
@@ -86,9 +101,20 @@ the deploy quick-start is in `README.md`.
    selection kept for inspection), Home/board-list v1 (monochrome row icons, danger-token delete,
    canvas board-title rename), ShareDialog (link summary + revoke, flag dropped), 404/403/error
    (faint Mark backdrop, auth-aware 403 recovery), and the button-class + `.muted` cross-surface
-   seams. **Still pending:** themed Clerk auth, marketing-site ratification, presence halo
-   attribution, and the remaining seams (single-source brand mark, app-vs-site cursor glyph, unified
-   status/loading frame, toggle padding).
+   seams. **Implemented & verified 2026-06-17 (typecheck/tests/build + rendered, pending final
+   sign-off):** the four remaining seams — single-source brand mark (site uses one `<symbol>` +
+   `<use>`; app stays single-sourced via `Brand.tsx`), app-vs-site cursor glyph (site ghost-cursors
+   now use the app's canonical presence glyph), unified status/loading frame (`LoadingState`/
+   `EmptyState` share the `.status-screen` frame as a `plain` variant), toggle padding (app+site →
+   `6px 12px`, the design-system value); **presence halo attribution** (a peer's selection now shows
+   a small initials chip in the peer's colour/ink at the card corner — shared `initials()` +
+   `PeerHalo` in `usePresence.ts`; rels stay colour-only); and a found-and-fixed **law-1 bug** — the
+   status-screen brand wordmark "jot" was rendering browser-default link blue (`#0000EE`) inside the
+   `<Link>`; `.wm` now pins `color:var(--jm-text)`. Themed Clerk auth was rendered (dev key) and the
+   token theming holds in light+dark; **one finding:** the OAuth social buttons are low-contrast in
+   dark (GitHub mono icon ~invisible) — a `clerkAppearance` tweak, only visible once OAuth is enabled
+   (prod is `oauth_pending`). **Still pending:** that dark-mode OAuth button polish, and
+   marketing-site ratification (rendered, awaiting eyeball).
 4. Optional: broaden the CI token (Workers Routes + DNS + D1 + R2 edit) to auto-deploy the worker
    too; add error tracking/analytics (Cloudflare Web Analytics snippet is commented in `index.html`).
 5. `develop` branch is behind `main` — fast-forward it if you keep using it.

@@ -72,16 +72,22 @@
 </head>
 <body>
 
+<!-- Brand mark — single source (law 6/7): defined once here, referenced everywhere via
+     <use href="#jm-mark">. Keep this path in sync with the app's src/ui/Brand.tsx <Mark/>. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <symbol id="jm-mark" viewBox="0 0 48 48" fill="none">
+    <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+    <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
+    <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
+    <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+  </symbol>
+</svg>
+
 <!-- ============================ HEADER ============================ -->
 <header class="site-head">
   <div class="wrap head-row">
     <a class="brand" href="/" aria-label="JotModel home">
-      <svg class="mark" width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-        <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-        <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
-        <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
-        <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
-      </svg>
+      <svg class="mark" width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
       <span class="wm"><b>jot</b><span>model</span></span>
     </a>
 
@@ -272,9 +278,9 @@
           <h3>Live multiplayer with presence</h3>
           <p>See who&rsquo;s in the room and where they&rsquo;re pointing. Edits land in real time.</p>
           <div class="presence-demo" aria-hidden="true">
-            <span class="ghost-cur g1"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Priya</em></span>
-            <span class="ghost-cur g2"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Marco</em></span>
-            <span class="ghost-cur g3"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 3l6 14 2.2-5.2L18.4 9.6 5 3z" fill="currentColor"/></svg><em>Dana</em></span>
+            <span class="ghost-cur g1"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Priya</em></span>
+            <span class="ghost-cur g2"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Marco</em></span>
+            <span class="ghost-cur g3"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Dana</em></span>
           </div>
         </article>
       </div>
@@ -299,14 +305,14 @@
       <div class="equals-tiles" aria-hidden="true">
         <div class="eq-tile eq-light" data-theme="light">
           <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
             <span class="wm"><b>jot</b><span>model</span></span>
           </span>
           <span class="eq-cap">Light</span>
         </div>
         <div class="eq-tile eq-dark" data-theme="dark">
           <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none"><path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g><rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/><rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>
+            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
             <span class="wm"><b>jot</b><span>model</span></span>
           </span>
           <span class="eq-cap">Dark</span>
@@ -330,12 +336,7 @@
 <footer class="site-foot">
   <div class="wrap foot-row">
     <a class="brand brand-sm" href="/" aria-label="JotModel home">
-      <svg class="mark" width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-        <path d="M16 16 C 23 23, 17 36, 26.5 36" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-        <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
-        <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
-        <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
-      </svg>
+      <svg class="mark" width="22" height="22" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
       <span class="wm"><b>jot</b><span>model</span></span>
     </a>
     <span class="foot-sp"></span>

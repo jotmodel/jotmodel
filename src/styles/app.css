@@ -14,7 +14,9 @@ body{
 }
 .topbar .mark{height:22px;color:var(--jm-text)}
 /* wordmark — shared primitive (Brand.tsx); Space Grotesk wherever it appears (law 7), not just the top bar */
-.wm{font-family:var(--jm-display);font-weight:600;font-size:16px;letter-spacing:-.01em}
+/* color:var(--jm-text) pins it monochrome (law 1/6) even when wrapped in an <a> (e.g. the status-screen
+   brand Link), so "jot" never inherits the browser's default link blue. */
+.wm{font-family:var(--jm-display);font-weight:600;font-size:16px;letter-spacing:-.01em;color:var(--jm-text)}
 .wm b{font-weight:700}.wm span{color:var(--jm-text-mid);font-weight:500}
 .topbar .sp{flex:1}
 .topbar .sep{width:1px;height:22px;background:var(--jm-line);margin:0 2px}
@@ -39,7 +41,7 @@ body{
 .btn-icon{padding:7px 9px;font-size:14px;line-height:1}
 .btn-icon svg{display:block}
 .toggle{display:inline-flex;border:1px solid var(--jm-line-2);border-radius:var(--jm-r-pill);overflow:hidden;font-family:var(--jm-mono);font-size:11px}
-.toggle button{padding:6px 11px;background:transparent;border:0;color:var(--jm-text-dim);cursor:pointer}
+.toggle button{padding:6px 12px;background:transparent;border:0;color:var(--jm-text-dim);cursor:pointer}
 .toggle button.on{background:var(--jm-text);color:var(--jm-bg)}
 
 /* menu (export) */
@@ -287,6 +289,13 @@ body{
 .peer-pill{margin:-1px 0 0 -2px;font-family:var(--jm-ui);font-weight:600;font-size:10.5px;line-height:1;
   color:var(--jm-text);padding:3px 7px;border-radius:var(--jm-r-pill);white-space:nowrap;
   box-shadow:var(--jm-shadow-card)}
+
+/* on-card selection-halo tag — who selected this entity. Initials in the peer's identity colour +
+   paired ink (presence layer), pinned to the card's corner. Colour/ink set inline per peer. */
+.peer-tag{position:absolute;top:-9px;left:-9px;z-index:4;min-width:18px;height:18px;padding:0 4px;
+  border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--jm-ui);font-weight:700;font-size:10px;line-height:1;letter-spacing:.02em;
+  border:1.5px solid var(--jm-canvas);box-shadow:var(--jm-shadow-cursor);pointer-events:none}
 
 /* presence roster (top bar) — overlapping peer chips; identity colour on the avatar (presence
    layer) with its paired ink, neutral on the +N overflow. Scaffold — pending design review. */
