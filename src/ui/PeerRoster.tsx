@@ -1,4 +1,4 @@
-import type { Peer } from '../canvas/usePresence'
+import { initials, type Peer } from '../canvas/usePresence'
 
 /**
  * Top-bar presence roster — a quiet overlapping stack of peer chips so "who's here / how many" is
@@ -9,13 +9,6 @@ import type { Peer } from '../canvas/usePresence'
  * Scaffold — pending design review (matches the project convention for non-board chrome).
  */
 const MAX = 4
-
-function initials(name: string): string {
-  const parts = name.replace(/·/g, ' ').trim().split(/\s+/).filter(Boolean)
-  if (!parts.length) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-}
 
 export function PeerRoster({ peers }: { peers: Peer[] }) {
   if (!peers.length) return null

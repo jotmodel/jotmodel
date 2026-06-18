@@ -12,7 +12,7 @@ import { reducer, initialState, type Pt } from './reducer'
 import { EntityCard } from './EntityCard'
 import { Relationships } from './Relationships'
 import { Presence } from './Presence'
-import type { Peer, SelSet } from './usePresence'
+import type { Peer, SelSet, PeerHalo } from './usePresence'
 
 interface Hit { entityId: string; fieldId: string | null }
 
@@ -60,11 +60,12 @@ export function Canvas({ board, entities, rels, peers, setCursor, setSelection, 
   const readOnlyRef = useRef(readOnly); readOnlyRef.current = readOnly
   // Broadcast our selection to peers whenever it changes (ephemeral — never in the Y.Doc).
   useEffect(() => { setSelection(state.selected) }, [state.selected, setSelection])
-  // Peer selections → halo colour per id (first peer to claim an id wins).
-  const peerEntityColor = new Map<string, string>()
+  // Peer selections → halo per id (first peer to claim an id wins). Entities carry full identity
+  // (colour + ink + name) so the card can show *who* selected it; rels keep a colour-only highlight.
+  const peerEntityHalo = new Map<string, PeerHalo>()
   const peerRelColor = new Map<string, string>()
   for (const p of peers) {
-    for (const id of p.selection.entities) if (!peerEntityColor.has(id)) peerEntityColor.set(id, p.color)
+    for (const id of p.selection.entities) if (!peerEntityHalo.has(id)) peerEntityHalo.set(id, { color: p.color, ink: p.ink, name: p.name })
     for (const id of p.selection.rels) if (!peerRelColor.has(id)) peerRelColor.set(id, p.color)
   }
 
@@ -612,7 +613,7 @@ export function Canvas({ board, entities, rels, peers, setCursor, setSelection, 
             autoFocusFields={e.id === state.newId}
             offset={pushed.get(e.id) ?? null}
             readOnly={readOnly}
-            peerColor={peerEntityColor.get(e.id) ?? null}
+            peer={peerEntityHalo.get(e.id) ?? null}
             onMeasure={measure}
             onSelect={(ev) => onCardSelect(e.id, ev)}
             onStartMove={(ev) => onCardMove(e, ev)}

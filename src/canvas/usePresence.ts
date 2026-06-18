@@ -13,6 +13,18 @@ export interface Peer {
   selection: SelSet
 }
 
+/** A peer's identity as attached to a selection halo on the canvas (colour + ink + name). */
+export interface PeerHalo { color: string; ink: string; name: string }
+
+/** Up-to-two-letter initials for a presence chip/avatar — shared by the top-bar roster and the
+ *  on-card selection-halo tag, so a peer is identified the same way everywhere. */
+export function initials(name: string): string {
+  const parts = name.replace(/·/g, ' ').trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return '?'
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
 /** Deterministic per-client identity colour from the sanctioned presence palette (law 2 — this
  *  is the ONE place a third colour layer is allowed; never on content or chrome). */
 export function presenceColor(clientId: number): string {

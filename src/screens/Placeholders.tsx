@@ -7,20 +7,23 @@ import { Mark, Wordmark } from '../ui/Brand'
 // Phase 2+ screens — scaffolded from tokens + primitives and flagged for design review.
 // Not routed in Phase 1; kept as honest starting points (CLAUDE.md: scaffold, don't invent).
 
-/** A routed full-screen status (404 / forbidden / offline). Scaffold — pending design review. */
-function StatusScreen({ code, title, body, actions }: {
-  code: string; title: string; body: string; actions?: ReactNode
+/** The one full-screen status frame — shared by 404 / 403 / error AND the quiet loading / empty
+ *  states, so every system surface reads as the same product (one frame, law 1/6). `plain` drops
+ *  the code, brand link, and action for the transient states. Scaffold — pending design review. */
+function StatusScreen({ code, title, body, actions, plain = false }: {
+  code?: string; title: string; body?: string; actions?: ReactNode; plain?: boolean
 }) {
   return (
     <div className="status-screen">
       {/* the Mark is the smallest data model — a calm, monochrome 'empty board' backdrop (law 1/6) */}
       <span className="status-bg-mark" aria-hidden="true"><Mark /></span>
-      <Link to="/" className="status-brand" aria-label="Home"><Mark /><Wordmark /></Link>
+      {!plain && <Link to="/" className="status-brand" aria-label="Home"><Mark /><Wordmark /></Link>}
       <div className="status-card">
-        <span className="status-code">{code}</span>
-        <h1>{title}</h1>
-        <p className="muted">{body}</p>
-        {actions ?? <Link to="/" className="btn btn-primary">Back to your boards</Link>}
+        {code && <span className="status-code">{code}</span>}
+        {plain
+          ? <p className="muted" role="status">{title}</p>
+          : <><h1>{title}</h1>{body && <p className="muted">{body}</p>}</>}
+        {!plain && (actions ?? <Link to="/" className="btn btn-primary">Back to your boards</Link>)}
       </div>
     </div>
   )
@@ -70,11 +73,10 @@ export const Marketing = () => (
     <p className="muted">Type it. Drag it. It’s a model. Landing page — pending design review.</p>
   </ScaffoldScreen>
 )
-export const LoadingState = () => (
-  <div className="scaffold-screen"><p className="muted">Loading…</p></div>
-)
+// Loading / empty share the same calm status frame as 404/403/error (the unified "system surface").
+export const LoadingState = () => <StatusScreen title="Loading…" plain />
 export const EmptyState = ({ what = 'Nothing here yet' }: { what?: string }) => (
-  <div className="scaffold-screen"><p className="muted">{what}</p></div>
+  <StatusScreen title={what} plain />
 )
 export const ErrorState = ({ message = 'Something went wrong' }: { message?: string }) => (
   <ScaffoldScreen title="Error"><p className="muted">{message}</p></ScaffoldScreen>
