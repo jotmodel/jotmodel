@@ -127,6 +127,22 @@ code {
 }
 .btn-ghost:hover { border-color: var(--jm-text-dim); }
 .btn-lg { font-size: 15px; padding: 12px 22px; }
+/* quiet anchor/ghost link — demoted secondary action (e.g. hero "See how it works").
+   The signal accent shows only on hover/focus, keeping the primary CTA dominant. */
+.btn-quiet {
+  background: transparent;
+  color: var(--jm-text-mid);
+  border-color: transparent;
+  padding-inline: var(--jm-3);
+}
+.btn-quiet:hover { color: var(--jm-signal-text); }
+/* "Coming soon" placeholders read as inert, not clickable (no billing yet). */
+.btn-quiet.price-cta-soon {
+  color: var(--jm-text-dim);
+  border: 1px dashed var(--jm-line-2);
+  cursor: default;
+}
+.btn-quiet.price-cta-soon:hover { color: var(--jm-text-dim); }
 
 /* ---------- theme toggle ---------- */
 .toggle {
@@ -150,6 +166,7 @@ code {
 .toggle button:hover { color: var(--jm-text-mid); }
 .toggle button.on { background: var(--jm-text); color: var(--jm-bg); }
 .toggle-inline { margin-top: var(--jm-5); }
+.toggle-foot { margin-left: auto; }
 
 /* ============================ HEADER ============================ */
 .site-head {
@@ -196,11 +213,12 @@ code {
 }
 .hero-copy { min-width: 0; }
 .hero-title {
-  font-size: clamp(40px, 7vw, 72px);
+  font-size: clamp(34px, 5.2vw, 56px);
   font-weight: 680;
-  letter-spacing: -.04em;
-  line-height: 1.02;
+  letter-spacing: -.035em;
+  line-height: 1.06;
   margin: var(--jm-2) 0 var(--jm-5);
+  text-wrap: balance;
 }
 .lede {
   font-size: clamp(16px, 1.7vw, 19px);
@@ -216,9 +234,22 @@ code {
   font-size: 12px;
   color: var(--jm-text-dim);
 }
+/* small brand tagline beneath the hero CTA — NOT the h1 (law: keep the old line demoted) */
+.hero-tag {
+  margin: var(--jm-5) 0 0;
+  font-size: 13px;
+  color: var(--jm-text-dim);
+  letter-spacing: -.01em;
+}
 
 /* ---------- hero demo ---------- */
 .hero-demo { min-width: 0; }
+.demo-caption {
+  margin: var(--jm-3) 0 0;
+  font-size: 13px;
+  color: var(--jm-text-dim);
+  text-align: center;
+}
 .demo {
   margin: 0;
   border: 1px solid var(--jm-line);
@@ -331,6 +362,80 @@ code {
   margin: var(--jm-4) 0 var(--jm-8);
 }
 
+/* ============================ PROOF BAR ============================ */
+.proof {
+  border-top: 1px solid var(--jm-line);
+  background: var(--jm-surface-2);
+  padding-block: clamp(var(--jm-8), 5vw, 56px);
+  text-align: center;
+}
+.proof-line {
+  font-size: clamp(16px, 2vw, 21px);
+  font-weight: 500;
+  color: var(--jm-text);
+  max-width: 44ch;
+  margin: 0 auto var(--jm-6);
+}
+.proof-formats {
+  list-style: none;
+  margin: 0 0 var(--jm-4);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--jm-3);
+  font-family: var(--jm-mono);
+  font-size: 13px;
+  color: var(--jm-text);
+}
+.proof-formats .proof-sep { color: var(--jm-text-dim); }
+.proof-sub {
+  font-family: var(--jm-mono);
+  font-size: 12px;
+  color: var(--jm-text-dim);
+  margin: 0;
+}
+/* honest, clearly-empty placeholder slots — NOT fabricated quotes/logos.
+   Flagged in the markup for design review; founder fills with real named quotes. */
+.proof-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--jm-4);
+  max-width: 760px;
+  margin: var(--jm-8) auto 0;
+}
+.proof-slot {
+  display: grid;
+  place-items: center;
+  min-height: 84px;
+  border: 1px dashed var(--jm-line-2);
+  border-radius: var(--jm-r-lg);
+  font-family: var(--jm-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--jm-text-dim);
+}
+
+/* ============================ PERSONAS ============================ */
+.persona-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--jm-4);
+}
+.persona {
+  background: var(--jm-surface);
+  border: 1px solid var(--jm-line);
+  border-radius: var(--jm-r-lg);
+  padding: var(--jm-6);
+}
+.persona h3 { margin-bottom: var(--jm-2); }
+.persona p { margin: 0; font-size: 14.5px; }
+
 /* ---------- steps ---------- */
 .steps {
   list-style: none;
@@ -362,6 +467,16 @@ code {
 }
 .step h3 { margin-bottom: var(--jm-1); }
 .step p { margin: 0; font-size: 14px; }
+
+/* repeat-CTA row at the end of How it works */
+.how-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--jm-4);
+  margin-top: var(--jm-8);
+}
+.how-cta .cta-note { margin-top: 0; }
 
 /* ---------- infer card ---------- */
 .infer-card {
@@ -564,6 +679,141 @@ code {
 .eq-tile .wm span { color: var(--jm-text-mid); }
 .eq-tile .mark { color: var(--jm-text); }
 
+/* ============================ PRICING ============================ */
+/* SCAFFOLD — flagged for design review. Built from tokens + existing primitives only. */
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--jm-4);
+  align-items: stretch;
+}
+.price-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--jm-surface);
+  border: 1px solid var(--jm-line);
+  border-radius: var(--jm-r-lg);
+  padding: var(--jm-6);
+}
+.band-alt .price-card { background: var(--jm-bg); }
+/* Free is the hero of the block — the only signal-bordered card. */
+.price-card-hero {
+  border-color: var(--jm-signal);
+  box-shadow: var(--jm-shadow-card);
+}
+.price-head {
+  padding-bottom: var(--jm-4);
+  margin-bottom: var(--jm-4);
+  border-bottom: 1px solid var(--jm-line);
+}
+.price-name {
+  display: flex;
+  align-items: center;
+  gap: var(--jm-2);
+  font-size: 16px;
+  margin-bottom: var(--jm-2);
+}
+.price-badge {
+  font-family: var(--jm-mono);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--jm-text-dim);
+  background: var(--jm-surface-2);
+  border: 1px solid var(--jm-line);
+  border-radius: var(--jm-r-pill);
+  padding: 2px 8px;
+}
+.price-amount { margin: 0 0 var(--jm-1); }
+.price-num {
+  font-size: 28px;
+  font-weight: 680;
+  letter-spacing: -.03em;
+  color: var(--jm-text);
+}
+.price-per {
+  font-family: var(--jm-mono);
+  font-size: 12px;
+  color: var(--jm-text-dim);
+}
+.price-for {
+  margin: 0;
+  font-size: 13px;
+  color: var(--jm-text-mid);
+}
+.price-feats {
+  list-style: none;
+  margin: 0 0 var(--jm-6);
+  padding: 0;
+  display: grid;
+  gap: var(--jm-2);
+  flex: 1;
+}
+.price-feats li {
+  position: relative;
+  padding-left: var(--jm-5);
+  font-size: 13.5px;
+  color: var(--jm-text-mid);
+  line-height: 1.45;
+}
+.price-feats li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: .55em;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--jm-r-pill);
+  background: var(--jm-line-2);
+}
+.price-card-hero .price-feats li::before { background: var(--jm-signal); }
+.price-cta { width: 100%; margin-top: auto; }
+.price-note {
+  margin: var(--jm-6) 0 0;
+  font-family: var(--jm-mono);
+  font-size: 12px;
+  color: var(--jm-text-dim);
+}
+
+/* ============================ FAQ ============================ */
+.faq-wrap { max-width: 760px; }
+.faq-list { margin-top: var(--jm-8); }
+.faq-item {
+  border-top: 1px solid var(--jm-line);
+  padding: var(--jm-1) 0;
+}
+.faq-item:last-child { border-bottom: 1px solid var(--jm-line); }
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--jm-3);
+  padding: var(--jm-4) 0;
+  font-family: var(--jm-ui);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--jm-text);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+/* chevron drawn from tokens (neutral chrome), rotates on open */
+.faq-item summary::after {
+  content: "";
+  flex: none;
+  margin-left: auto;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--jm-text-dim);
+  border-bottom: 2px solid var(--jm-text-dim);
+  transform: rotate(45deg);
+  transition: transform var(--jm-dur) var(--jm-ease);
+}
+.faq-item[open] summary::after { transform: rotate(-135deg); }
+.faq-item summary:hover { color: var(--jm-signal-text); }
+.faq-body { padding: 0 0 var(--jm-5); }
+.faq-body p { margin: 0; max-width: 64ch; }
+
 /* ============================ FINAL CTA ============================ */
 .final-cta {
   border-top: 1px solid var(--jm-line);
@@ -615,21 +865,27 @@ code {
 }
 
 /* ============================ RESPONSIVE ============================ */
+@media (max-width: 980px) {
+  .price-grid { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 880px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-demo { order: 2; }
-  .export-grid,
-  .equals-grid { grid-template-columns: 1fr; }
+  .export-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
   .feature-grid { grid-template-columns: 1fr; }
+  .persona-grid { grid-template-columns: 1fr; }
+  .proof-slots { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .wrap { padding-inline: var(--jm-5); }
   .head-row { gap: var(--jm-2); }
-  .toggle { display: none; }            /* keep header uncluttered on phones; toggle lives in the equals section */
+  .site-head .toggle { display: none; } /* keep header uncluttered on phones; toggle stays in the footer */
   .demo-stage { height: 320px; }
   .export-targets li { grid-template-columns: 1fr; gap: 2px; }
+  .price-grid { grid-template-columns: 1fr; }
   .foot-row { flex-wrap: wrap; }
+  .toggle-foot { margin-left: 0; order: 3; }
 }
 
 /* ============================ MOTION ============================ */

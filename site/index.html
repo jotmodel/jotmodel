@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
 
-  <title>JotModel — Type it. Drag it. It's a model.</title>
-  <meta name="description" content="JotModel is a fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+  <title>JotModel — Turn the conversation into a data model</title>
+  <meta name="description" content="JotModel is the collaborative data-modeling tool the whole room can use. Type an entity in plain English, drag a relationship, and the model appears. PMs, analysts, and engineers model together — then it exports clean DBML, dbt, and SQL." />
 
   <link rel="canonical" href="https://jotmodel.com/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -19,8 +19,8 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://jotmodel.com/" />
-  <meta property="og:title" content="JotModel — Type it. Drag it. It's a model." />
-  <meta property="og:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+  <meta property="og:title" content="JotModel — Turn the conversation into a data model" />
+  <meta property="og:description" content="The collaborative data-modeling tool the whole room can use. Type in plain English, drag a relationship, model together — then export clean DBML, dbt, and SQL." />
   <meta property="og:image" content="https://jotmodel.com/og-image.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,8 +28,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JotModel — Type it. Drag it. It's a model." />
-  <meta name="twitter:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship — the model just appears. Exports clean DBML, dbt, and SQL." />
+  <meta name="twitter:title" content="JotModel — Turn the conversation into a data model" />
+  <meta name="twitter:description" content="The collaborative data-modeling tool the whole room can use. Type in plain English, drag a relationship, model together — then export clean DBML, dbt, and SQL." />
   <meta name="twitter:image" content="https://jotmodel.com/og-image.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,12 +61,69 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
     "url": "https://jotmodel.com/",
-    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
+    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain English. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
     "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
     }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do I need to know SQL?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. You type in plain English — \"order date\", \"amount\", \"active?\" — and JotModel infers a sensible type for each field. You never have to write SQL or follow naming conventions, and you can override any inferred type inline."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "I'm a PM or business analyst — can I use this?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — that's exactly who it's for. JotModel reads plain English, so a PM, analyst, or domain expert can lead the modeling session instead of watching one engineer type. The whole room shapes the model together."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What can I export?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "DBML (portable and dbdiagram-ready), dbt (a schema.yml plus model stubs), and SQL DDL for Postgres, MySQL, and SQL Server. The export is production-clean — no cleanup pass required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. JotModel is local-first: boards load instantly and keep working offline — even on conference-room wifi. You sync to the cloud when you want to, not before."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Free plan gives you 10 boards forever with the full app — plain-English input, all exports, and real-time collaboration — with no credit card. Paid plans for unlimited boards and team features are coming soon."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do accounts work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Purely local boards need no account at all. To save to the cloud or share a board you create a free account with an email and password. More sign-in options are coming."
+        }
+      }
+    ]
   }
   </script>
 </head>
@@ -98,28 +155,29 @@
       <button type="button" id="t-dark" data-theme-set="dark">Dark</button>
     </span>
 
-    <a class="btn btn-primary" href="https://app.jotmodel.com">Open the app</a>
+    <a class="btn btn-primary" href="https://app.jotmodel.com">Start free</a>
   </div>
 </header>
 
 <main>
 
-  <!-- ============================ HERO ============================ -->
+  <!-- ===================== 1 · HERO ===================== -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">A whiteboard for data-modeling conversations</p>
-        <h1 class="hero-title">Type it. <span class="nowrap">Drag it.</span><br>It&rsquo;s a model.</h1>
+        <p class="eyebrow">Collaborative data modeling</p>
+        <h1 class="hero-title">Turn the conversation into a data model &mdash; while you&rsquo;re still in the room.</h1>
         <p class="lede">
-          Model at the speed of conversation. Type an entity, drag a relationship, and the
-          diagram just appears &mdash; in plain language, not <code>snake_case</code>. The tool
-          gets out of the room&rsquo;s way so the people in it can think.
+          Type what you mean &mdash; &ldquo;order date&rdquo;, &ldquo;amount&rdquo;, &ldquo;active?&rdquo; &mdash; and the model appears.
+          No syntax, no conventions, no code. PMs, analysts, and engineers shape it together in plain English,
+          then it exports clean DBML, dbt, and SQL.
         </p>
         <div class="cta-row">
-          <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
-          <a class="btn btn-ghost btn-lg" href="#input-model">See how it works</a>
+          <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
+          <a class="btn btn-quiet" href="#how-it-works">See how it works</a>
         </div>
-        <p class="cta-note">Free to start &middot; works offline &middot; your boards sync across devices.</p>
+        <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
+        <p class="hero-tag">Type it. Drag it. It&rsquo;s a model.</p>
       </div>
 
       <div class="hero-demo">
@@ -141,20 +199,72 @@
             table type themselves in, then a relationship line draws between them.
           </figcaption>
         </figure>
+        <p class="demo-caption">Watch a model take shape the way it does in a real session &mdash; typed, then related.</p>
       </div>
     </div>
   </section>
 
-  <!-- ====================== THE INPUT MODEL ====================== -->
-  <section id="input-model" class="band">
+  <!-- ===================== 2 · TRUST / PROOF BAR ===================== -->
+  <section class="proof" aria-labelledby="proof-h">
     <div class="wrap">
-      <p class="eyebrow">The input model</p>
-      <h2>Type an entity. Drag to relate. <span class="h-accent">Done.</span></h2>
+      <p id="proof-h" class="proof-line">Built for the people in the room &mdash; not just the people who write SQL.</p>
+      <ul class="proof-formats" aria-label="Export formats">
+        <li>DBML</li>
+        <li aria-hidden="true" class="proof-sep">&middot;</li>
+        <li>dbt</li>
+        <li aria-hidden="true" class="proof-sep">&middot;</li>
+        <li>PostgreSQL</li>
+        <li aria-hidden="true" class="proof-sep">&middot;</li>
+        <li>MySQL</li>
+        <li aria-hidden="true" class="proof-sep">&middot;</li>
+        <li>SQL Server</li>
+      </ul>
+      <p class="proof-sub">Works with your stack &middot; Local-first &mdash; your data stays on your machine</p>
+      <!-- TODO (design review): replace with 2–3 real, named quotes pre-launch (at least one from a PM/BA).
+           Honest empty slots below — do NOT fabricate logos or testimonials. -->
+      <div class="proof-slots" aria-hidden="true">
+        <span class="proof-slot">Customer quote</span>
+        <span class="proof-slot">Customer quote</span>
+        <span class="proof-slot">Customer quote</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3 · WHO IT'S FOR ===================== -->
+  <section class="band" aria-labelledby="who-h">
+    <div class="wrap">
+      <p class="eyebrow">Who it&rsquo;s for</p>
+      <h2 id="who-h">Everyone in the meeting can model now &mdash; <span class="h-accent">not just the engineers.</span></h2>
       <p class="section-lede">
-        The whole tool is built around one motion. You write the way you talk &mdash;
-        &ldquo;order date&rdquo;, &ldquo;active?&rdquo;, &ldquo;amount&rdquo; &mdash; and JotModel reads the
-        natural language, infers a sensible type, and keeps the diagram tidy. No syntax,
-        no conventions, no code required.
+        You type &ldquo;order date&rdquo;, &ldquo;active?&rdquo;, &ldquo;amount&rdquo; &mdash; never <code>order_date</code> or
+        <code>is_active</code>. So whoever knows the business can lead the model.
+      </p>
+
+      <ul class="persona-grid">
+        <li class="persona">
+          <h3>PMs &amp; business analysts</h3>
+          <p>Map the domain in plain English, and hand engineering a clean model &mdash; not a Google Doc or a stale screenshot.</p>
+        </li>
+        <li class="persona">
+          <h3>Engineers &amp; data folks</h3>
+          <p>Skip the cleanup pass. Loose notes export as real DBML, dbt, and SQL you can build from.</p>
+        </li>
+        <li class="persona">
+          <h3>Domain experts</h3>
+          <p>Describe how your business actually works, and watch it become a model you can correct live.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 4 · HOW IT WORKS ===================== -->
+  <section id="how-it-works" class="band band-alt" aria-labelledby="how-h">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 id="how-h">Type an entity. Drag to relate. <span class="h-accent">Done.</span></h2>
+      <p class="section-lede">
+        The whole tool is built around one motion. You write the way you talk, and JotModel keeps the
+        diagram tidy &mdash; no syntax, no conventions, no code required.
       </p>
 
       <ol class="steps">
@@ -162,7 +272,7 @@
           <span class="step-n" aria-hidden="true">1</span>
           <div>
             <h3>Type an entity</h3>
-            <p>Click anywhere, name the table, and start listing fields &mdash; comma-separated, plain English.</p>
+            <p>Click anywhere, name the table, and list fields in plain English &mdash; comma-separated.</p>
           </div>
         </li>
         <li class="step">
@@ -194,23 +304,25 @@
           <li><code class="fn">id</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">pk</span></li>
           <li><code class="fn">created at</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">timestamp</span></li>
         </ul>
-        <p class="infer-foot">
-          You never write <code>order_date</code> or <code>is_active</code> unless you want to.
-          Snake_case is supported &mdash; never assumed.
-        </p>
+        <p class="infer-foot">Snake_case is supported &mdash; never assumed.</p>
+      </div>
+
+      <div class="how-cta">
+        <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
+        <span class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</span>
       </div>
     </div>
   </section>
 
-  <!-- ================ STRICT UNDERNEATH / EXPORT ================ -->
-  <section class="band band-alt">
+  <!-- ===================== 5 · HAND OFF CLEAN ===================== -->
+  <section class="band" aria-labelledby="export-h">
     <div class="wrap export-grid">
       <div class="export-copy">
-        <p class="eyebrow">Loose in the room, strict underneath</p>
-        <h2>A whiteboard up top. <span class="h-accent">Clean output below.</span></h2>
+        <p class="eyebrow">Hand off clean</p>
+        <h2 id="export-h">A whiteboard on top. <span class="h-accent">Production-clean schema underneath.</span></h2>
         <p class="section-lede">
-          Fields can stay loose while the conversation is live. The moment you need real
-          artifacts, the model exports clean &mdash; no cleanup pass required.
+          Fields stay loose plain-English while the conversation is live. The moment you need real
+          artifacts, the same model exports clean &mdash; no cleanup pass. The messy notes <em>are</em> the model.
         </p>
         <ul class="export-targets">
           <li>
@@ -254,29 +366,28 @@
     </div>
   </section>
 
-  <!-- =================== LOCAL-FIRST + REALTIME =================== -->
-  <section class="band">
+  <!-- ===================== 6 · MODEL TOGETHER ===================== -->
+  <section class="band band-alt" aria-labelledby="together-h">
     <div class="wrap">
-      <p class="eyebrow">Local-first, now multiplayer</p>
-      <h2>Your boards live with you. <span class="h-accent">And travel when you need them to.</span></h2>
+      <p class="eyebrow">Model together</p>
+      <h2 id="together-h">Model together, live &mdash; <span class="h-accent">the whole room on one board.</span></h2>
       <p class="section-lede">
-        JotModel loads instantly and works offline &mdash; your work is yours, on your machine, first.
-        When you&rsquo;re ready to bring others in, save to the cloud, share by link, and model together
-        live.
+        Collaboration is what lets mixed roles co-create instead of one person transcribing. Send a link,
+        and everyone is looking at the same model &mdash; not a picture of one.
       </p>
 
       <div class="feature-grid">
         <article class="feature">
-          <h3>Instant &amp; offline</h3>
-          <p>Boards cache in your browser, so they load with no spinner and keep working offline &mdash; even on a plane.</p>
+          <h3>Loads instantly, works offline</h3>
+          <p>Local-first, so boards load with no spinner and keep working &mdash; even on conference-room wifi.</p>
         </article>
         <article class="feature">
-          <h3>Cloud save &amp; share links</h3>
-          <p>Sync when you want it. Send a link and the room is looking at the same model.</p>
+          <h3>Send a link, share the model</h3>
+          <p>Cloud-save when you want it, then share by link so the whole room sees the same board.</p>
         </article>
         <article class="feature feature-wide">
-          <h3>Live multiplayer with presence</h3>
-          <p>See who&rsquo;s in the room and where they&rsquo;re pointing. Edits land in real time.</p>
+          <h3>Real time, with presence</h3>
+          <p>Model together as it happens &mdash; see who&rsquo;s in the room and where everyone&rsquo;s pointing. Edits land live.</p>
           <div class="presence-demo" aria-hidden="true">
             <span class="ghost-cur g1"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Priya</em></span>
             <span class="ghost-cur g2"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Marco</em></span>
@@ -287,46 +398,147 @@
     </div>
   </section>
 
-  <!-- ================= LIGHT AND DARK ARE EQUALS ================= -->
-  <section class="band band-alt">
-    <div class="wrap equals-grid">
-      <div>
-        <p class="eyebrow">Light and dark are equals</p>
-        <h2>Designed twice. <span class="h-accent">Patched never.</span></h2>
-        <p class="section-lede">
-          Every color in JotModel ships in both themes from the start &mdash; nothing is built for one
-          and bolted onto the other. Flip it and see: the whole page moves as one.
-        </p>
-        <span class="toggle toggle-inline" role="group" aria-label="Color theme">
-          <button type="button" data-theme-set="light">Light</button>
-          <button type="button" data-theme-set="dark">Dark</button>
-        </span>
+  <!-- ===================== 7 · PRICING ===================== -->
+  <!-- SCAFFOLD — flagged for design review. No billing exists; paid tiers marked "Coming soon". -->
+  <section id="pricing" class="band" aria-labelledby="pricing-h">
+    <div class="wrap">
+      <p class="eyebrow">Pricing</p>
+      <h2 id="pricing-h">Free for 10 boards. <span class="h-accent">Generous on purpose.</span></h2>
+      <p class="section-lede">
+        The whole loop &mdash; model, export, collaborate &mdash; is free forever. Paid plans just lift the board
+        cap and add control and scale around it. No signup wall, no trial clock, no credit card.
+      </p>
+
+      <div class="price-grid">
+        <article class="price-card price-card-hero" aria-labelledby="price-free">
+          <header class="price-head">
+            <h3 id="price-free" class="price-name">Free</h3>
+            <p class="price-amount"><span class="price-num">$0</span> <span class="price-per">forever</span></p>
+            <p class="price-for">10 boards &mdash; the full app</p>
+          </header>
+          <ul class="price-feats">
+            <li>Plain-English input &amp; type inference</li>
+            <li>All exports: DBML, dbt, SQL DDL</li>
+            <li>Real-time collaboration &amp; presence</li>
+            <li>Private boards, local-first &amp; offline</li>
+            <li>No credit card</li>
+          </ul>
+          <a class="btn btn-primary btn-lg price-cta" href="https://app.jotmodel.com">Start free</a>
+        </article>
+
+        <article class="price-card" aria-labelledby="price-pro">
+          <header class="price-head">
+            <h3 id="price-pro" class="price-name">Pro <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">$10</span> <span class="price-per">/mo</span></p>
+            <p class="price-for">$8/mo billed annually</p>
+          </header>
+          <ul class="price-feats">
+            <li>Unlimited boards</li>
+            <li>Extended version history</li>
+            <li>Private share-link controls</li>
+            <li>Larger multiplayer rooms</li>
+          </ul>
+          <span class="btn btn-quiet price-cta price-cta-soon" aria-disabled="true">Coming soon</span>
+        </article>
+
+        <article class="price-card" aria-labelledby="price-team">
+          <header class="price-head">
+            <h3 id="price-team" class="price-name">Team <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">$16</span> <span class="price-per">/user/mo</span></p>
+            <p class="price-for">$13/user billed annually</p>
+          </header>
+          <ul class="price-feats">
+            <li>Everything in Pro, per seat</li>
+            <li>Shared team workspace</li>
+            <li>Roles &amp; permissions</li>
+            <li>Centralized billing &amp; seats</li>
+          </ul>
+          <span class="btn btn-quiet price-cta price-cta-soon" aria-disabled="true">Coming soon</span>
+        </article>
+
+        <article class="price-card" aria-labelledby="price-ent">
+          <header class="price-head">
+            <h3 id="price-ent" class="price-name">Enterprise <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">Custom</span></p>
+            <p class="price-for">For security &amp; procurement</p>
+          </header>
+          <ul class="price-feats">
+            <li>SSO / SAML &amp; SCIM</li>
+            <li>Audit logs &amp; compliance</li>
+            <li>Enforced sharing controls</li>
+            <li>Dedicated support &amp; SLA</li>
+          </ul>
+          <a class="btn btn-quiet price-cta" href="mailto:hello@jotmodel.com">Contact us</a>
+        </article>
       </div>
-      <div class="equals-tiles" aria-hidden="true">
-        <div class="eq-tile eq-light" data-theme="light">
-          <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
-            <span class="wm"><b>jot</b><span>model</span></span>
-          </span>
-          <span class="eq-cap">Light</span>
-        </div>
-        <div class="eq-tile eq-dark" data-theme="dark">
-          <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
-            <span class="wm"><b>jot</b><span>model</span></span>
-          </span>
-          <span class="eq-cap">Dark</span>
-        </div>
+      <p class="price-note">Paid plans aren&rsquo;t live yet &mdash; prices are set, billing is coming. Free at 10 boards is available today.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 8 · FAQ ===================== -->
+  <section class="band band-alt" aria-labelledby="faq-h">
+    <div class="wrap faq-wrap">
+      <p class="eyebrow">FAQ</p>
+      <h2 id="faq-h">Questions, <span class="h-accent">answered.</span></h2>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I need to know SQL?</summary>
+          <div class="faq-body">
+            <p>No. You type in plain English &mdash; &ldquo;order date&rdquo;, &ldquo;amount&rdquo;, &ldquo;active?&rdquo; &mdash; and JotModel
+            infers a sensible type for each field. You never have to write SQL or follow naming conventions,
+            and you can override any inferred type inline.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>I&rsquo;m a PM or business analyst &mdash; can I use this?</summary>
+          <div class="faq-body">
+            <p>Yes &mdash; that&rsquo;s exactly who it&rsquo;s for. JotModel reads plain English, so a PM, analyst, or domain
+            expert can lead the modeling session instead of watching one engineer type. The whole room
+            shapes the model together.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>What can I export?</summary>
+          <div class="faq-body">
+            <p>DBML (portable and dbdiagram-ready), dbt (a <code>schema.yml</code> plus model stubs), and SQL DDL
+            for Postgres, MySQL, and SQL Server. The export is production-clean &mdash; no cleanup pass required.
+            (Importing an existing schema is on the roadmap.)</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Does it work offline?</summary>
+          <div class="faq-body">
+            <p>Yes. JotModel is local-first: boards load instantly and keep working offline &mdash; even on
+            conference-room wifi. You sync to the cloud when you want to, not before.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Is it really free?</summary>
+          <div class="faq-body">
+            <p>Yes. The Free plan gives you 10 boards forever with the full app &mdash; plain-English input, all
+            exports, and real-time collaboration &mdash; with no credit card. Paid plans for unlimited boards and
+            team features are coming soon.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>How do accounts work?</summary>
+          <div class="faq-body">
+            <p>Purely local boards need no account at all. To save to the cloud or share a board, you create a
+            free account with an email and password. More sign-in options are coming.</p>
+          </div>
+        </details>
       </div>
     </div>
   </section>
 
-  <!-- ========================= FINAL CTA ========================= -->
+  <!-- ===================== 9 · FINAL CTA ===================== -->
   <section class="final-cta">
     <div class="wrap final-inner">
-      <h2 class="final-title">Type it. Drag it. It&rsquo;s a model.</h2>
-      <p class="final-lede">Jot the model. Have the conversation. The tool stays out of the way.</p>
-      <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
+      <h2 class="final-title">Have the conversation.<br>Leave with the model.</h2>
+      <p class="final-lede">No SQL required. Start free.</p>
+      <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
+      <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
     </div>
   </section>
 
@@ -340,8 +552,13 @@
       <span class="wm"><b>jot</b><span>model</span></span>
     </a>
     <span class="foot-sp"></span>
+    <span class="toggle toggle-foot" role="group" aria-label="Color theme">
+      <button type="button" data-theme-set="light">Light</button>
+      <button type="button" data-theme-set="dark">Dark</button>
+    </span>
     <nav class="foot-nav" aria-label="Footer">
-      <a href="https://app.jotmodel.com">Open the app</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://app.jotmodel.com">Start free</a>
       <a href="mailto:hello@jotmodel.com">hello@jotmodel.com</a>
     </nav>
   </div>
