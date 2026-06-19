@@ -3,7 +3,7 @@
    Dependency-free. Adapted from the design-system reference demo.
    It "builds" a small model the way the product does: two entity
    cards type in their fields, then a neutral relationship line draws
-   with one-bar / crow's-foot cardinality glyphs.
+   between them.
 
    Performance & a11y:
    - rAF-driven; pauses when the tab is hidden or the figure is offscreen
@@ -120,7 +120,7 @@
     })();
   }
 
-  // ---- relationship line + cardinality glyphs ------------------------
+  // ---- relationship line ---------------------------------------------
   function rectOf(node) {
     var d = node.def;
     return {
@@ -137,23 +137,6 @@
     var ay = ca.y + Math.max(20, Math.min(ca.h - 20, (cb.y + cb.h / 2) - ca.y));
     return { x: right ? ca.x + ca.w : ca.x, y: ay, side: right ? 1 : -1 };
   }
-  // crow's-foot (many) at the "to" end. The three toes touch the entity edge
-  // (x, y-6 / y / y+6) and converge to an apex out on the line (x + dir*9), so the
-  // foot opens toward the table, on the line side, instead of fanning into the card.
-  function crow(x, y, dir, col) {
-    var ax = x + dir * 9;
-    return '<g stroke="' + col + '" stroke-width="1.8" stroke-linecap="round" fill="none">' +
-      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + (y - 6) + '"/>' +
-      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + y + '"/>' +
-      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + (y + 6) + '"/></g>';
-  }
-  // single bar (one) at the "from" end
-  function bar(x, y, dir, col) {
-    var bx = x + dir * 8;
-    return '<line x1="' + bx + '" y1="' + (y - 6) + '" x2="' + bx + '" y2="' + (y + 6) +
-      '" stroke="' + col + '" stroke-width="1.8" stroke-linecap="round"/>';
-  }
-
   function drawRelationship(progress) {
     var from = nodes.users, to = nodes.orders;
     if (!from || !to) { svg.innerHTML = ''; return; }
@@ -170,11 +153,7 @@
     }
     path += '/>';
 
-    var glyphs = '';
-    if (progress == null || progress >= 1) {
-      glyphs = bar(a.x, a.y, a.side, col) + crow(b.x, b.y, b.side, col);
-    }
-    svg.innerHTML = path + glyphs;
+    svg.innerHTML = path;
   }
 
   // ---- the build sequence --------------------------------------------
