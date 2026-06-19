@@ -80,6 +80,10 @@ function BoardList() {
   }
   async function moveBoard(id: string, projectId: string | null) {
     setMoveFor(null)
+    // Clear the drag state here too: on a successful drop, React moves the card to its new section
+    // and unmounts the source node, so onDragEnd may never fire — leaving every section stuck with
+    // the drag-active outline. Filing via the menu (no drag) sets nothing, so this is a harmless no-op there.
+    setDragId(null)
     setBoards(bs => bs?.map(b => b.id === id ? { ...b, project_id: projectId } : b) ?? bs)
     try { await api.moveBoard(token, id, projectId) } catch (e) { setError(msg(e)); reload() }
   }
