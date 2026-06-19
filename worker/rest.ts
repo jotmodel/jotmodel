@@ -17,6 +17,7 @@ function noContent(env: Cloudflare.Env): Response {
   return new Response(null, { status: 204, headers: corsHeaders(env) })
 }
 const rid = () => crypto.randomUUID().replace(/-/g, '')
+function safeParse(s: string): unknown { try { return JSON.parse(s) } catch { return null } }
 
 async function requireUser(req: Request, env: Cloudflare.Env): Promise<string | null> {
   const auth = req.headers.get('Authorization') || ''
@@ -54,12 +55,19 @@ export async function handleRest(req: Request, env: Cloudflare.Env): Promise<Res
 
   if (path === '/api/boards' && method === 'GET') {
     const { results } = await env.DB.prepare(
-      `SELECT b.id, b.title, b.updated_at FROM boards b
+      `SELECT b.id, b.title, b.updated_at, b.project_id, b.summary_json FROM boards b
        LEFT JOIN members m ON m.board_id = b.id AND m.user_id = ?1
        WHERE b.owner_id = ?1 OR m.user_id = ?1
        GROUP BY b.id ORDER BY b.updated_at DESC`,
-    ).bind(userId).all()
-    return json(env, { boards: results })
+    ).bind(userId).all<{ id: string; title: string; updated_at: number; project_id: string | null; summary_json: string | null }>()
+    // Parse the cached thumbnail summary here so the wire shape is a clean object|null
+    // (a board project_id only ever surfaces for boards the user owns or co-owns).
+    const boards = results.map((b) => ({
+      id: b.id, title: b.title, updated_at: b.updated_at,
+      project_id: b.project_id ?? null,
+      summary: b.summary_json ? safeParse(b.summary_json) : null,
+    }))
+    return json(env, { boards })
   }
 
   if (path === '/api/boards' && method === 'POST') {
@@ -84,11 +92,32 @@ export async function handleRest(req: Request, env: Cloudflare.Env): Promise<Res
 
     if (method === 'PATCH') {
       if (role !== 'owner' && role !== 'editor') return json(env, { error: 'forbidden' }, 403)
-      const body = await req.json().catch(() => ({})) as { title?: string }
-      const title = (body.title ?? '').trim()
-      if (!title) return json(env, { error: 'title required' }, 400)
-      await env.DB.prepare('UPDATE boards SET title=?, updated_at=? WHERE id=?')
-        .bind(title, Date.now(), id).run()
+      const body = await req.json().catch(() => ({})) as { title?: string; project_id?: string | null }
+      const sets: string[] = []
+      const binds: unknown[] = []
+
+      if (body.title !== undefined) {
+        const title = body.title.trim()
+        if (!title) return json(env, { error: 'title required' }, 400)
+        sets.push('title=?'); binds.push(title)
+        // A title change is a real edit → bump recency. A pure move (below) is filing, not editing.
+        sets.push('updated_at=?'); binds.push(Date.now())
+      }
+
+      if ('project_id' in body) {
+        const pid = body.project_id ?? null
+        if (pid !== null) {
+          // You can only file a board into a project you own.
+          const proj = await env.DB.prepare('SELECT owner_id FROM projects WHERE id=?')
+            .bind(pid).first<{ owner_id: string }>()
+          if (!proj || proj.owner_id !== userId) return json(env, { error: 'forbidden' }, 403)
+        }
+        sets.push('project_id=?'); binds.push(pid)
+      }
+
+      if (!sets.length) return json(env, { error: 'nothing to update' }, 400)
+      binds.push(id)
+      await env.DB.prepare(`UPDATE boards SET ${sets.join(', ')} WHERE id=?`).bind(...binds).run()
       return json(env, { ok: true })
     }
 
@@ -96,6 +125,46 @@ export async function handleRest(req: Request, env: Cloudflare.Env): Promise<Res
       if (role !== 'owner') return json(env, { error: 'forbidden' }, 403)
       await env.DB.prepare('DELETE FROM boards WHERE id=?').bind(id).run() // cascades members/share_links
       await env.SNAPSHOTS.delete(`board/${id}.ydoc`).catch(() => {})
+      return noContent(env)
+    }
+  }
+
+  // --- projects: owner-scoped grouping for the board list (a board belongs to ≤1 project) ---
+  if (path === '/api/projects' && method === 'GET') {
+    const { results } = await env.DB.prepare(
+      'SELECT id, name, created_at FROM projects WHERE owner_id=? ORDER BY created_at ASC',
+    ).bind(userId).all()
+    return json(env, { projects: results })
+  }
+
+  if (path === '/api/projects' && method === 'POST') {
+    const body = await req.json().catch(() => ({})) as { name?: string }
+    const id = rid()
+    const name = (body.name || 'untitled project').trim() || 'untitled project'
+    await env.DB.prepare('INSERT INTO projects (id, owner_id, name) VALUES (?, ?, ?)')
+      .bind(id, userId, name).run()
+    return json(env, { id })
+  }
+
+  const oneProject = path.match(/^\/api\/projects\/([^/]+)$/)
+  if (oneProject) {
+    const pid = oneProject[1]
+    const owner = await env.DB.prepare('SELECT owner_id FROM projects WHERE id=?')
+      .bind(pid).first<{ owner_id: string }>()
+    if (!owner) return json(env, { error: 'not found' }, 404)
+    if (owner.owner_id !== userId) return json(env, { error: 'forbidden' }, 403)
+
+    if (method === 'PATCH') {
+      const body = await req.json().catch(() => ({})) as { name?: string }
+      const name = (body.name ?? '').trim()
+      if (!name) return json(env, { error: 'name required' }, 400)
+      await env.DB.prepare('UPDATE projects SET name=? WHERE id=?').bind(name, pid).run()
+      return json(env, { ok: true })
+    }
+
+    if (method === 'DELETE') {
+      // ON DELETE SET NULL un-files this project's boards; their drawings are untouched.
+      await env.DB.prepare('DELETE FROM projects WHERE id=?').bind(pid).run()
       return noContent(env)
     }
   }

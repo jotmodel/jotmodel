@@ -13,6 +13,8 @@
     "dev:worker": "wrangler dev",
     "db:local": "wrangler d1 execute jotmodel --local --file worker/db/schema.sql",
     "db:remote": "wrangler d1 execute jotmodel --remote --file worker/db/schema.sql",
+    "db:migrate:local": "wrangler d1 execute jotmodel --local --file worker/db/migrations/0001_projects_thumbnails.sql",
+    "db:migrate:remote": "wrangler d1 execute jotmodel --remote --file worker/db/migrations/0001_projects_thumbnails.sql",
     "deploy:worker": "wrangler deploy",
     "deploy:app": "npm run build && wrangler pages deploy dist --project-name jotmodel-app --branch main",
     "deploy:site": "wrangler pages deploy site --project-name jotmodel-site --branch main"

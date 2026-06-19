@@ -267,15 +267,63 @@ body{
 .home-main{width:min(760px,92vw);margin:0 auto;padding:40px 0;flex:1}
 .home-title{font-family:var(--jm-ui);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--jm-text);margin:0 0 20px}
 .home-error{font-size:13px;color:var(--jm-danger-text);background:var(--jm-danger-weak);border:1px solid color-mix(in srgb,var(--jm-danger) 30%,transparent);border-radius:var(--jm-r-md);padding:9px 12px}
-.board-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.board-row{display:flex;align-items:center;gap:8px;border:1px solid var(--jm-line);border-radius:var(--jm-r-md);background:var(--jm-surface);transition:border-color var(--jm-dur-fast)}
-.board-row:hover{border-color:var(--jm-line-2)}
-.board-open{flex:1;display:flex;align-items:baseline;gap:12px;text-align:left;background:transparent;border:0;cursor:pointer;padding:13px 14px;border-radius:var(--jm-r-md)}
-.board-name{font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text)}
-.board-time{font-family:var(--jm-mono);font-size:11px;color:var(--jm-text-dim)}
-.board-rename{flex:1;font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;margin:12px 14px;caret-color:var(--jm-signal)}
-.board-actions{display:flex;align-items:center;gap:4px;padding-right:10px;opacity:0;transition:opacity var(--jm-dur-fast)}
-.board-row:hover .board-actions,.board-row:focus-within .board-actions{opacity:1}
+/* the board grid wants more room than the old single-column list */
+.home-main.home-boards{width:min(1120px,92vw)}
+
+/* board card grid (your own boards — a grid of your work, not a template gallery) */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:14px}
+.board-card{display:flex;flex-direction:column;border:1px solid var(--jm-line);border-radius:var(--jm-r-md);background:var(--jm-surface);overflow:hidden;transition:border-color var(--jm-dur-fast),box-shadow var(--jm-dur-fast)}
+.board-card:hover{border-color:var(--jm-line-2);box-shadow:var(--jm-shadow-card)}
+.board-card[draggable=true]{cursor:grab}
+.board-card.dragging,.board-card:active{cursor:grabbing}
+
+/* thumbnail — a live vector mini-canvas (BoardThumb.tsx); --sem-* fills, neutral --jm-rel lines */
+.board-thumb-wrap{display:block;width:100%;aspect-ratio:4/3;padding:0;border:0;border-bottom:1px solid var(--jm-line);background:var(--jm-canvas);cursor:pointer;overflow:hidden}
+.board-thumb-wrap:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--jm-signal)}
+.board-thumb{display:block;width:100%;height:100%}
+/* empty board → a faint dot grid, echoing the canvas */
+.board-thumb-empty{width:100%;height:100%;background:radial-gradient(circle at 1px 1px,var(--jm-grid) 1.1px,transparent 0);background-size:14px 14px}
+.thumb-rels line{stroke:var(--jm-rel);stroke-width:1.5}
+.thumb-body{fill:var(--jm-surface);stroke:var(--jm-line-2);stroke-width:1}
+.thumb-head{fill:var(--jm-surface-2)}
+.thumb-accent{stroke:var(--jm-line-2);stroke-width:2}
+/* user colour layer — same --sem-* hues as the canvas card (law 2); the lines above stay neutral */
+.thumb-card.c-slate .thumb-head{fill:color-mix(in srgb,var(--sem-slate) 20%,var(--jm-surface))}.thumb-card.c-slate .thumb-accent{stroke:var(--sem-slate)}
+.thumb-card.c-cyan .thumb-head{fill:color-mix(in srgb,var(--sem-cyan) 20%,var(--jm-surface))}.thumb-card.c-cyan .thumb-accent{stroke:var(--sem-cyan)}
+.thumb-card.c-teal .thumb-head{fill:color-mix(in srgb,var(--sem-teal) 20%,var(--jm-surface))}.thumb-card.c-teal .thumb-accent{stroke:var(--sem-teal)}
+.thumb-card.c-green .thumb-head{fill:color-mix(in srgb,var(--sem-green) 20%,var(--jm-surface))}.thumb-card.c-green .thumb-accent{stroke:var(--sem-green)}
+.thumb-card.c-amber .thumb-head{fill:color-mix(in srgb,var(--sem-amber) 22%,var(--jm-surface))}.thumb-card.c-amber .thumb-accent{stroke:var(--sem-amber)}
+.thumb-card.c-orange .thumb-head{fill:color-mix(in srgb,var(--sem-orange) 22%,var(--jm-surface))}.thumb-card.c-orange .thumb-accent{stroke:var(--sem-orange)}
+.thumb-card.c-rose .thumb-head{fill:color-mix(in srgb,var(--sem-rose) 20%,var(--jm-surface))}.thumb-card.c-rose .thumb-accent{stroke:var(--sem-rose)}
+.thumb-card.c-violet .thumb-head{fill:color-mix(in srgb,var(--sem-violet) 20%,var(--jm-surface))}.thumb-card.c-violet .thumb-accent{stroke:var(--sem-violet)}
+
+/* card footer (title + actions) */
+.board-card-foot{display:flex;align-items:center;gap:6px;padding:9px 10px}
+.board-name-btn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;background:transparent;border:0;cursor:pointer;padding:0;border-radius:var(--jm-r-sm)}
+.board-name-btn:focus-visible{outline:none;box-shadow:var(--jm-ring)}
+.board-name{font-family:var(--jm-ui);font-weight:600;font-size:13.5px;color:var(--jm-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.board-time{font-family:var(--jm-mono);font-size:10.5px;color:var(--jm-text-dim)}
+.board-rename{flex:1;min-width:0;font-family:var(--jm-ui);font-weight:600;font-size:13.5px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;caret-color:var(--jm-signal)}
+.board-actions{display:flex;align-items:center;gap:2px;flex:none;opacity:0;transition:opacity var(--jm-dur-fast)}
+.board-card:hover .board-actions,.board-card:focus-within .board-actions{opacity:1}
+
+/* move-to-project menu (reuses the .menu/.menu-pop popover) */
+.move-pop{min-width:182px}
+.move-pop .move-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.move-pop button[aria-checked=true]{color:var(--jm-signal-text)}
+
+/* project sections — flat, always expanded; each is a drop target for filing a board */
+.proj-list{display:flex;flex-direction:column;gap:26px}
+.proj{border-radius:var(--jm-r-md);padding:2px;transition:box-shadow var(--jm-dur-fast),background var(--jm-dur-fast)}
+.proj.drag-active{box-shadow:0 0 0 1px var(--jm-line) inset}
+.proj.drag-over{box-shadow:var(--jm-ring),0 0 0 1px var(--jm-signal) inset;background:var(--jm-signal-weak)}
+.proj-head{display:flex;align-items:center;gap:10px;margin:0 0 12px;min-height:28px}
+.proj-name{font-family:var(--jm-ui);font-weight:600;font-size:14px;letter-spacing:-.01em;color:var(--jm-text);margin:0;cursor:default}
+.proj-rename{font-family:var(--jm-ui);font-weight:600;font-size:14px;color:var(--jm-text);background:transparent;border:0;border-bottom:1px solid var(--jm-signal);outline:0;caret-color:var(--jm-signal)}
+.proj-count{font-family:var(--jm-mono);font-size:10.5px;color:var(--jm-text-dim);background:var(--jm-surface-2);border:1px solid var(--jm-line);border-radius:var(--jm-r-pill);padding:1px 7px}
+.proj-actions{display:flex;align-items:center;gap:2px;opacity:0;transition:opacity var(--jm-dur-fast)}
+.proj-head:hover .proj-actions,.proj:focus-within .proj-actions{opacity:1}
+.proj-empty{margin:0;padding:12px 2px}
 
 /* ---- presence (multiplayer) — cursors + pills use ONLY the presence palette ---- */
 .presence-layer{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}

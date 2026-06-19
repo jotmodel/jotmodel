@@ -123,17 +123,30 @@ the deploy quick-start is in `README.md`.
 4. Optional: broaden the CI token (Workers Routes + DNS + D1 + R2 edit) to auto-deploy the worker
    too; add error tracking/analytics (Cloudflare Web Analytics snippet is commented in `index.html`).
 5. `develop` branch is behind `main` — fast-forward it if you keep using it.
-6. **Flat "projects" (board grouping) — captured, not yet built.** One level: a board belongs to at
-   most one project; Home shows a project list + an "All boards" view. Scope:
-   - **D1:** new `projects` table (`id`, `owner_id`, `name`, `created_at`) + a nullable
-     `boards.project_id` (NULL = root / "All boards"); index on `project_id`. Apply to remote with
-     `npm run db:remote`.
-   - **API / worker:** list/create/rename/delete projects (owner-scoped ACL like boards); `listBoards`
-     returns `project_id`; add a "move board to project" endpoint. New routes in `worker/rest.ts` →
-     needs a **manual worker deploy** (see CI/CD note above).
-   - **UI (Home):** project list + "All boards", create project, rename via **double-click** (the
-     sanctioned rename gesture), move a board into a project. Extends the existing Home v1 list.
-   - Already live: rename-by-double-click on Home rows **and** the canvas board title (top bar).
+6. **Flat "projects" (board grouping) + board thumbnails — BUILT on branch
+   `projects-and-thumbnails` (PR open), not yet shipped.** One level: a board belongs to at most one
+   project (`project_id` NULL = ungrouped). Home is now a **board-card grid with live thumbnails**,
+   flat always-expanded project sections + an Ungrouped catch-all; file a board by **drag-onto-section
+   or a per-board move menu** (keyboard parity). Still a scaffold (`DesignReviewFlag` stays).
+   - **D1:** `projects` table + `boards.project_id` (ON DELETE SET NULL) + `boards.summary_json`.
+     Fresh installs get it all from `schema.sql`; existing DBs run the one-time migration
+     `worker/db/migrations/0001_projects_thumbnails.sql` via `npm run db:migrate:local` /
+     `db:migrate:remote` (ALTER is not idempotent — run once).
+   - **Thumbnails = live vector, no stored images.** The Durable Object computes a compact model
+     summary (entities x/y/field-count/colour + rel endpoints, `worker/summary.ts`) on save and
+     caches it in `boards.summary_json`; `listBoards` returns it; `BoardThumb.tsx` renders it as an
+     SVG mini-canvas (auto light/dark, `--sem-*` fills + neutral `--jm-rel` lines, plain — no
+     crow's-foot). Existing boards backfill on first open (onLoad, never bumps `updated_at`).
+   - **API / worker:** owner-scoped `GET/POST/PATCH/DELETE /api/projects`; `PATCH /api/boards/:id`
+     now also accepts `{project_id}` to file a board (verifies project ownership). Needs a **manual
+     worker deploy**.
+   - ⚠️ **Ship order (coordinated — merging the app auto-deploys Pages):** (1) `npm run
+     db:migrate:remote`, (2) manual worker deploy (`deploy-worker` workflow_dispatch or
+     `npm run deploy:worker`), (3) merge the app PR. The app degrades gracefully if `/api/projects`
+     is missing (flat grid, empty thumbnails), so order is about correctness, not crash-safety.
+   - Already live: rename-by-double-click on Home cards **and** the canvas board title (top bar).
+   - **Deferred:** project-level sharing (boards keep their own `share_links`); thumbnails cap at 80
+     entities / 160 rels per board to bound the list payload.
 7. **Paid plans (freemium) — strategy set 2026-06-19, not built.** Full marketing + pricing strategy
    in repo `MARKETING.md`. Model: free tier = **10 boards**, full app (input model + all exports +
    real-time collab) free forever; paid lifts the cap + adds control/scale. Publish real prices but

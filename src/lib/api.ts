@@ -4,7 +4,18 @@
  * Worker's D1 ACL is the source of truth for permissions; this is just the wire format.
  */
 export type Role = 'owner' | 'editor' | 'viewer'
-export interface BoardSummary { id: string; title: string; updated_at: number }
+/** Render-only model summary for the Home thumbnail; mirrors worker/summary.ts (ThumbModel).
+ *  e = entities (i:id, x, y, n:fieldCount, c:semantic colour|null); r = relationship [from,to] pairs. */
+export interface ThumbEntity { i: string; x: number; y: number; n: number; c: string | null }
+export interface ThumbModel { v: number; e: ThumbEntity[]; r: [string, string][] }
+export interface BoardSummary {
+  id: string; title: string; updated_at: number
+  /** Project this board is filed under, or null = ungrouped. */
+  project_id: string | null
+  /** Cached model summary for the thumbnail, or null until the board is next saved/opened. */
+  summary: ThumbModel | null
+}
+export interface Project { id: string; name: string; created_at: number }
 export interface BoardMeta { id: string; title: string; role: Role }
 export interface ShareResult { token: string; url: string }
 export type GetToken = () => Promise<string | null>
@@ -50,6 +61,18 @@ export const api = {
     req<{ ok: true }>(t, `/api/boards/${id}`, { method: 'PATCH', body: JSON.stringify({ title }) }),
   deleteBoard: (t: GetToken, id: string) =>
     req<void>(t, `/api/boards/${id}`, { method: 'DELETE' }),
+  /** File a board into a project (or pass null to un-file it back to "ungrouped"). */
+  moveBoard: (t: GetToken, id: string, projectId: string | null) =>
+    req<{ ok: true }>(t, `/api/boards/${id}`, { method: 'PATCH', body: JSON.stringify({ project_id: projectId }) }),
+
+  listProjects: (t: GetToken) =>
+    req<{ projects: Project[] }>(t, '/api/projects').then(r => r.projects),
+  createProject: (t: GetToken, name?: string) =>
+    req<{ id: string }>(t, '/api/projects', { method: 'POST', body: JSON.stringify({ name }) }).then(r => r.id),
+  renameProject: (t: GetToken, id: string, name: string) =>
+    req<{ ok: true }>(t, `/api/projects/${id}`, { method: 'PATCH', body: JSON.stringify({ name }) }),
+  deleteProject: (t: GetToken, id: string) =>
+    req<void>(t, `/api/projects/${id}`, { method: 'DELETE' }),
   createShare: (t: GetToken, id: string, role: 'editor' | 'viewer', expiresInDays?: number) =>
     req<ShareResult>(t, `/api/boards/${id}/share`, { method: 'POST', body: JSON.stringify({ role, expiresInDays }) }),
   revokeShare: (t: GetToken, id: string, token: string) =>
