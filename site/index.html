@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
 
-  <title>JotModel · Turn the conversation into a data model</title>
-  <meta name="description" content="A data-modeling tool the whole team can actually use. Type an entity in plain English, drag a relationship, and the model appears. Then it exports clean DBML, dbt, and SQL." />
+  <title>JotModel &middot; Turn the conversation into a data model</title>
+  <meta name="description" content="Turn the conversation into a data model. Just talk it through and it takes shape as you go. A data-modeling tool the whole team can use, that exports clean to your database when you need it." />
 
   <link rel="canonical" href="https://jotmodel.com/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -19,8 +19,8 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://jotmodel.com/" />
-  <meta property="og:title" content="JotModel · Turn the conversation into a data model" />
-  <meta property="og:description" content="A data-modeling tool the whole team can actually use. Type in plain English, drag a relationship, and the model appears. Exports clean DBML, dbt, and SQL." />
+  <meta property="og:title" content="JotModel &middot; Turn the conversation into a data model" />
+  <meta property="og:description" content="Just talk it through and the model takes shape as you go. A data-modeling tool the whole team can use." />
   <meta property="og:image" content="https://jotmodel.com/og-image.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,8 +28,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JotModel · Turn the conversation into a data model" />
-  <meta name="twitter:description" content="A data-modeling tool the whole team can actually use. Type in plain English, drag a relationship, and the model appears. Exports clean DBML, dbt, and SQL." />
+  <meta name="twitter:title" content="JotModel &middot; Turn the conversation into a data model" />
+  <meta name="twitter:description" content="Just talk it through and the model takes shape as you go. A data-modeling tool the whole team can use." />
   <meta name="twitter:image" content="https://jotmodel.com/og-image.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,7 +61,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
     "url": "https://jotmodel.com/",
-    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears, in plain English. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
+    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Just talk it through and the model takes shape as you go, in plain language. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -77,34 +77,26 @@
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What can I export?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "DBML (portable and dbdiagram-ready), dbt (a schema.yml plus model stubs), and SQL DDL for Postgres, MySQL, and SQL Server. The export is production-clean, no cleanup pass required."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does it work offline?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. JotModel is local-first: boards load instantly and keep working offline. You sync to the cloud when you want to, not before."
-        }
-      },
-      {
-        "@type": "Question",
         "name": "Is it really free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. The Free plan gives you 10 boards forever with the full app, with no credit card. Paid plans for unlimited boards and team features are coming soon."
+          "text": "Yes. 10 boards free forever, the full app, no credit card. Paid plans for unlimited boards and teams are coming soon."
         }
       },
       {
         "@type": "Question",
-        "name": "How do accounts work?",
+        "name": "Do I need an account?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Purely local boards need no account at all. To save to the cloud or share a board you create a free account with an email and password. More sign-in options are coming."
+          "text": "Not to start. Local boards need no account at all. Sign up free, with an email and password, when you want to save to the cloud or share a board."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I get real schema out of it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, when you need it. It exports clean to DBML, dbt, and SQL with no cleanup pass. Think of it as the bonus, not the point."
         }
       }
     ]
@@ -159,19 +151,14 @@
 
 <main>
 
-  <!-- ===================== 1 · HERO ===================== -->
+  <!-- ===================== HERO ===================== -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Collaborative data modeling</p>
-        <h1 class="hero-title">Turn the conversation into a data model, while you&rsquo;re still in the room.</h1>
-        <p class="lede">
-          Just type what you mean. The model appears as you talk, in plain English,
-          then exports clean DBML, dbt, and SQL.
-        </p>
+        <h1 class="hero-title">Turn the conversation into a model.</h1>
+        <p class="lede">Just talk it through. It takes shape as you go, and it just works.</p>
         <div class="cta-row">
           <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
-          <a class="btn btn-quiet" href="#how-it-works">See it work</a>
         </div>
         <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
         <p class="hero-tag">Type it. Drag it. It&rsquo;s a model.</p>
@@ -192,149 +179,35 @@
             <svg id="rels" class="demo-rels" aria-hidden="true"></svg>
           </div>
           <figcaption class="visually-hidden">
-            Animated demonstration of building a data model: a "users" table and an "orders"
-            table type themselves in, then a relationship line draws between them.
+            Animated demonstration: a "users" table and an "orders" table type themselves in,
+            then a relationship line draws between them.
           </figcaption>
         </figure>
-        <p class="demo-caption">Watch a model take shape the way it does in a real session.</p>
+        <p class="demo-caption">No setup. This is the actual tool, mid-thought.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===================== 2 · TRUST / PROOF BAR ===================== -->
-  <section class="proof" aria-labelledby="proof-h">
-    <div class="wrap">
-      <p id="proof-h" class="proof-line">A data-modeling tool the whole team can actually use.</p>
-      <ul class="proof-formats" aria-label="Export formats">
-        <li>DBML</li>
-        <li aria-hidden="true" class="proof-sep">&middot;</li>
-        <li>dbt</li>
-        <li aria-hidden="true" class="proof-sep">&middot;</li>
-        <li>PostgreSQL</li>
-        <li aria-hidden="true" class="proof-sep">&middot;</li>
-        <li>MySQL</li>
-        <li aria-hidden="true" class="proof-sep">&middot;</li>
-        <li>SQL Server</li>
-      </ul>
-      <p class="proof-sub">Works with your stack &middot; Local-first, your data stays on your machine</p>
-    </div>
-  </section>
-
-  <!-- ===================== 3 · HOW IT WORKS ===================== -->
-  <section id="how-it-works" class="band band-alt" aria-labelledby="how-h">
-    <div class="wrap">
-      <p class="eyebrow">How it works</p>
-      <h2 id="how-h">Type an entity. Drag to relate. <span class="h-accent">That&rsquo;s the whole tool.</span></h2>
-      <p class="section-lede">
-        You write the way you talk, and JotModel keeps the diagram tidy. The demo above is the real thing.
-      </p>
-      <p class="infer-aside">
-        Type <code>order date</code> and you get a date; <code>active?</code> a boolean; <code>amount</code> a number.
-        Wrong guess? Override it inline.
-      </p>
-    </div>
-  </section>
-
-  <!-- ===================== 4 · OUT OF THE WAY ===================== -->
+  <!-- ===================== IT GETS OUT OF THE WAY ===================== -->
   <section class="say-band" aria-label="Why it stays out of the way">
     <div class="wrap">
       <p class="say-line">Meetings are for the discussion, <span class="h-accent">not for learning the tool.</span></p>
-      <p class="say-sub">Nobody has to learn JotModel first. It stays out of the way, so the room stays on the data.</p>
-    </div>
-  </section>
-
-  <!-- ===================== 5 · HAND OFF CLEAN ===================== -->
-  <section class="band" aria-labelledby="export-h">
-    <div class="wrap export-grid">
-      <div class="export-copy">
-        <p class="eyebrow">Hand off clean</p>
-        <h2 id="export-h">A whiteboard on top. <span class="h-accent">Production-clean schema underneath.</span></h2>
-        <p class="section-lede">
-          Fields stay loose while you talk. When you need real artifacts, the same model exports clean.
-          The messy notes <em>are</em> the model.
-        </p>
-        <ul class="export-targets">
-          <li>
-            <span class="tgt-name">DBML</span>
-            <span class="tgt-desc">Portable schema, ready for dbdiagram and friends.</span>
-          </li>
-          <li>
-            <span class="tgt-name">dbt</span>
-            <span class="tgt-desc">A <code>schema.yml</code> plus model stubs to drop in.</span>
-          </li>
-          <li>
-            <span class="tgt-name">SQL DDL</span>
-            <span class="tgt-desc">Postgres, MySQL, or SQL Server. Pick your dialect.</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="export-code">
-        <div class="code-card" aria-label="Example DBML export">
-          <div class="code-bar">
-            <span class="code-dot" aria-hidden="true"></span>
-            <span class="code-name">model.dbml</span>
-          </div>
-<pre class="code"><code><span class="c-kw">Table</span> <span class="c-id">users</span> {
-  id          <span class="c-ty">integer</span>   [pk]
-  email       <span class="c-ty">varchar</span>
-  created_at  <span class="c-ty">timestamp</span>
-}
-
-<span class="c-kw">Table</span> <span class="c-id">orders</span> {
-  id          <span class="c-ty">integer</span>   [pk]
-  user_id     <span class="c-ty">integer</span>   [ref: &gt; users.id]
-  amount      <span class="c-ty">decimal</span>
-  order_date  <span class="c-ty">date</span>
-}
-
-<span class="c-cm">// one user, many orders</span>
-<span class="c-kw">Ref</span>: orders.user_id &gt; users.id</code></pre>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== 6 · MODEL TOGETHER ===================== -->
-  <section class="band band-alt" aria-labelledby="together-h">
-    <div class="wrap">
-      <p class="eyebrow">Model together</p>
-      <h2 id="together-h">Model together, live. <span class="h-accent">The whole room on one board.</span></h2>
-      <p class="section-lede">
-        Send a link, and everyone is looking at the same model. Not a picture of one.
+      <p class="say-sub">
+        Nothing to learn, so the whole team shapes the model together. It stays out of the way,
+        and the room stays on the data.
       </p>
-
-      <div class="feature-grid">
-        <article class="feature">
-          <h3>Loads instantly, works offline</h3>
-          <p>Local-first, so boards load with no spinner and keep working, even on conference-room wifi.</p>
-        </article>
-        <article class="feature">
-          <h3>Send a link, share the model</h3>
-          <p>Cloud-save when you want it, then share by link so the whole room sees the same board.</p>
-        </article>
-        <article class="feature feature-wide">
-          <h3>Real time, with presence</h3>
-          <p>See who&rsquo;s in the room and where everyone&rsquo;s pointing. Edits land live.</p>
-          <div class="presence-demo" aria-hidden="true">
-            <span class="ghost-cur g1"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Priya</em></span>
-            <span class="ghost-cur g2"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Marco</em></span>
-            <span class="ghost-cur g3"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Dana</em></span>
-          </div>
-        </article>
-      </div>
     </div>
   </section>
 
-  <!-- ===================== 7 · PRICING ===================== -->
+  <!-- ===================== PRICING ===================== -->
   <!-- SCAFFOLD: flagged for design review. No billing exists; paid tiers marked "Coming soon". -->
   <section id="pricing" class="band" aria-labelledby="pricing-h">
     <div class="wrap">
       <p class="eyebrow">Pricing</p>
       <h2 id="pricing-h">Free for 10 boards. <span class="h-accent">Generous on purpose.</span></h2>
       <p class="section-lede">
-        The whole loop, model, export, collaborate, is free forever. Paid plans just lift the board
-        cap and add control and scale around it. No signup wall, no trial clock, no credit card.
+        The whole thing is free forever. Paid plans just lift the board cap and add scale.
+        No signup wall, no trial clock, no credit card.
       </p>
 
       <div class="price-grid">
@@ -345,10 +218,10 @@
             <p class="price-for">10 boards, the full app</p>
           </header>
           <ul class="price-feats">
-            <li>Plain-language input &amp; type inference</li>
-            <li>All exports: DBML, dbt, SQL DDL</li>
-            <li>Real-time collaboration &amp; presence</li>
-            <li>Private boards, local-first &amp; offline</li>
+            <li>Just type what you mean</li>
+            <li>Real time, together</li>
+            <li>Private boards, offline</li>
+            <li>Clean export when you need it</li>
             <li>No credit card</li>
           </ul>
           <a class="btn btn-primary btn-lg price-cta" href="https://app.jotmodel.com">Start free</a>
@@ -403,51 +276,39 @@
     </div>
   </section>
 
-  <!-- ===================== 8 · FAQ ===================== -->
+  <!-- ===================== FAQ ===================== -->
   <section class="band band-alt" aria-labelledby="faq-h">
     <div class="wrap faq-wrap">
       <p class="eyebrow">FAQ</p>
-      <h2 id="faq-h">Questions, <span class="h-accent">answered.</span></h2>
+      <h2 id="faq-h">Good to know.</h2>
 
       <div class="faq-list">
         <details class="faq-item">
-          <summary>What can I export?</summary>
-          <div class="faq-body">
-            <p>DBML (portable and dbdiagram-ready), dbt (a <code>schema.yml</code> plus model stubs), and SQL DDL
-            for Postgres, MySQL, and SQL Server. The export is production-clean, no cleanup pass required.
-            (Importing an existing schema is on the roadmap.)</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary>Does it work offline?</summary>
-          <div class="faq-body">
-            <p>Yes. JotModel is local-first: boards load instantly and keep working offline. You sync to the
-            cloud when you want to, not before.</p>
-          </div>
-        </details>
-        <details class="faq-item">
           <summary>Is it really free?</summary>
           <div class="faq-body">
-            <p>Yes. The Free plan gives you 10 boards forever with the full app, with no credit card. Paid
-            plans for unlimited boards and team features are coming soon.</p>
+            <p>Yes. 10 boards free forever, the full app, no credit card. Paid plans for unlimited boards and teams are coming soon.</p>
           </div>
         </details>
         <details class="faq-item">
-          <summary>How do accounts work?</summary>
+          <summary>Do I need an account?</summary>
           <div class="faq-body">
-            <p>Purely local boards need no account at all. To save to the cloud or share a board, you create a
-            free account with an email and password. More sign-in options are coming.</p>
+            <p>Not to start. Local boards need no account at all. Sign up free, with an email and password, when you want to save to the cloud or share a board.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Can I get real schema out of it?</summary>
+          <div class="faq-body">
+            <p>Yes, when you need it. It exports clean to DBML, dbt, and SQL with no cleanup pass. Think of it as the bonus, not the point.</p>
           </div>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- ===================== 9 · FINAL CTA ===================== -->
+  <!-- ===================== FINAL CTA ===================== -->
   <section class="final-cta">
     <div class="wrap final-inner">
       <h2 class="final-title">Have the conversation.<br>Leave with the model.</h2>
-      <p class="final-lede">Just type what you mean. Start free.</p>
       <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
       <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
     </div>
