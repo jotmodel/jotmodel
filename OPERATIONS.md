@@ -23,6 +23,11 @@ the deploy quick-start is in `README.md`.
 - **D1** `jotmodel` → id `b19c42df-8010-432a-91e0-92cf504662d9` (pinned in `wrangler.toml`); schema in
   `worker/db/schema.sql` (tables: users, boards, members, share_links — **applied to remote**)
 - **R2** bucket `jotmodel-snapshots` (CRDT snapshots, key `board/{id}.ydoc`)
+- **Email Routing** (enabled 2026-06-19): apex MX → `route1/2/3.mx.cloudflare.net` + SPF
+  `v=spf1 include:_spf.mx.cloudflare.net ~all`; rule **`contact@jotmodel.com` → forward →
+  `jotmodel.app@gmail.com`** (catch-all = drop). Managed via `wrangler email routing` (OAuth token has
+  `email_routing` write). **Destination needs the one-time Cloudflare verification click** to go live.
+  Does not affect Clerk mail (subdomain-based). Set up to receive URL-categorization confirmations.
 - **Worker** `jotmodel` → DO `JotBoard` (y-partyserver) + D1 + R2 bindings; `[vars] APP_ORIGIN =
   https://app.jotmodel.com`; secrets `CLERK_SECRET_KEY`, `CLERK_JWT_KEY` (production instance)
 - **DNS for Clerk** (5 CNAMEs, **DNS-only / not proxied**): `clerk`, `accounts`, `clkmail`,
@@ -95,14 +100,14 @@ the deploy quick-start is in `README.md`.
    colour/JS literals, read-only dead tab-stop, reduced-motion guard). Added a sanctioned chrome
    danger layer `--jm-danger*` to both `tokens.css` (PROVISIONAL hues `#C9362C`/`#F2766B` — safe to
    re-tune). Amended law 7 (Space Grotesk = wordmark **+** the create-flow `.namebox`).
-   **Signed off (on branch `design-review-pass`, not yet merged to `main`):** presence (new palette
+   **Signed off & shipped (PR #1, merged to `main` + deployed 2026-06-16):** presence (new palette
    w/ dark values + per-colour ink + every hue ΔE≥25 from `--jm-signal`; top-bar roster;
    deterministic anon names; cursor smoothing), view-only (on-canvas cue, Share hidden for viewers,
    selection kept for inspection), Home/board-list v1 (monochrome row icons, danger-token delete,
    canvas board-title rename), ShareDialog (link summary + revoke, flag dropped), 404/403/error
    (faint Mark backdrop, auth-aware 403 recovery), and the button-class + `.muted` cross-surface
-   seams. **Implemented & verified 2026-06-17 (typecheck/tests/build + rendered, pending final
-   sign-off):** the four remaining seams — single-source brand mark (site uses one `<symbol>` +
+   seams. **Shipped via PR #2 (merged to `main` + deployed 2026-06-18; typecheck/tests/build +
+   rendered live):** the four remaining seams — single-source brand mark (site uses one `<symbol>` +
    `<use>`; app stays single-sourced via `Brand.tsx`), app-vs-site cursor glyph (site ghost-cursors
    now use the app's canonical presence glyph), unified status/loading frame (`LoadingState`/
    `EmptyState` share the `.status-screen` frame as a `plain` variant), toggle padding (app+site →
@@ -129,6 +134,30 @@ the deploy quick-start is in `README.md`.
    - **UI (Home):** project list + "All boards", create project, rename via **double-click** (the
      sanctioned rename gesture), move a board into a project. Extends the existing Home v1 list.
    - Already live: rename-by-double-click on Home rows **and** the canvas board title (top bar).
+7. **Paid plans (freemium) — strategy set 2026-06-19, not built.** Full marketing + pricing strategy
+   in repo `MARKETING.md`. Model: free tier = **10 boards**, full app (input model + all exports +
+   real-time collab) free forever; paid lifts the cap + adds control/scale. Publish real prices but
+   mark paid tiers **"Coming soon"** until billing exists. Engineering tasks to stand it up:
+   - **Stripe billing** — Checkout + Customer Portal + idempotent webhooks via the Worker; store
+     customer/subscription ids in D1 (none today); test-mode behind a flag.
+   - **Plans & entitlements in D1** — `users.plan`/`subscriptions` keyed to owner; one resolved
+     entitlements function (board_limit, history_window_days, private_link_controls, room/guest caps)
+     called by worker + app — never scatter limit literals.
+   - **Enforce board-count limit server-side** — on create, count owner's boards (`idx_boards_owner`)
+     vs the resolved limit; reject over-cap with a structured response; existing boards stay editable.
+   - **Upgrade / limit-reached UI** — graceful board-#11 prompt + inline Pro affordances on gated
+     controls. Non-canvas screen → **scaffold + design review**.
+   - **Team workspace/roles/seats** — extend `members` (owner/editor/viewer exists) into shared
+     workspace + seat counting tied to Stripe quantity.
+   - **Private share-link controls (Pro)** — `share_links` has role + `expires_at`; add password +
+     view-only enforcement, gate expiry/password behind Pro; enforce expiry server-side.
+   - **Multiplayer scale gating** — cap concurrent/guest count by entitlement (existence stays free,
+     only scale gated). ⚠️ confirm cost model before marketing "free multiplayer" loudly.
+   - **Version-history retention by plan** — 7-day free vs extended paid (R2 prune job by entitlement).
+   - **Enterprise (deferred)** — SSO/SAML + SCIM via Clerk enterprise; audit logs; out of lower tiers.
+   - **Instrument the board-limit wall before pricing day** — track create attempts + boards-per-owner
+     + cap hits; launch free at 10 now, turn paid on once conversion data exists.
+   - **Update JSON-LD when paid launches** — `site/index.html` offers price `0` today; update when live.
 
 ## Verify current state next session
 

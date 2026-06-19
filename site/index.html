@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
 
-  <title>JotModel — Type it. Drag it. It's a model.</title>
-  <meta name="description" content="JotModel is a fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+  <title>JotModel &middot; Turn the conversation into a data model</title>
+  <meta name="description" content="Turn the conversation into a data model. Just talk it through and it takes shape as you go. A data-modeling tool the whole team can use, that exports clean to your database when you need it." />
 
   <link rel="canonical" href="https://jotmodel.com/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -19,8 +19,8 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://jotmodel.com/" />
-  <meta property="og:title" content="JotModel — Type it. Drag it. It's a model." />
-  <meta property="og:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Exports clean DBML, dbt, and SQL." />
+  <meta property="og:title" content="JotModel &middot; Turn the conversation into a data model" />
+  <meta property="og:description" content="Just talk it through and the model takes shape as you go. A data-modeling tool the whole team can use." />
   <meta property="og:image" content="https://jotmodel.com/og-image.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,16 +28,18 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JotModel — Type it. Drag it. It's a model." />
-  <meta name="twitter:description" content="A fast whiteboard for data-modeling conversations. Type an entity, drag a relationship — the model just appears. Exports clean DBML, dbt, and SQL." />
+  <meta name="twitter:title" content="JotModel &middot; Turn the conversation into a data model" />
+  <meta name="twitter:description" content="Just talk it through and the model takes shape as you go. A data-modeling tool the whole team can use." />
   <meta name="twitter:image" content="https://jotmodel.com/og-image.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/tokens.css" />
-  <link rel="stylesheet" href="/site.css" />
+  <!-- ?v= busts the year-long immutable cache (see _headers). BUMP this whenever
+       tokens.css / site.css / demo.js change, or browsers serve stale assets. -->
+  <link rel="stylesheet" href="/tokens.css?v=4" />
+  <link rel="stylesheet" href="/site.css?v=4" />
 
   <script>
     // Set the theme before first paint to avoid a flash. Stored choice wins;
@@ -61,7 +63,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
     "url": "https://jotmodel.com/",
-    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Type an entity, drag a relationship, and the model just appears — in plain language. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
+    "description": "A fast, fit-to-purpose whiteboard for data-modeling conversations. Just talk it through and the model takes shape as you go, in plain language. Local-first, with cloud save, share links, and live multiplayer. Exports clean DBML, dbt, and SQL.",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -69,10 +71,43 @@
     }
   }
   </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is it really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. 10 boards free forever, the full app, no credit card. Paid plans for unlimited boards and teams are coming soon."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need an account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Not to start. Local boards need no account at all. Sign up free, with an email and password, when you want to save to the cloud or share a board."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I get real schema out of it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, when you need it. It exports clean to DBML, dbt, and SQL with no cleanup pass. Think of it as the bonus, not the point."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
-<!-- Brand mark — single source (law 6/7): defined once here, referenced everywhere via
+<!-- Brand mark, single source (law 6/7): defined once here, referenced everywhere via
      <use href="#jm-mark">. Keep this path in sync with the app's src/ui/Brand.tsx <Mark/>. -->
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
   <symbol id="jm-mark" viewBox="0 0 48 48" fill="none">
@@ -80,6 +115,20 @@
     <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="26.5" y1="36" x2="30" y2="32.6"/><line x1="26.5" y1="36" x2="30" y2="36"/><line x1="26.5" y1="36" x2="30" y2="39.4"/></g>
     <rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor"/>
     <rect x="30" y="29" width="13" height="13" rx="3.6" fill="none" stroke="currentColor" stroke-width="2.8"/>
+  </symbol>
+  <!-- Theme toggle glyphs: monochrome currentColor (law 6). Moon shows in light mode
+       (click for dark); sun shows in dark mode (click for light). -->
+  <symbol id="jm-moon" viewBox="0 0 24 24" fill="none">
+    <path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5Z" fill="currentColor"/>
+  </symbol>
+  <symbol id="jm-sun" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+    <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/>
+      <line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/>
+      <line x1="5.3" y1="5.3" x2="7" y2="7"/><line x1="17" y1="17" x2="18.7" y2="18.7"/>
+      <line x1="18.7" y1="5.3" x2="17" y2="7"/><line x1="7" y1="17" x2="5.3" y2="18.7"/>
+    </g>
   </symbol>
 </svg>
 
@@ -93,33 +142,28 @@
 
     <span class="head-sp"></span>
 
-    <span class="toggle" role="group" aria-label="Color theme">
-      <button type="button" id="t-light" data-theme-set="light">Light</button>
-      <button type="button" id="t-dark" data-theme-set="dark">Dark</button>
-    </span>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark theme">
+      <svg class="ico ico-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="#jm-moon"/></svg>
+      <svg class="ico ico-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="#jm-sun"/></svg>
+    </button>
 
-    <a class="btn btn-primary" href="https://app.jotmodel.com">Open the app</a>
+    <a class="btn btn-primary" href="https://app.jotmodel.com">Start free</a>
   </div>
 </header>
 
 <main>
 
-  <!-- ============================ HERO ============================ -->
+  <!-- ===================== HERO ===================== -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">A whiteboard for data-modeling conversations</p>
-        <h1 class="hero-title">Type it. <span class="nowrap">Drag it.</span><br>It&rsquo;s a model.</h1>
-        <p class="lede">
-          Model at the speed of conversation. Type an entity, drag a relationship, and the
-          diagram just appears &mdash; in plain language, not <code>snake_case</code>. The tool
-          gets out of the room&rsquo;s way so the people in it can think.
-        </p>
+        <h1 class="hero-title">Turn the conversation into a model.</h1>
+        <p class="lede">Just talk it through. It takes shape as you go, and it just works.</p>
         <div class="cta-row">
-          <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
-          <a class="btn btn-ghost btn-lg" href="#input-model">See how it works</a>
+          <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
         </div>
-        <p class="cta-note">Free to start &middot; works offline &middot; your boards sync across devices.</p>
+        <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
+        <p class="hero-tag">Type it. Drag it. It&rsquo;s a model.</p>
       </div>
 
       <div class="hero-demo">
@@ -137,196 +181,138 @@
             <svg id="rels" class="demo-rels" aria-hidden="true"></svg>
           </div>
           <figcaption class="visually-hidden">
-            Animated demonstration of building a data model: a "users" table and an "orders"
-            table type themselves in, then a relationship line draws between them.
+            Animated demonstration: a "users" table and an "orders" table type themselves in,
+            then a relationship line draws between them.
           </figcaption>
         </figure>
+        <p class="demo-caption">No setup. This is the actual tool, mid-thought.</p>
       </div>
     </div>
   </section>
 
-  <!-- ====================== THE INPUT MODEL ====================== -->
-  <section id="input-model" class="band">
+  <!-- ===================== IT GETS OUT OF THE WAY ===================== -->
+  <section class="say-band" aria-label="Why it stays out of the way">
     <div class="wrap">
-      <p class="eyebrow">The input model</p>
-      <h2>Type an entity. Drag to relate. <span class="h-accent">Done.</span></h2>
+      <p class="say-line">Meetings are for the discussion, <span class="h-accent">not for learning the tool.</span></p>
+      <p class="say-sub">
+        Nothing to learn, so the whole team shapes the model together. It stays out of the way,
+        and the room stays on the data.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== PRICING ===================== -->
+  <!-- SCAFFOLD: flagged for design review. No billing exists; paid tiers marked "Coming soon". -->
+  <section id="pricing" class="band" aria-labelledby="pricing-h">
+    <div class="wrap">
+      <p class="eyebrow">Pricing</p>
+      <h2 id="pricing-h">Free for 10 boards. <span class="h-accent">Generous on purpose.</span></h2>
       <p class="section-lede">
-        The whole tool is built around one motion. You write the way you talk &mdash;
-        &ldquo;order date&rdquo;, &ldquo;active?&rdquo;, &ldquo;amount&rdquo; &mdash; and JotModel reads the
-        natural language, infers a sensible type, and keeps the diagram tidy. No syntax,
-        no conventions, no code required.
+        The whole thing is free forever. Paid plans just lift the board cap and add scale.
+        No signup wall, no trial clock, no credit card.
       </p>
 
-      <ol class="steps">
-        <li class="step">
-          <span class="step-n" aria-hidden="true">1</span>
-          <div>
-            <h3>Type an entity</h3>
-            <p>Click anywhere, name the table, and start listing fields &mdash; comma-separated, plain English.</p>
-          </div>
-        </li>
-        <li class="step">
-          <span class="step-n" aria-hidden="true">2</span>
-          <div>
-            <h3>Types infer themselves</h3>
-            <p>JotModel reads each field name and assigns a sensible type. Wrong guess? Override it inline.</p>
-          </div>
-        </li>
-        <li class="step">
-          <span class="step-n" aria-hidden="true">3</span>
-          <div>
-            <h3>Drag to relate</h3>
-            <p>Pull from a table&rsquo;s edge to another table. The relationship draws itself, with cardinality.</p>
-          </div>
-        </li>
-      </ol>
-
-      <div class="infer-card">
-        <div class="infer-head">
-          <span class="infer-label">You type</span>
-          <span class="infer-label">JotModel reads</span>
-        </div>
-        <ul class="infer-list">
-          <li><code class="fn">order date</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">date</span></li>
-          <li><code class="fn">active?</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">boolean</span></li>
-          <li><code class="fn">amount</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">number</span></li>
-          <li><code class="fn">email</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">email</span></li>
-          <li><code class="fn">id</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">pk</span></li>
-          <li><code class="fn">created at</code><span class="arrow" aria-hidden="true">&rarr;</span><span class="ty">timestamp</span></li>
-        </ul>
-        <p class="infer-foot">
-          You never write <code>order_date</code> or <code>is_active</code> unless you want to.
-          Snake_case is supported &mdash; never assumed.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================ STRICT UNDERNEATH / EXPORT ================ -->
-  <section class="band band-alt">
-    <div class="wrap export-grid">
-      <div class="export-copy">
-        <p class="eyebrow">Loose in the room, strict underneath</p>
-        <h2>A whiteboard up top. <span class="h-accent">Clean output below.</span></h2>
-        <p class="section-lede">
-          Fields can stay loose while the conversation is live. The moment you need real
-          artifacts, the model exports clean &mdash; no cleanup pass required.
-        </p>
-        <ul class="export-targets">
-          <li>
-            <span class="tgt-name">DBML</span>
-            <span class="tgt-desc">Portable schema, ready for dbdiagram and friends.</span>
-          </li>
-          <li>
-            <span class="tgt-name">dbt</span>
-            <span class="tgt-desc">A <code>schema.yml</code> plus model stubs to drop in.</span>
-          </li>
-          <li>
-            <span class="tgt-name">SQL DDL</span>
-            <span class="tgt-desc">Postgres, MySQL, or SQL Server &mdash; pick your dialect.</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="export-code">
-        <div class="code-card" aria-label="Example DBML export">
-          <div class="code-bar">
-            <span class="code-dot" aria-hidden="true"></span>
-            <span class="code-name">model.dbml</span>
-          </div>
-<pre class="code"><code><span class="c-kw">Table</span> <span class="c-id">users</span> {
-  id          <span class="c-ty">integer</span>   [pk]
-  email       <span class="c-ty">varchar</span>
-  created_at  <span class="c-ty">timestamp</span>
-}
-
-<span class="c-kw">Table</span> <span class="c-id">orders</span> {
-  id          <span class="c-ty">integer</span>   [pk]
-  user_id     <span class="c-ty">integer</span>   [ref: &gt; users.id]
-  amount      <span class="c-ty">decimal</span>
-  order_date  <span class="c-ty">date</span>
-}
-
-<span class="c-cm">// one user, many orders</span>
-<span class="c-kw">Ref</span>: orders.user_id &gt; users.id</code></pre>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =================== LOCAL-FIRST + REALTIME =================== -->
-  <section class="band">
-    <div class="wrap">
-      <p class="eyebrow">Local-first, now multiplayer</p>
-      <h2>Your boards live with you. <span class="h-accent">And travel when you need them to.</span></h2>
-      <p class="section-lede">
-        JotModel loads instantly and works offline &mdash; your work is yours, on your machine, first.
-        When you&rsquo;re ready to bring others in, save to the cloud, share by link, and model together
-        live.
-      </p>
-
-      <div class="feature-grid">
-        <article class="feature">
-          <h3>Instant &amp; offline</h3>
-          <p>Boards cache in your browser, so they load with no spinner and keep working offline &mdash; even on a plane.</p>
+      <div class="price-grid">
+        <article class="price-card price-card-hero" aria-labelledby="price-free">
+          <header class="price-head">
+            <h3 id="price-free" class="price-name">Free</h3>
+            <p class="price-amount"><span class="price-num">$0</span> <span class="price-per">forever</span></p>
+            <p class="price-for">10 boards, the full app</p>
+          </header>
+          <ul class="price-feats">
+            <li>Just type what you mean</li>
+            <li>Real time, together</li>
+            <li>Private boards, offline</li>
+            <li>Clean export when you need it</li>
+            <li>No credit card</li>
+          </ul>
+          <a class="btn btn-primary btn-lg price-cta" href="https://app.jotmodel.com">Start free</a>
         </article>
-        <article class="feature">
-          <h3>Cloud save &amp; share links</h3>
-          <p>Sync when you want it. Send a link and the room is looking at the same model.</p>
+
+        <article class="price-card" aria-labelledby="price-pro">
+          <header class="price-head">
+            <h3 id="price-pro" class="price-name">Pro <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">$10</span> <span class="price-per">/mo</span></p>
+            <p class="price-for">$8/mo billed annually</p>
+          </header>
+          <ul class="price-feats">
+            <li>Unlimited boards</li>
+            <li>Extended version history</li>
+            <li>Private share-link controls</li>
+            <li>Larger multiplayer rooms</li>
+          </ul>
+          <span class="btn btn-quiet price-cta price-cta-soon" aria-disabled="true">Coming soon</span>
         </article>
-        <article class="feature feature-wide">
-          <h3>Live multiplayer with presence</h3>
-          <p>See who&rsquo;s in the room and where they&rsquo;re pointing. Edits land in real time.</p>
-          <div class="presence-demo" aria-hidden="true">
-            <span class="ghost-cur g1"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Priya</em></span>
-            <span class="ghost-cur g2"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Marco</em></span>
-            <span class="ghost-cur g3"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M2 1.5 L2 13 L5.4 9.6 L7.8 14.5 L9.6 13.7 L7.2 9 L12 9 Z" fill="currentColor" stroke="var(--jm-canvas)" stroke-width="1"/></svg><em>Dana</em></span>
-          </div>
+
+        <article class="price-card" aria-labelledby="price-team">
+          <header class="price-head">
+            <h3 id="price-team" class="price-name">Team <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">$16</span> <span class="price-per">/user/mo</span></p>
+            <p class="price-for">$13/user billed annually</p>
+          </header>
+          <ul class="price-feats">
+            <li>Everything in Pro, per seat</li>
+            <li>Shared team workspace</li>
+            <li>Roles &amp; permissions</li>
+            <li>Centralized billing &amp; seats</li>
+          </ul>
+          <span class="btn btn-quiet price-cta price-cta-soon" aria-disabled="true">Coming soon</span>
+        </article>
+
+        <article class="price-card" aria-labelledby="price-ent">
+          <header class="price-head">
+            <h3 id="price-ent" class="price-name">Enterprise <span class="price-badge">Coming soon</span></h3>
+            <p class="price-amount"><span class="price-num">Custom</span></p>
+            <p class="price-for">For security &amp; procurement</p>
+          </header>
+          <ul class="price-feats">
+            <li>SSO / SAML &amp; SCIM</li>
+            <li>Audit logs &amp; compliance</li>
+            <li>Enforced sharing controls</li>
+            <li>Dedicated support &amp; SLA</li>
+          </ul>
+          <a class="btn btn-quiet price-cta" href="mailto:hello@jotmodel.com">Contact us</a>
         </article>
       </div>
+      <p class="price-note">Paid plans aren&rsquo;t live yet. Prices are set, billing is coming. Free at 10 boards is available today.</p>
     </div>
   </section>
 
-  <!-- ================= LIGHT AND DARK ARE EQUALS ================= -->
-  <section class="band band-alt">
-    <div class="wrap equals-grid">
-      <div>
-        <p class="eyebrow">Light and dark are equals</p>
-        <h2>Designed twice. <span class="h-accent">Patched never.</span></h2>
-        <p class="section-lede">
-          Every color in JotModel ships in both themes from the start &mdash; nothing is built for one
-          and bolted onto the other. Flip it and see: the whole page moves as one.
-        </p>
-        <span class="toggle toggle-inline" role="group" aria-label="Color theme">
-          <button type="button" data-theme-set="light">Light</button>
-          <button type="button" data-theme-set="dark">Dark</button>
-        </span>
-      </div>
-      <div class="equals-tiles" aria-hidden="true">
-        <div class="eq-tile eq-light" data-theme="light">
-          <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
-            <span class="wm"><b>jot</b><span>model</span></span>
-          </span>
-          <span class="eq-cap">Light</span>
-        </div>
-        <div class="eq-tile eq-dark" data-theme="dark">
-          <span class="eq-lk">
-            <svg width="30" height="30" viewBox="0 0 48 48" fill="none" aria-hidden="true"><use href="#jm-mark"/></svg>
-            <span class="wm"><b>jot</b><span>model</span></span>
-          </span>
-          <span class="eq-cap">Dark</span>
-        </div>
+  <!-- ===================== FAQ ===================== -->
+  <section class="band band-alt" aria-labelledby="faq-h">
+    <div class="wrap faq-wrap">
+      <p class="eyebrow">FAQ</p>
+      <h2 id="faq-h">Good to know.</h2>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is it really free?</summary>
+          <div class="faq-body">
+            <p>Yes. 10 boards free forever, the full app, no credit card. Paid plans for unlimited boards and teams are coming soon.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need an account?</summary>
+          <div class="faq-body">
+            <p>Not to start. Local boards need no account at all. Sign up free, with an email and password, when you want to save to the cloud or share a board.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Can I get real schema out of it?</summary>
+          <div class="faq-body">
+            <p>Yes, when you need it. It exports clean to DBML, dbt, and SQL with no cleanup pass. Think of it as the bonus, not the point.</p>
+          </div>
+        </details>
       </div>
     </div>
   </section>
 
-  <!-- ========================= FINAL CTA ========================= -->
+  <!-- ===================== FINAL CTA ===================== -->
   <section class="final-cta">
     <div class="wrap final-inner">
-      <h2 class="final-title">Type it. Drag it. It&rsquo;s a model.</h2>
-      <p class="final-lede">Jot the model. Have the conversation. The tool stays out of the way.</p>
-      <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Open the app</a>
+      <h2 class="final-title">Have the conversation.<br>Leave with the model.</h2>
+      <a class="btn btn-primary btn-lg" href="https://app.jotmodel.com">Start free</a>
+      <p class="cta-note">Free forever for 10 boards &middot; no credit card &middot; works offline</p>
     </div>
   </section>
 
@@ -341,7 +327,8 @@
     </a>
     <span class="foot-sp"></span>
     <nav class="foot-nav" aria-label="Footer">
-      <a href="https://app.jotmodel.com">Open the app</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://app.jotmodel.com">Start free</a>
       <a href="mailto:hello@jotmodel.com">hello@jotmodel.com</a>
     </nav>
   </div>
@@ -351,26 +338,26 @@
   </div>
 </footer>
 
-<script src="/demo.js" defer></script>
+<script src="/demo.js?v=4" defer></script>
 <script>
-  // Theme toggle — persists to localStorage 'jm-theme', mirrors the app.
+  // Theme toggle: one button. Shows a moon in light mode (click for dark) and a
+  // sun in dark mode (click for light). Persists to localStorage 'jm-theme' (same
+  // key the pre-paint script reads); mirrors the app.
   (function () {
     var html = document.documentElement;
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
     function sync() {
-      var t = html.dataset.theme;
-      document.querySelectorAll('[data-theme-set]').forEach(function (b) {
-        b.classList.toggle('on', b.dataset.themeSet === t);
-        b.setAttribute('aria-pressed', String(b.dataset.themeSet === t));
-      });
+      var dark = html.dataset.theme === 'dark';
+      // aria-label names the destination, not the current state.
+      btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
     }
-    document.querySelectorAll('[data-theme-set]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var t = b.dataset.themeSet;
-        html.dataset.theme = t;
-        try { localStorage.setItem('jm-theme', t); } catch (e) { /* ignore */ }
-        sync();
-        window.dispatchEvent(new CustomEvent('jm-theme-change'));
-      });
+    btn.addEventListener('click', function () {
+      var next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+      html.dataset.theme = next;
+      try { localStorage.setItem('jm-theme', next); } catch (e) { /* ignore */ }
+      sync();
+      window.dispatchEvent(new CustomEvent('jm-theme-change'));
     });
     sync();
   })();

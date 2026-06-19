@@ -137,13 +137,15 @@
     var ay = ca.y + Math.max(20, Math.min(ca.h - 20, (cb.y + cb.h / 2) - ca.y));
     return { x: right ? ca.x + ca.w : ca.x, y: ay, side: right ? 1 : -1 };
   }
-  // crow's-foot (many) at the "to" end
+  // crow's-foot (many) at the "to" end. The three toes touch the entity edge
+  // (x, y-6 / y / y+6) and converge to an apex out on the line (x + dir*9), so the
+  // foot opens toward the table, on the line side, instead of fanning into the card.
   function crow(x, y, dir, col) {
-    var ox = -dir * 9;
+    var ax = x + dir * 9;
     return '<g stroke="' + col + '" stroke-width="1.8" stroke-linecap="round" fill="none">' +
-      '<line x1="' + x + '" y1="' + y + '" x2="' + (x + ox) + '" y2="' + (y - 6) + '"/>' +
-      '<line x1="' + x + '" y1="' + y + '" x2="' + (x + ox) + '" y2="' + y + '"/>' +
-      '<line x1="' + x + '" y1="' + y + '" x2="' + (x + ox) + '" y2="' + (y + 6) + '"/></g>';
+      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + (y - 6) + '"/>' +
+      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + y + '"/>' +
+      '<line x1="' + ax + '" y1="' + y + '" x2="' + x + '" y2="' + (y + 6) + '"/></g>';
   }
   // single bar (one) at the "from" end
   function bar(x, y, dir, col) {
