@@ -21,3 +21,13 @@ export function IconTrash({ size = 14 }: { size?: number }) {
     </svg>
   )
 }
+
+/** Folder — "move to project". Quiet monochrome line icon (law 1). */
+export function IconMove({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor"
+         strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M2 4.5a1 1 0 0 1 1-1h3l1.3 1.4H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" />
+    </svg>
+  )
+}
